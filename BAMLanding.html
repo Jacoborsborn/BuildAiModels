@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuildAIModels — Create Hyper-Realistic AI Models</title>
+<meta name="description" content="The professional studio for creating hyper-realistic AI influencer models. Generate studio-quality images and videos in seconds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080808;
+  --panel: #101010;
+  --panel2: #141414;
+  --border: #1c1c1c;
+  --border2: #252525;
+  --text: #efefef;
+  --muted: #777;
+  --muted2: #444;
+  --accent: #b8f054;
+  --accent2: rgba(184,240,84,0.07);
+  --accent3: rgba(184,240,84,0.14);
+  --red: #ff4f6a;
+  --orange: #f5a623;
+  --font: 'DM Sans', sans-serif;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--font); font-size: 15px;
+  line-height: 1.65; overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 1000;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; opacity: 0.35;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  height: 60px; padding: 0 40px;
+  display: flex; align-items: center; gap: 32px;
+  background: rgba(8,8,8,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  transition: background .3s;
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 22px; letter-spacing: 1px;
+  color: var(--text); text-decoration: none;
+  margin-right: auto;
+}
+.nav-logo em { color: var(--accent); font-style: normal; }
+.nav-link {
+  font-size: 13px; color: var(--muted);
+  text-decoration: none; transition: color .15s;
+  font-weight: 400;
+}
+.nav-link:hover { color: var(--text); }
+.nav-cta {
+  padding: 8px 20px; border-radius: 6px;
+  background: var(--accent); color: #000;
+  font-weight: 700; font-size: 13px;
+  text-decoration: none; transition: all .15s;
+  font-family: var(--font);
+}
+.nav-cta:hover { background: #ceff6b; transform: translateY(-1px); }
+.nav-signin {
+  font-size: 13px; color: var(--muted);
+  text-decoration: none; transition: color .15s;
+}
+.nav-signin:hover { color: var(--text); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 120px 40px 80px;
+  position: relative; overflow: hidden;
+}
+
+/* Grid background */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(184,240,84,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184,240,84,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 100%);
+}
+
+/* Glow */
+.hero-glow {
+  position: absolute;
+  width: 800px; height: 800px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(184,240,84,0.08) 0%, transparent 65%);
+  top: 50%; left: 50%; transform: translate(-50%, -60%);
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--accent); padding: 6px 16px;
+  border: 1px solid rgba(184,240,84,0.3);
+  border-radius: 20px; background: var(--accent2);
+  margin-bottom: 32px;
+  animation: fadeUp .6s ease both;
+}
+.hero-badge::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s ease infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(72px, 12vw, 140px);
+  line-height: 0.92; letter-spacing: 2px;
+  color: var(--text); margin-bottom: 8px;
+  animation: fadeUp .7s .1s ease both;
+}
+.hero-title .accent { color: var(--accent); }
+.hero-title .outline {
+  -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+  color: transparent;
+}
+
+.hero-sub {
+  font-size: clamp(16px, 2.5vw, 20px);
+  color: var(--muted); max-width: 560px;
+  margin: 24px auto 0; line-height: 1.6;
+  font-weight: 300;
+  animation: fadeUp .7s .2s ease both;
+}
+.hero-sub strong { color: var(--text); font-weight: 500; }
+
+.hero-actions {
+  display: flex; align-items: center; gap: 16px;
+  margin-top: 48px; flex-wrap: wrap; justify-content: center;
+  animation: fadeUp .7s .35s ease both;
+}
+.btn-hero-primary {
+  padding: 16px 36px; border-radius: 8px;
+  background: var(--accent); color: #000;
+  font-family: var(--font); font-weight: 700;
+  font-size: 15px; text-decoration: none;
+  transition: all .2s; border: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-hero-primary:hover { background: #ceff6b; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(184,240,84,0.25); }
+.btn-hero-ghost {
+  padding: 16px 32px; border-radius: 8px;
+  border: 1px solid var(--border2); color: var(--muted);
+  font-size: 15px; text-decoration: none;
+  transition: all .2s; background: none;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-hero-ghost:hover { border-color: var(--muted2); color: var(--text); }
+
+.hero-stats {
+  display: flex; align-items: center; gap: 40px;
+  margin-top: 72px; flex-wrap: wrap; justify-content: center;
+  animation: fadeUp .7s .45s ease both;
+}
+.stat { text-align: center; }
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 40px; color: var(--text); letter-spacing: 1px;
+  line-height: 1;
+}
+.stat-num em { color: var(--accent); font-style: normal; }
+.stat-label { font-size: 11px; color: var(--muted2); letter-spacing: 1px; text-transform: uppercase; font-family: var(--font-mono); margin-top: 4px; }
+.stat-divider { width: 1px; height: 40px; background: var(--border2); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── MARQUEE ── */
+.marquee-wrap {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  padding: 14px 0; overflow: hidden;
+  position: relative;
+}
+.marquee-wrap::before, .marquee-wrap::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 100px; z-index: 2;
+}
+.marquee-wrap::before { left: 0; background: linear-gradient(90deg, var(--panel), transparent); }
+.marquee-wrap::after { right: 0; background: linear-gradient(-90deg, var(--panel), transparent); }
+.marquee-track {
+  display: flex; gap: 0;
+  animation: marquee 25s linear infinite;
+  width: max-content;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 28px; white-space: nowrap;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted2);
+}
+.marquee-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+
+/* ── SECTION ── */
+section { padding: 100px 40px; max-width: 1200px; margin: 0 auto; }
+.section-label {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 16px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 7vw, 80px);
+  line-height: 0.95; letter-spacing: 1px;
+  margin-bottom: 20px; color: var(--text);
+}
+.section-sub {
+  font-size: 16px; color: var(--muted);
+  max-width: 520px; line-height: 1.7;
+  font-weight: 300;
+}
+
+/* ── HOW IT WORKS ── */
+.steps {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; margin-top: 60px;
+  border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+}
+.step {
+  background: var(--panel); padding: 36px 32px;
+  border-right: 1px solid var(--border);
+  position: relative;
+  transition: background .2s;
+}
+.step:last-child { border-right: none; }
+.step:hover { background: var(--panel2); }
+.step-num {
+  font-family: var(--font-display); font-size: 64px;
+  color: var(--border2); line-height: 1;
+  margin-bottom: 20px; letter-spacing: 2px;
+  transition: color .2s;
+}
+.step:hover .step-num { color: var(--accent); }
+.step-title {
+  font-size: 17px; font-weight: 700; margin-bottom: 10px;
+  color: var(--text);
+}
+.step-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.step-tag {
+  display: inline-block; margin-top: 16px;
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 4px;
+  background: var(--accent2); color: var(--accent);
+  border: 1px solid rgba(184,240,84,0.15);
+}
+
+/* ── FEATURES GRID ── */
+.features {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 16px; margin-top: 60px;
+}
+.feature-card {
+  background: var(--panel); border: 1px solid var(--border2);
+  border-radius: 14px; padding: 32px;
+  transition: all .2s; position: relative; overflow: hidden;
+}
+.feature-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.feature-card:hover { border-color: rgba(184,240,84,0.2); transform: translateY(-2px); }
+.feature-card:hover::before { opacity: 1; }
+.feature-icon { font-size: 28px; margin-bottom: 16px; }
+.feature-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.feature-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.feature-card.wide { grid-column: span 2; }
+
+/* ── PRICING ── */
+.pricing-wrap {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-top: 60px;
+}
+.price-card {
+  background: var(--panel); border: 1px solid var(--border2);
+  border-radius: 14px; padding: 32px 28px;
+  transition: all .2s; position: relative;
+}
+.price-card.featured {
+  border-color: var(--accent);
+  background: linear-gradient(160deg, var(--panel2) 0%, #0e1a06 100%);
+}
+.price-card.featured::before {
+  content: 'MOST POPULAR';
+  position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+  background: var(--accent); color: #000;
+  font-family: var(--font-mono); font-size: 9px;
+  font-weight: 700; letter-spacing: 2px;
+  padding: 4px 14px; border-radius: 0 0 8px 8px;
+}
+.price-top-label {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted2); margin-bottom: 16px;
+}
+.price-amount {
+  font-family: var(--font-display); font-size: 56px;
+  letter-spacing: -1px; line-height: 1; margin-bottom: 4px;
+}
+.price-amount .currency { font-size: 28px; vertical-align: top; margin-top: 10px; display: inline-block; }
+.price-desc { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
+.price-bonus {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--accent); letter-spacing: 1px; margin-bottom: 24px;
+}
+.price-list { list-style: none; margin-bottom: 28px; }
+.price-list li {
+  font-size: 13px; color: var(--muted);
+  padding: 7px 0; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.price-list li:last-child { border-bottom: none; }
+.price-list li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+.btn-price {
+  width: 100%; padding: 13px;
+  border-radius: 8px; border: none;
+  font-family: var(--font); font-weight: 700;
+  font-size: 14px; cursor: pointer;
+  text-decoration: none; display: block;
+  text-align: center; transition: all .2s;
+}
+.btn-price-primary { background: var(--accent); color: #000; }
+.btn-price-primary:hover { background: #ceff6b; }
+.btn-price-ghost { background: none; border: 1px solid var(--border2); color: var(--muted); }
+.btn-price-ghost:hover { border-color: var(--muted2); color: var(--text); }
+
+/* ── COURSE BANNER ── */
+.course-banner {
+  margin: 0 40px 100px;
+  background: var(--panel);
+  border: 1px solid var(--border2);
+  border-radius: 20px; padding: 60px;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 40px;
+  position: relative; overflow: hidden;
+}
+.course-banner::before {
+  content: '';
+  position: absolute; top: -60px; right: -60px;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(184,240,84,0.06) 0%, transparent 70%);
+}
+.course-label {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 14px;
+}
+.course-title {
+  font-family: var(--font-display); font-size: 52px;
+  letter-spacing: 1px; line-height: 0.95;
+  margin-bottom: 16px;
+}
+.course-desc { font-size: 15px; color: var(--muted); max-width: 440px; line-height: 1.7; }
+.course-cta {
+  flex-shrink: 0; text-align: center;
+}
+.course-cta a {
+  display: inline-block; padding: 16px 36px;
+  background: var(--text); color: #000;
+  border-radius: 8px; font-weight: 700;
+  font-size: 15px; text-decoration: none;
+  transition: all .2s; white-space: nowrap;
+}
+.course-cta a:hover { background: var(--accent); transform: translateY(-2px); }
+.course-cta p { font-size: 11px; color: var(--muted2); margin-top: 10px; font-family: var(--font-mono); }
+
+/* ── FAQ ── */
+.faq-list { margin-top: 48px; max-width: 720px; }
+.faq-item {
+  border-bottom: 1px solid var(--border);
+  padding: 20px 0;
+}
+.faq-q {
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  color: var(--text); transition: color .15s;
+  user-select: none;
+}
+.faq-q:hover { color: var(--accent); }
+.faq-chevron { transition: transform .2s; font-style: normal; font-size: 18px; color: var(--muted); }
+.faq-item.open .faq-chevron { transform: rotate(45deg); color: var(--accent); }
+.faq-a {
+  font-size: 13.5px; color: var(--muted); line-height: 1.8;
+  max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s;
+}
+.faq-item.open .faq-a { max-height: 200px; padding-top: 12px; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 48px 40px 32px;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 40px; align-items: start;
+}
+.footer-logo {
+  font-family: var(--font-display); font-size: 24px;
+  letter-spacing: 1px; color: var(--text); margin-bottom: 10px;
+}
+.footer-logo em { color: var(--accent); font-style: normal; }
+.footer-tagline { font-size: 13px; color: var(--muted2); max-width: 280px; line-height: 1.6; }
+.footer-links { display: flex; gap: 40px; }
+.footer-col { display: flex; flex-direction: column; gap: 12px; }
+.footer-col-title { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted2); font-family: var(--font-mono); margin-bottom: 4px; }
+.footer-col a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color .15s; }
+.footer-col a:hover { color: var(--accent); }
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  padding: 20px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 11px; color: var(--muted2);
+  font-family: var(--font-mono);
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 900px) {
+  nav { padding: 0 20px; gap: 16px; }
+  .nav-link { display: none; }
+  .hero { padding: 100px 20px 60px; }
+  .hero-stats { gap: 24px; }
+  section { padding: 60px 20px; }
+  .steps { grid-template-columns: 1fr; }
+  .step { border-right: none; border-bottom: 1px solid var(--border); }
+  .step:last-child { border-bottom: none; }
+  .features { grid-template-columns: 1fr; }
+  .feature-card.wide { grid-column: span 1; }
+  .pricing-wrap { grid-template-columns: 1fr; }
+  .course-banner { flex-direction: column; margin: 0 20px 60px; padding: 36px 28px; }
+  footer { grid-template-columns: 1fr; }
+  .footer-links { flex-wrap: wrap; gap: 24px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">BUILD<em>AI</em>MODELS</a>
+  <a href="#how" class="nav-link">How it works</a>
+  <a href="#pricing" class="nav-link">Pricing</a>
+  <a href="/course" class="nav-link">Course</a>
+  <a href="/auth" class="nav-signin">Sign in</a>
+  <a href="/auth" class="nav-cta">Start Free →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge">⚡ Hyper-Realistic AI Generation Studio</div>
+  <h1 class="hero-title">
+    BUILD YOUR<br>
+    <span class="accent">AI MODEL</span><br>
+    <span class="outline">IN MINUTES</span>
+  </h1>
+  <p class="hero-sub">
+    Generate <strong>studio-quality images and videos</strong> of your AI influencer persona. No experience needed. Just your vision.
+  </p>
+  <div class="hero-actions">
+    <a href="/auth" class="btn-hero-primary">Start Creating Free →</a>
+    <a href="#how" class="btn-hero-ghost">See how it works ↓</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num"><em>£0.09</em></div>
+      <div class="stat-label">Per Image</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-num"><em>4K</em></div>
+      <div class="stat-label">Resolution</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-num"><em>5</em></div>
+      <div class="stat-label">AI Models</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-num"><em>60s</em></div>
+      <div class="stat-label">Generation Time</div>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item"><span class="marquee-dot"></span>Nano Banana Pro</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Seedream 5.0 Lite</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Kling 3.0 Motion Control</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Wan 2.2 Spicy</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Reel Recreator</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>4K RAW Output</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Face Lock Technology</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>NSFW Generation</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Nano Banana Pro</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Seedream 5.0 Lite</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Kling 3.0 Motion Control</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Wan 2.2 Spicy</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Reel Recreator</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>4K RAW Output</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Face Lock Technology</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>NSFW Generation</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="reveal">
+    <div class="section-label">Process</div>
+    <h2 class="section-title">THREE STEPS.<br>INFINITE CONTENT.</h2>
+    <p class="section-sub">From concept to hyper-realistic AI model content in under 5 minutes.</p>
+  </div>
+  <div class="steps reveal">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Define Your Model</div>
+      <div class="step-desc">Upload your reference images to lock your AI model's face, body, and identity. Our face-lock technology ensures consistency across every generation.</div>
+      <span class="step-tag">Face Lock Tech</span>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Generate Content</div>
+      <div class="step-desc">Choose from 14+ scenario templates or write your own prompt. Generate hyper-realistic images and videos across gym, lifestyle, and creator content pillars.</div>
+      <span class="step-tag">AI Generation</span>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Publish & Profit</div>
+      <div class="step-desc">Download studio-quality outputs ready for Instagram, TikTok, Threads, and Fanvue. One session produces a full week of content.</div>
+      <span class="step-tag">Multi-Platform</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" style="padding-top:0">
+  <div class="reveal">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">EVERYTHING YOU<br>NEED TO SCALE.</h2>
+  </div>
+  <div class="features reveal">
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <div class="feature-title">Face Lock Technology</div>
+      <div class="feature-desc">Maintain perfect consistency across every image and video. Your model looks identical whether she's at the gym, a café, or on a London street.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎬</div>
+      <div class="feature-title">Reel Recreator</div>
+      <div class="feature-desc">Upload any viral reel, extract the frame, swap your AI model in with one click, then regenerate the full video with Kling 3.0 Motion Control.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Multi-Model Generation</div>
+      <div class="feature-desc">Access Nano Banana Pro, Seedream 5.0 Lite, Wan 2.2 Spicy, and Kling 3.0 — all from one studio. Switch models per generation based on quality and cost needs.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔞</div>
+      <div class="feature-title">NSFW Studio</div>
+      <div class="feature-desc">Dedicated adult content generation with Seedream 5.0 Lite. Separate tab, separate library. For creators monetising on Fanvue and subscription platforms.</div>
+    </div>
+    <div class="feature-card wide">
+      <div class="feature-icon">📱</div>
+      <div class="feature-title">Built for Social — Every Platform</div>
+      <div class="feature-desc">Every output is sized and optimised for Instagram carousels (4:5), Reels and TikTok (9:16), Stories, and Threads. Generate once, cross-post everywhere. A full week of content in a single session.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="reveal">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">PAY AS YOU GO.<br>NO SUBSCRIPTIONS.</h2>
+    <p class="section-sub">Top up credits when you need them. They never expire. No monthly fees, no commitments.</p>
+  </div>
+  <div class="pricing-wrap reveal">
+    <div class="price-card">
+      <div class="price-top-label">Starter</div>
+      <div class="price-amount"><span class="currency">£</span>10</div>
+      <div class="price-desc">Perfect for getting started and testing your first AI model</div>
+      <ul class="price-list">
+        <li>~111 images at £0.09 each</li>
+        <li>~35 short videos (Wan 2.2)</li>
+        <li>All image models included</li>
+        <li>Full studio access</li>
+        <li>Credits never expire</li>
+      </ul>
+      <a href="/auth" class="btn-price btn-price-ghost">Get Started</a>
+    </div>
+    <div class="price-card featured">
+      <div class="price-top-label">Standard</div>
+      <div class="price-amount"><span class="currency">£</span>25</div>
+      <div class="price-desc">Most popular — enough for a full month of content</div>
+      <div class="price-bonus">+8% BONUS CREDITS INCLUDED</div>
+      <ul class="price-list">
+        <li>~300 images at £0.09 each</li>
+        <li>~96 short videos (Wan 2.2)</li>
+        <li>All models + NSFW access</li>
+        <li>Reel Recreator included</li>
+        <li>Priority generation</li>
+      </ul>
+      <a href="/auth" class="btn-price btn-price-primary">Top Up £25</a>
+    </div>
+    <div class="price-card">
+      <div class="price-top-label">Pro</div>
+      <div class="price-amount"><span class="currency">£</span>50</div>
+      <div class="price-desc">For serious creators scaling multiple personas</div>
+      <div class="price-bonus">+14% BONUS CREDITS INCLUDED</div>
+      <ul class="price-list">
+        <li>~628 images at £0.09 each</li>
+        <li>~200 short videos (Wan 2.2)</li>
+        <li>All models + NSFW access</li>
+        <li>Kling 3.0 Pro video access</li>
+        <li>Priority generation</li>
+      </ul>
+      <a href="/auth" class="btn-price btn-price-ghost">Top Up £50</a>
+    </div>
+  </div>
+
+  <!-- Per-generation rates -->
+  <div class="reveal" style="margin-top:32px;background:var(--panel);border:1px solid var(--border2);border-radius:14px;padding:28px 32px">
+    <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);margin-bottom:16px">Per-Generation Rates</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+      <div style="font-size:13px;color:var(--muted)">📸 Nano Banana Pro — <strong style="color:var(--text)">£0.09/img</strong></div>
+      <div style="font-size:13px;color:var(--muted)">📸 Seedream 5.0 Lite — <strong style="color:var(--text)">£0.07/img</strong></div>
+      <div style="font-size:13px;color:var(--muted)">🎬 Wan 2.2 Spicy 5s — <strong style="color:var(--text)">£0.28</strong></div>
+      <div style="font-size:13px;color:var(--muted)">🎬 Kling 3.0 I2V 5s — <strong style="color:var(--text)">£0.85</strong></div>
+      <div style="font-size:13px;color:var(--muted)">🎬 Motion Control 5s — <strong style="color:var(--text)">£1.20</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- COURSE BANNER -->
+<div class="course-banner reveal">
+  <div>
+    <div class="course-label">Also from BuildAIModels</div>
+    <div class="course-title">LEARN THE<br>FULL SYSTEM</div>
+    <p class="course-desc">The complete course on building, launching, and monetising AI influencer personas from scratch. From generation to Fanvue to five figures.</p>
+  </div>
+  <div class="course-cta">
+    <a href="/course">View the Course →</a>
+    <p>Full walkthrough · No fluff</p>
+  </div>
+</div>
+
+<!-- FAQ -->
+<section id="faq" style="padding-top:0">
+  <div class="reveal">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">COMMON<br>QUESTIONS.</h2>
+  </div>
+  <div class="faq-list reveal">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        What is BuildAIModels?
+        <em class="faq-chevron">+</em>
+      </div>
+      <div class="faq-a">BuildAIModels is a professional AI generation studio for creating hyper-realistic AI influencer personas. Generate consistent, studio-quality images and videos for Instagram, TikTok, Fanvue, and other platforms — without any photography or design skills.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Do credits expire?
+        <em class="faq-chevron">+</em>
+      </div>
+      <div class="faq-a">No. Credits never expire. Top up when you need to and use them at your own pace. There are no monthly fees or subscription commitments.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Can I use the content commercially?
+        <em class="faq-chevron">+</em>
+      </div>
+      <div class="faq-a">Yes. All content you generate is yours to use commercially — social media, subscription platforms, brand deals, marketing. You own the outputs. See our Terms & Conditions for full details.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        How realistic is the output?
+        <em class="faq-chevron">+</em>
+      </div>
+      <div class="faq-a">Extremely. We use the latest frontier models including Nano Banana Pro (Google Gemini-based) and Seedream 5.0 Lite at 4K resolution. With proper prompting and reference images, outputs are indistinguishable from professional photography.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Is there an age restriction?
+        <em class="faq-chevron">+</em>
+      </div>
+      <div class="faq-a">Yes. You must be 18 or older to use BuildAIModels. This applies to all features including those unrelated to adult content. See our Acceptable Use Policy for full rules.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        What if a generation fails?
+        <em class="faq-chevron">+</em>
+      </div>
+      <div class="faq-a">If a generation fails due to a platform error on our side, the credit cost is automatically returned to your account. You are never charged for failed generations caused by our systems.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">BUILD<em>AI</em>MODELS</div>
+    <div class="footer-tagline">The professional studio for hyper-realistic AI model creation.</div>
+  </div>
+  <div class="footer-links">
+    <div class="footer-col">
+      <div class="footer-col-title">Product</div>
+      <a href="/studio">Studio</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/course">Course</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Account</div>
+      <a href="/auth">Sign In</a>
+      <a href="/auth">Sign Up</a>
+      <a href="/account">Billing</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Legal</div>
+      <a href="/legal">Terms & Conditions</a>
+      <a href="/legal">Privacy Policy</a>
+      <a href="/legal">Acceptable Use</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Support</div>
+      <a href="mailto:support@buildaimodels.co.uk">Contact</a>
+    </div>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span>© 2026 BuildAIModels.co.uk · All rights reserved</span>
+  <span>Built for creators · Powered by AI</span>
+</div>
+
+<script>
+// FAQ toggle
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Nav scroll effect
+window.addEventListener('scroll', () => {
+  document.querySelector('nav').style.background =
+    window.scrollY > 40 ? 'rgba(8,8,8,0.98)' : 'rgba(8,8,8,0.85)';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synthia.ai — Legal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --panel: #111111;
+  --panel2: #161616;
+  --border: #222222;
+  --border2: #2a2a2a;
+  --text: #e8e8e8;
+  --muted: #888;
+  --muted2: #555;
+  --accent: #b8f054;
+  --accent2: rgba(184,240,84,0.08);
+  --accent3: rgba(184,240,84,0.15);
+  --red: #ff4f6a;
+  --font: 'DM Sans', sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 56px;
+  display: flex; align-items: center; gap: 24px;
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 18px;
+  color: var(--accent); letter-spacing: -0.5px;
+  text-decoration: none; margin-right: auto;
+}
+.nav-tab {
+  font-size: 12px; font-weight: 500; letter-spacing: 0.5px;
+  color: var(--muted); text-decoration: none;
+  padding: 6px 14px; border-radius: 6px;
+  transition: all .15s; border: 1px solid transparent;
+  cursor: pointer; background: none;
+  font-family: var(--font);
+}
+.nav-tab:hover, .nav-tab.active {
+  color: var(--text); border-color: var(--border2);
+  background: var(--panel2);
+}
+.nav-tab.active { color: var(--accent); border-color: var(--accent); background: var(--accent2); }
+
+/* LAYOUT */
+.layout { display: flex; min-height: calc(100vh - 56px); }
+.sidebar {
+  width: 240px; min-width: 240px;
+  border-right: 1px solid var(--border);
+  padding: 32px 20px;
+  position: sticky; top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+  background: var(--panel);
+}
+.sidebar-label {
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted2); font-family: var(--font-mono);
+  margin-bottom: 12px; padding-left: 4px;
+}
+.sidebar-link {
+  display: block; padding: 7px 10px; border-radius: 6px;
+  color: var(--muted); text-decoration: none; font-size: 12px;
+  transition: all .15s; margin-bottom: 2px;
+  border-left: 2px solid transparent;
+}
+.sidebar-link:hover { color: var(--text); background: var(--panel2); }
+.sidebar-link.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent2); }
+.sidebar-divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* CONTENT */
+.content { flex: 1; padding: 48px 64px; max-width: 860px; }
+.doc-section { display: none; }
+.doc-section.active { display: block; }
+
+.doc-header {
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.doc-badge {
+  display: inline-block;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 4px;
+  background: var(--accent2); color: var(--accent);
+  border: 1px solid rgba(184,240,84,0.2);
+  margin-bottom: 16px;
+}
+.doc-title {
+  font-family: var(--font-display);
+  font-size: 36px; font-weight: 800;
+  letter-spacing: -1px; color: var(--text);
+  margin-bottom: 8px; line-height: 1.1;
+}
+.doc-meta {
+  font-size: 12px; color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 700;
+  color: var(--text); margin: 36px 0 12px;
+  padding-top: 36px;
+  border-top: 1px solid var(--border);
+}
+h2:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+h3 {
+  font-size: 14px; font-weight: 600;
+  color: var(--accent); margin: 20px 0 8px;
+  font-family: var(--font-mono); letter-spacing: 0.5px;
+}
+p { color: var(--muted); margin-bottom: 14px; font-size: 13.5px; }
+p strong { color: var(--text); }
+ul, ol { margin: 0 0 14px 20px; color: var(--muted); font-size: 13.5px; }
+li { margin-bottom: 6px; }
+li strong { color: var(--text); }
+
+.warning-box {
+  background: rgba(255,79,106,0.08);
+  border: 1px solid rgba(255,79,106,0.25);
+  border-radius: 8px; padding: 16px 20px;
+  margin: 20px 0;
+}
+.warning-box p { color: #ff8fa0; margin: 0; }
+.warning-box strong { color: var(--red); }
+
+.info-box {
+  background: var(--accent2);
+  border: 1px solid rgba(184,240,84,0.2);
+  border-radius: 8px; padding: 16px 20px;
+  margin: 20px 0;
+}
+.info-box p { color: #c8f070; margin: 0; font-size: 13px; }
+
+.contact-block {
+  background: var(--panel2);
+  border: 1px solid var(--border2);
+  border-radius: 10px; padding: 20px 24px;
+  margin-top: 32px;
+}
+.contact-block p { margin: 4px 0; font-size: 13px; }
+.contact-block a { color: var(--accent); text-decoration: none; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 11px; color: var(--muted2);
+}
+footer a { color: var(--muted); text-decoration: none; }
+footer a:hover { color: var(--accent); }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .content { padding: 32px 24px; }
+  .doc-title { font-size: 26px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">Synthia.ai</a>
+  <button class="nav-tab active" onclick="showDoc('terms')">Terms & Conditions</button>
+  <button class="nav-tab" onclick="showDoc('privacy')">Privacy Policy</button>
+  <button class="nav-tab" onclick="showDoc('aup')">Acceptable Use</button>
+</nav>
+
+<div class="layout">
+  <div class="sidebar">
+    <!-- Terms sidebar -->
+    <div id="sidebar-terms">
+      <div class="sidebar-label">Contents</div>
+      <a class="sidebar-link" href="#t-intro">Introduction</a>
+      <a class="sidebar-link" href="#t-eligibility">Eligibility</a>
+      <a class="sidebar-link" href="#t-account">Account</a>
+      <a class="sidebar-link" href="#t-credits">Credits & Payments</a>
+      <a class="sidebar-link" href="#t-refunds">Refund Policy</a>
+      <a class="sidebar-link" href="#t-content">Generated Content</a>
+      <a class="sidebar-link" href="#t-ip">Intellectual Property</a>
+      <a class="sidebar-link" href="#t-prohibited">Prohibited Use</a>
+      <a class="sidebar-link" href="#t-liability">Liability</a>
+      <a class="sidebar-link" href="#t-termination">Termination</a>
+      <a class="sidebar-link" href="#t-governing">Governing Law</a>
+      <a class="sidebar-link" href="#t-changes">Changes</a>
+      <a class="sidebar-link" href="#t-contact">Contact</a>
+    </div>
+    <!-- Privacy sidebar -->
+    <div id="sidebar-privacy" style="display:none">
+      <div class="sidebar-label">Contents</div>
+      <a class="sidebar-link" href="#p-intro">Introduction</a>
+      <a class="sidebar-link" href="#p-collect">Data We Collect</a>
+      <a class="sidebar-link" href="#p-use">How We Use It</a>
+      <a class="sidebar-link" href="#p-store">Data Storage</a>
+      <a class="sidebar-link" href="#p-third">Third Parties</a>
+      <a class="sidebar-link" href="#p-retention">Retention</a>
+      <a class="sidebar-link" href="#p-rights">Your Rights</a>
+      <a class="sidebar-link" href="#p-cookies">Cookies</a>
+      <a class="sidebar-link" href="#p-children">Children</a>
+      <a class="sidebar-link" href="#p-changes">Changes</a>
+      <a class="sidebar-link" href="#p-contact">Contact</a>
+    </div>
+    <!-- AUP sidebar -->
+    <div id="sidebar-aup" style="display:none">
+      <div class="sidebar-label">Contents</div>
+      <a class="sidebar-link" href="#a-intro">Introduction</a>
+      <a class="sidebar-link" href="#a-age">Age Requirement</a>
+      <a class="sidebar-link" href="#a-prohibited">Prohibited Content</a>
+      <a class="sidebar-link" href="#a-nsfw">NSFW Rules</a>
+      <a class="sidebar-link" href="#a-real">Real People</a>
+      <a class="sidebar-link" href="#a-commercial">Commercial Use</a>
+      <a class="sidebar-link" href="#a-enforcement">Enforcement</a>
+      <a class="sidebar-link" href="#a-reporting">Reporting</a>
+      <a class="sidebar-link" href="#a-contact">Contact</a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════════════════════════════════════
+         TERMS & CONDITIONS
+    ══════════════════════════════════════════ -->
+    <div id="doc-terms" class="doc-section active">
+      <div class="doc-header">
+        <div class="doc-badge">Legal</div>
+        <h1 class="doc-title">Terms &amp; Conditions</h1>
+        <div class="doc-meta">Synthia.ai · Last updated: April 2026 · Effective immediately</div>
+      </div>
+
+      <h2 id="t-intro">1. Introduction</h2>
+      <p>These Terms and Conditions ("Terms") govern your access to and use of Synthia.ai ("the Platform", "we", "us", "our"), an AI-powered image and video generation service. By creating an account or using the Platform you agree to be bound by these Terms in full.</p>
+      <p>Synthia.ai is operated as an independent platform. References to "you" or "user" mean any individual accessing the Platform.</p>
+
+      <h2 id="t-eligibility">2. Eligibility</h2>
+      <p>You must be <strong>at least 18 years of age</strong> to create an account or use Synthia.ai. By registering you confirm that you meet this requirement. We reserve the right to terminate accounts where we have reasonable belief a user is under 18.</p>
+      <p>You must not be located in a jurisdiction where accessing or using AI generation services is prohibited by law.</p>
+
+      <h2 id="t-account">3. Account Registration</h2>
+      <p>You must provide accurate and complete information when registering. You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account.</p>
+      <p>You must not share your account with others, create multiple accounts to circumvent restrictions, or use automated means to create accounts.</p>
+      <p>We reserve the right to suspend or terminate accounts at our sole discretion where we believe these Terms have been violated.</p>
+
+      <h2 id="t-credits">4. Credits &amp; Payments</h2>
+      <p>Synthia.ai operates on a <strong>prepaid credit system</strong>. Credits are purchased in advance and deducted per generation based on the model and output type used. Current per-generation costs are displayed within the Platform before each generation.</p>
+      <p>Credits are purchased in GBP (£) via Stripe. All payments are processed securely by Stripe; we do not store your card details.</p>
+      <p><strong>Credits have no cash value</strong> and cannot be transferred to other accounts, exchanged for currency, or carried over upon account termination.</p>
+      <p>We reserve the right to adjust credit pricing with reasonable notice displayed within the Platform. Existing purchased credits are not affected by price changes.</p>
+
+      <h2 id="t-refunds">5. Refund Policy</h2>
+      <p><strong>Credits consumed by completed generations are non-refundable.</strong> If a generation fails due to a platform error on our side, the credit cost will be returned to your account automatically.</p>
+      <p>Unused credits (not yet consumed by any generation) may be refunded within <strong>14 days of purchase</strong> upon written request to our support email, subject to a minimum unused balance of £5.00. Refund requests after 14 days will not be accepted.</p>
+      <p>We do not offer refunds on credits consumed where the output was technically delivered, regardless of satisfaction with the result — AI generation output is inherently variable.</p>
+
+      <h2 id="t-content">6. Generated Content</h2>
+      <p>You are solely responsible for the prompts you submit and the content you generate using Synthia.ai. We do not review generated outputs in real time.</p>
+      <p>You must not use Synthia.ai to generate content that violates our <strong>Acceptable Use Policy</strong>, which forms part of these Terms by reference.</p>
+      <p>We reserve the right to implement automated and manual content moderation and to remove content or terminate accounts where violations are detected.</p>
+
+      <h2 id="t-ip">7. Intellectual Property</h2>
+      <p>Images and videos generated through Synthia.ai using your prompts and reference inputs are owned by <strong>you</strong>, subject to the limitations of the underlying AI model providers' terms.</p>
+      <p>The Synthia.ai platform, branding, interface, and all non-generated content remain the intellectual property of Synthia.ai and may not be reproduced, copied, or resold without written permission.</p>
+      <p>You grant us a limited, non-exclusive licence to process your inputs solely for the purpose of delivering the generation service.</p>
+
+      <h2 id="t-prohibited">8. Prohibited Use</h2>
+      <p>You must not use the Platform to:</p>
+      <ul>
+        <li>Generate content involving minors in any sexual or exploitative context</li>
+        <li>Generate non-consensual intimate imagery of real identifiable individuals</li>
+        <li>Create content designed to harass, defame, or harm specific individuals</li>
+        <li>Produce deepfakes of real people for deceptive or harmful purposes</li>
+        <li>Circumvent API limits or attempt to extract underlying API keys</li>
+        <li>Resell access to the Platform or use it to build competing services without written agreement</li>
+        <li>Use the Platform for any unlawful purpose under UK or applicable international law</li>
+      </ul>
+      <p>Violation of these prohibitions may result in immediate account termination without refund of remaining credits.</p>
+
+      <h2 id="t-liability">9. Limitation of Liability</h2>
+      <p>Synthia.ai provides the Platform on an "as is" basis. We make no warranties, express or implied, regarding uptime, output quality, or fitness for a particular purpose.</p>
+      <p>To the maximum extent permitted by law, our total liability to you for any claim arising from your use of the Platform shall not exceed the value of credits purchased by you in the <strong>30 days preceding the claim</strong>.</p>
+      <p>We are not liable for any indirect, incidental, special, or consequential damages including but not limited to lost profits, data loss, or reputational damage.</p>
+
+      <h2 id="t-termination">10. Termination</h2>
+      <p>You may close your account at any time via the Settings page. Upon closure, any remaining credit balance will be forfeited unless you request a refund of unused credits within the 14-day window described above.</p>
+      <p>We may suspend or terminate your account immediately, without notice, if we believe you have violated these Terms. We reserve sole discretion in this determination.</p>
+
+      <h2 id="t-governing">11. Governing Law</h2>
+      <p>These Terms are governed by the laws of <strong>England and Wales</strong>. Any disputes shall be subject to the exclusive jurisdiction of the courts of England and Wales.</p>
+      <p>If you are a consumer based in another jurisdiction, you may also have rights under applicable local consumer protection laws which these Terms do not override.</p>
+
+      <h2 id="t-changes">12. Changes to Terms</h2>
+      <p>We may update these Terms from time to time. Where changes are material, we will notify you by email or by prominent notice within the Platform at least <strong>14 days</strong> before the change takes effect. Continued use of the Platform after that date constitutes acceptance.</p>
+
+      <h2 id="t-contact">13. Contact</h2>
+      <div class="contact-block">
+        <p><strong>Synthia.ai Support</strong></p>
+        <p>Email: <a href="mailto:legal@synthia.ai">legal@synthia.ai</a></p>
+        <p>For billing disputes, account issues, or legal enquiries.</p>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         PRIVACY POLICY
+    ══════════════════════════════════════════ -->
+    <div id="doc-privacy" class="doc-section">
+      <div class="doc-header">
+        <div class="doc-badge">Legal</div>
+        <h1 class="doc-title">Privacy Policy</h1>
+        <div class="doc-meta">Synthia.ai · Last updated: April 2026 · GDPR &amp; UK GDPR Compliant</div>
+      </div>
+
+      <div class="info-box">
+        <p><strong>Short version:</strong> We collect only what we need to run the service. We don't sell your data. You can request deletion at any time. We comply with UK GDPR.</p>
+      </div>
+
+      <h2 id="p-intro">1. Introduction</h2>
+      <p>Synthia.ai ("we", "us", "our") is committed to protecting your personal data. This Privacy Policy explains what data we collect, how we use it, and your rights under the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.</p>
+      <p>Our lawful bases for processing your data are: <strong>contractual necessity</strong> (to deliver the service), <strong>legitimate interests</strong> (to operate and improve the platform), and <strong>legal obligation</strong> (compliance with applicable law).</p>
+
+      <h2 id="p-collect">2. Data We Collect</h2>
+      <h3>Account Data</h3>
+      <ul>
+        <li>Email address</li>
+        <li>Display name</li>
+        <li>Password (stored as a salted hash — never in plain text)</li>
+        <li>Account creation date and last login</li>
+        <li>Age confirmation (boolean — we do not store your date of birth)</li>
+      </ul>
+      <h3>Billing Data</h3>
+      <ul>
+        <li>Credit balance and transaction history</li>
+        <li>Stripe payment intent IDs (for reconciliation)</li>
+        <li><strong>We do not store card numbers, CVVs, or full payment details</strong> — these are handled exclusively by Stripe</li>
+      </ul>
+      <h3>Usage Data</h3>
+      <ul>
+        <li>Generation logs: model used, cost, timestamp</li>
+        <li>We do not store your prompts or generated images on our servers long-term</li>
+      </ul>
+      <h3>Technical Data</h3>
+      <ul>
+        <li>IP address (for security and fraud prevention)</li>
+        <li>Browser type and device type</li>
+        <li>Session tokens</li>
+      </ul>
+
+      <h2 id="p-use">3. How We Use Your Data</h2>
+      <ul>
+        <li><strong>To provide the service</strong> — authenticate you, process generations, manage your credit balance</li>
+        <li><strong>To process payments</strong> — via Stripe, to top up your account</li>
+        <li><strong>To communicate with you</strong> — account notifications, policy updates, support responses</li>
+        <li><strong>For security</strong> — fraud detection, abuse prevention, account integrity</li>
+        <li><strong>Legal compliance</strong> — to meet our obligations under UK law</li>
+      </ul>
+      <p>We do <strong>not</strong> use your data for advertising, sell it to third parties, or use it to train AI models.</p>
+
+      <h2 id="p-store">4. Data Storage &amp; Security</h2>
+      <p>Your account data is stored in <strong>Supabase</strong> (PostgreSQL), hosted on EU-region servers. All data is encrypted at rest and in transit (TLS 1.2+).</p>
+      <p>Access to your data is restricted to authorised personnel only. We implement industry-standard security measures including row-level security policies on our database.</p>
+      <p>Despite our best efforts, no system is completely secure. In the event of a data breach affecting your rights, we will notify you within 72 hours as required by UK GDPR.</p>
+
+      <h2 id="p-third">5. Third-Party Services</h2>
+      <p>We share data with the following third parties only as necessary to deliver the service:</p>
+      <ul>
+        <li><strong>Stripe</strong> — payment processing. Their privacy policy: stripe.com/gb/privacy</li>
+        <li><strong>Supabase</strong> — database and authentication hosting</li>
+        <li><strong>Vercel</strong> — platform hosting and edge functions</li>
+        <li><strong>AI model providers</strong> (WaveSpeed, EvoLink, LaoZhang) — your prompts and reference images are transmitted to these providers to process generations. We recommend reviewing their terms if you have concerns about specific input data</li>
+      </ul>
+      <p>We do not share your personal data (name, email, billing information) with AI model providers.</p>
+
+      <h2 id="p-retention">6. Data Retention</h2>
+      <ul>
+        <li><strong>Account data</strong> — retained for the lifetime of your account plus 90 days after deletion</li>
+        <li><strong>Transaction records</strong> — retained for 7 years for tax and legal compliance</li>
+        <li><strong>Generation logs</strong> — retained for 90 days then deleted</li>
+        <li><strong>IP logs</strong> — retained for 30 days</li>
+      </ul>
+
+      <h2 id="p-rights">7. Your Rights (UK GDPR)</h2>
+      <p>You have the following rights regarding your personal data:</p>
+      <ul>
+        <li><strong>Right of access</strong> — request a copy of your data</li>
+        <li><strong>Right to rectification</strong> — correct inaccurate data</li>
+        <li><strong>Right to erasure</strong> — request deletion ("right to be forgotten"), subject to legal retention obligations</li>
+        <li><strong>Right to restriction</strong> — limit how we process your data</li>
+        <li><strong>Right to portability</strong> — receive your data in a machine-readable format</li>
+        <li><strong>Right to object</strong> — object to processing based on legitimate interests</li>
+      </ul>
+      <p>To exercise any of these rights, email <a href="mailto:privacy@synthia.ai" style="color:var(--accent)">privacy@synthia.ai</a>. We will respond within <strong>30 days</strong>.</p>
+      <p>You also have the right to lodge a complaint with the <strong>Information Commissioner's Office (ICO)</strong> at ico.org.uk.</p>
+
+      <h2 id="p-cookies">8. Cookies</h2>
+      <p>We use only <strong>essential cookies</strong> required for authentication and session management. We do not use tracking, advertising, or analytics cookies.</p>
+      <ul>
+        <li><strong>Session cookie</strong> — keeps you logged in</li>
+        <li><strong>CSRF token</strong> — security protection</li>
+      </ul>
+      <p>You can disable cookies in your browser settings but this will prevent you from logging in.</p>
+
+      <h2 id="p-children">9. Children</h2>
+      <p>Synthia.ai is strictly for users aged 18 and over. We do not knowingly collect personal data from anyone under 18. If we become aware that a user is under 18, their account will be terminated and their data deleted promptly.</p>
+
+      <h2 id="p-changes">10. Changes to This Policy</h2>
+      <p>We will notify you of material changes to this Privacy Policy by email or in-platform notice at least 14 days before changes take effect.</p>
+
+      <h2 id="p-contact">11. Contact &amp; Data Controller</h2>
+      <div class="contact-block">
+        <p><strong>Data Controller: Synthia.ai</strong></p>
+        <p>Privacy enquiries: <a href="mailto:privacy@synthia.ai">privacy@synthia.ai</a></p>
+        <p>ICO (supervisory authority): <a href="https://ico.org.uk" target="_blank">ico.org.uk</a></p>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         ACCEPTABLE USE POLICY
+    ══════════════════════════════════════════ -->
+    <div id="doc-aup" class="doc-section">
+      <div class="doc-header">
+        <div class="doc-badge">Legal</div>
+        <h1 class="doc-title">Acceptable Use Policy</h1>
+        <div class="doc-meta">Synthia.ai · Last updated: April 2026 · Applies to all users</div>
+      </div>
+
+      <div class="warning-box">
+        <p><strong>Important:</strong> Violation of this policy may result in immediate account termination without refund. Certain violations will be reported to relevant authorities.</p>
+      </div>
+
+      <h2 id="a-intro">1. Introduction</h2>
+      <p>This Acceptable Use Policy ("AUP") sets out the rules governing what content may and may not be generated using Synthia.ai. It applies to all users without exception and forms part of our Terms and Conditions.</p>
+      <p>Synthia.ai provides powerful AI generation capabilities. With that power comes responsibility. These rules exist to protect individuals, protect you legally, and maintain the integrity of the platform.</p>
+
+      <h2 id="a-age">2. Age Requirement</h2>
+      <p>You must be <strong>18 or older</strong> to use Synthia.ai. This applies to all features including those unrelated to adult content. By using the platform you confirm you are 18 or older.</p>
+      <p>Any attempt to circumvent age verification or create accounts on behalf of minors will result in permanent account termination and may be reported to appropriate authorities.</p>
+
+      <h2 id="a-prohibited">3. Absolutely Prohibited Content</h2>
+      <p>The following content is <strong>strictly prohibited</strong> under all circumstances. Generating, attempting to generate, or distributing this content will result in immediate termination and may result in reports to law enforcement:</p>
+      <ul>
+        <li><strong>Child Sexual Abuse Material (CSAM)</strong> — any sexual or exploitative content involving individuals under 18, whether real or AI-generated. This is illegal under UK law (Sexual Offences Act 2003, Protection of Children Act 1978) and will be reported to the National Crime Agency (NCA) and Internet Watch Foundation (IWF)</li>
+        <li><strong>Non-consensual intimate imagery</strong> of real, identifiable individuals ("deepfake pornography") — illegal under the Online Safety Act 2023</li>
+        <li><strong>Content designed to facilitate real-world violence</strong> — instructions, planning material, or incitement</li>
+        <li><strong>Terrorism or extremist content</strong> — material glorifying, promoting, or supporting terrorist organisations</li>
+        <li><strong>Content targeting specific real individuals</strong> for harassment, defamation, or harm</li>
+      </ul>
+
+      <h2 id="a-nsfw">4. Adult / NSFW Content Rules</h2>
+      <p>Synthia.ai includes NSFW generation capabilities. Access to these features is subject to the following rules:</p>
+      <ul>
+        <li>All subjects must be depicted as <strong>clearly adult</strong> (18+) in appearance and context</li>
+        <li>Do not generate content that ambiguously depicts or could be interpreted as depicting minors — if in doubt, do not generate it</li>
+        <li>NSFW content generated on Synthia.ai is for <strong>personal or commercial use within legal limits</strong> of your jurisdiction</li>
+        <li>You are responsible for ensuring any NSFW content you publish or distribute complies with the platform and laws of the jurisdiction where it is published</li>
+        <li>Do not attempt to use NSFW features to generate real persons without their consent</li>
+      </ul>
+
+      <div class="warning-box">
+        <p><strong>Zero tolerance:</strong> Any content that appears to depict a minor in a sexual context — regardless of claimed intent — will result in immediate termination and a mandatory report to the IWF and NCA.</p>
+      </div>
+
+      <h2 id="a-real">5. Real People</h2>
+      <p>Generating realistic images or videos of real, identifiable individuals requires care:</p>
+      <ul>
+        <li><strong>Public figures</strong> — satirical or clearly non-realistic depictions may be acceptable; realistic depictions designed to deceive or defame are not</li>
+        <li><strong>Private individuals</strong> — do not generate realistic images of private individuals without their explicit consent</li>
+        <li><strong>Intimate content</strong> — never generate intimate or sexual content featuring real identifiable individuals under any circumstances</li>
+        <li><strong>Synthetic personas</strong> (AI influencers, fictional characters) — permitted provided they are clearly not representations of real, identifiable individuals</li>
+      </ul>
+
+      <h2 id="a-commercial">6. Commercial Use</h2>
+      <p>You may use Synthia.ai outputs for commercial purposes including:</p>
+      <ul>
+        <li>Social media content and marketing</li>
+        <li>AI influencer personas (subject to platform rules of the publishing platform)</li>
+        <li>Product imagery and promotional material</li>
+        <li>Content subscription platforms, subject to those platforms' own age verification and content rules</li>
+      </ul>
+      <p>You are solely responsible for ensuring your commercial use complies with the rules of any third-party platform where you publish content, including age verification obligations under the Online Safety Act 2023 for adult content platforms.</p>
+
+      <h2 id="a-enforcement">7. Enforcement</h2>
+      <p>We reserve the right to:</p>
+      <ul>
+        <li>Suspend or terminate accounts at our sole discretion for policy violations</li>
+        <li>Remove generated content that violates this policy</li>
+        <li>Report illegal content to relevant authorities including the NCA, IWF, and law enforcement</li>
+        <li>Cooperate fully with law enforcement investigations</li>
+      </ul>
+      <p>Account termination for AUP violations does not entitle you to a refund of remaining credits.</p>
+
+      <h2 id="a-reporting">8. Reporting Violations</h2>
+      <p>If you become aware of content or activity on Synthia.ai that violates this policy, please report it immediately.</p>
+      <div class="contact-block">
+        <p><strong>Report abuse:</strong> <a href="mailto:abuse@synthia.ai">abuse@synthia.ai</a></p>
+        <p>Reports are reviewed promptly. We take all reports seriously.</p>
+        <p style="margin-top:12px;font-size:12px;color:var(--muted2)">For child safety concerns you can also report directly to the Internet Watch Foundation at <a href="https://www.iwf.org.uk" target="_blank">iwf.org.uk</a></p>
+      </div>
+
+      <h2 id="a-contact">9. Contact</h2>
+      <div class="contact-block">
+        <p><strong>Synthia.ai Policy Team</strong></p>
+        <p>General: <a href="mailto:legal@synthia.ai">legal@synthia.ai</a></p>
+        <p>Abuse reports: <a href="mailto:abuse@synthia.ai">abuse@synthia.ai</a></p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <span>© 2026 Synthia.ai · All rights reserved</span>
+  <div style="display:flex;gap:20px">
+    <a href="#" onclick="showDoc('terms')">Terms</a>
+    <a href="#" onclick="showDoc('privacy')">Privacy</a>
+    <a href="#" onclick="showDoc('aup')">Acceptable Use</a>
+  </div>
+</footer>
+
+<script>
+function showDoc(doc) {
+  // Hide all
+  document.querySelectorAll('.doc-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('[id^="sidebar-"]').forEach(s => s.style.display = 'none');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+
+  // Show target
+  document.getElementById('doc-' + doc).classList.add('active');
+  document.getElementById('sidebar-' + doc).style.display = 'block';
+
+  // Activate nav tab
+  const tabs = document.querySelectorAll('.nav-tab');
+  const map = { terms: 0, privacy: 1, aup: 2 };
+  tabs[map[doc]].classList.add('active');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Sidebar active state on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`.sidebar-link[href="#${id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.5, rootMargin: '-100px 0px -60% 0px' });
+
+document.querySelectorAll('h2[id]').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

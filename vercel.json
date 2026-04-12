@@ -1,0 +1,10 @@
+{
+    "rewrites": [
+      { "source": "/", "destination": "/landing.html" },
+      { "source": "/studio", "destination": "/BAMStudio.html" },
+      { "source": "/auth", "destination": "/BAMAuth.html" },
+      { "source": "/account", "destination": "/BAMAccount.html" },
+      { "source": "/legal", "destination": "/BAMLegal.html" },
+      { "source": "/course", "destination": "/Course.html" }
+    ]
+  }

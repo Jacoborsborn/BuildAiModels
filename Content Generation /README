@@ -1,0 +1,34 @@
+# KIRA STUDIO
+
+## Files
+```
+index.html   — UI markup (pages, modals, panels)
+kira.css     — all styles
+kira.js      — all logic (API calls, generation, batch, billing)
+```
+
+## Running
+
+Must be served via HTTP (not opened as file://) for scripts to load.
+
+**Python (easiest):**
+```bash
+cd /path/to/kira-studio
+python3 -m http.server 8080
+```
+Then open: http://localhost:8080
+
+**Node (if you have it):**
+```bash
+npx serve .
+```
+
+## API Keys
+Set via ⚙ API KEY button in the top bar. Stored in browser localStorage.
+
+| Key | Provider | Use |
+|-----|----------|-----|
+| kie.ai key | kie.ai | Default image generation |
+| laozhang key | laozhang.ai | Cheapest images (USDT/Alipay) |
+| WaveSpeed key | wavespeed.ai | Image fallback + ref hosting |
+| EvoLink key | evolink.ai | Kling video (55% cheaper) |

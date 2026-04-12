@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI PIMP BLUEPRINT</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-dim: #8a6e2f;
+    --gold-glow: rgba(201,168,76,0.15);
+    --bg: #0a0a0a;
+    --bg-card: #111111;
+    --bg-elevated: #161616;
+    --border: rgba(255,255,255,0.06);
+    --border-gold: rgba(201,168,76,0.3);
+    --text: #f0ede6;
+    --text-muted: #6b6b6b;
+    --text-dim: #3a3a3a;
+    --green: #4ade80;
+    --green-dim: rgba(74,222,128,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TOP NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 56px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-logo {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    list-style: none;
+  }
+
+  .nav-tabs li a {
+    display: block;
+    padding: 0 18px;
+    height: 56px;
+    line-height: 56px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    border-bottom: 2px solid transparent;
+  }
+
+  .nav-tabs li a:hover { color: var(--text); }
+  .nav-tabs li a.active {
+    color: var(--gold);
+    border-bottom: 2px solid var(--gold);
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .tier-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    padding: 4px 10px;
+    border: 1px solid var(--border-gold);
+    color: var(--gold);
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+    border: 1px solid var(--border-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  /* LAYOUT */
+  .layout {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 56px);
+    overflow: hidden;
+  }
+
+  /* SIDEBAR */
+  sidebar {
+    width: 300px;
+    min-width: 300px;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  sidebar::-webkit-scrollbar { width: 3px; }
+  sidebar::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .sidebar-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .course-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .progress-bar-outer {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar-inner {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+
+  .progress-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    min-width: 30px;
+  }
+
+  /* MODULE SECTIONS */
+  .module-section {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .module-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+  }
+
+  .module-header:hover { background: rgba(255,255,255,0.02); }
+
+  .module-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    min-width: 18px;
+  }
+
+  .module-title-text {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    flex: 1;
+    transition: color 0.2s;
+  }
+
+  .module-header:hover .module-title-text,
+  .module-header.open .module-title-text { color: var(--text); }
+
+  .module-header.open .module-title-text { color: var(--gold); }
+
+  .module-chevron {
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    color: var(--text-dim);
+  }
+
+  .module-header.open .module-chevron { transform: rotate(90deg); color: var(--gold); }
+
+  .module-chevron svg { width: 10px; height: 10px; }
+
+  .module-lessons {
+    display: none;
+    flex-direction: column;
+  }
+
+  .module-lessons.open { display: flex; }
+
+  .lesson-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px 10px 48px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+  }
+
+  .lesson-item:hover { background: rgba(255,255,255,0.02); }
+
+  .lesson-item.active {
+    background: var(--gold-glow);
+    border-left: 2px solid var(--gold);
+  }
+
+  .lesson-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .lesson-dot.done {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .lesson-dot.done svg { display: block; }
+  .lesson-dot svg { display: none; width: 8px; height: 8px; }
+
+  .lesson-dot.active-dot {
+    border-color: var(--gold);
+  }
+
+  .lesson-dot.active-dot::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  .lesson-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    flex: 1;
+    transition: color 0.2s;
+    line-height: 1.4;
+  }
+
+  .lesson-item:hover .lesson-label,
+  .lesson-item.active .lesson-label { color: var(--text); }
+
+  .lesson-duration {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .lesson-lock {
+    width: 12px;
+    height: 12px;
+    opacity: 0.3;
+  }
+
+  /* MAIN CONTENT */
+  main {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  main::-webkit-scrollbar { width: 3px; }
+  main::-webkit-scrollbar-thumb { background: var(--border); }
+
+  /* VIDEO AREA */
+  .video-zone {
+    background: #000;
+    aspect-ratio: 16/9;
+    max-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .video-zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(201,168,76,0.04) 0%, transparent 70%);
+  }
+
+  .play-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(201,168,76,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s;
+    background: rgba(201,168,76,0.08);
+    position: relative;
+    z-index: 1;
+  }
+
+  .video-zone:hover .play-btn {
+    background: rgba(201,168,76,0.18);
+    border-color: var(--gold);
+    transform: scale(1.06);
+  }
+
+  .play-btn svg {
+    width: 22px;
+    height: 22px;
+    fill: var(--gold);
+    margin-left: 3px;
+  }
+
+  .video-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* LESSON CONTENT */
+  .lesson-content {
+    padding: 36px 48px;
+    max-width: 780px;
+  }
+
+  .lesson-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .lesson-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    border: 1px solid var(--border-gold);
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .lesson-num-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .lesson-main-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  .lesson-subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+    max-width: 540px;
+  }
+
+  /* KEY POINTS */
+  .key-points {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  .key-point {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+
+  .key-point:hover { border-color: var(--border-gold); }
+
+  .kp-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 3px;
+    background: var(--gold-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 13px;
+  }
+
+  .kp-text strong {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+    letter-spacing: 0.02em;
+  }
+
+  .kp-text span {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* RESOURCES */
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+
+  .resource-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 36px;
+  }
+
+  .resource-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+
+  .resource-item:hover {
+    border-color: var(--border-gold);
+    background: var(--gold-glow);
+  }
+
+  .resource-icon {
+    font-size: 14px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .resource-name {
+    font-size: 13px;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .resource-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  /* COMPLETE BTN */
+  .complete-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: var(--gold);
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .complete-btn:hover {
+    background: #e0b955;
+    transform: translateY(-1px);
+  }
+
+  .complete-btn:active { transform: translateY(0); }
+
+  /* RIGHT PANEL */
+  .right-panel {
+    width: 260px;
+    min-width: 260px;
+    background: var(--bg-card);
+    border-left: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .right-panel::-webkit-scrollbar { width: 3px; }
+  .right-panel::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .panel-section-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  /* STATS */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .stat-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+  }
+
+  .stat-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--gold);
+    margin-bottom: 2px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* TIER CARDS */
+  .tier-card {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tier-card:hover { border-color: var(--border-gold); }
+
+  .tier-card.current {
+    border-color: var(--gold);
+    background: var(--gold-glow);
+  }
+
+  .tier-card.locked { opacity: 0.4; cursor: not-allowed; }
+
+  .tier-name {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .tier-price {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .tier-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .tier-check {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tier-check svg {
+    width: 9px;
+    height: 9px;
+    stroke: #000;
+    stroke-width: 2.5;
+    fill: none;
+  }
+
+  /* COMMUNITY FEED */
+  .community-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .community-item:last-child { border-bottom: none; }
+
+  .comm-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .comm-text {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .comm-text strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .comm-time {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    margin-top: 3px;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .lesson-content > * {
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .lesson-content > *:nth-child(1) { animation-delay: 0.05s; }
+  .lesson-content > *:nth-child(2) { animation-delay: 0.1s; }
+  .lesson-content > *:nth-child(3) { animation-delay: 0.15s; }
+  .lesson-content > *:nth-child(4) { animation-delay: 0.2s; }
+  .lesson-content > *:nth-child(5) { animation-delay: 0.25s; }
+  .lesson-content > *:nth-child(6) { animation-delay: 0.3s; }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">AI Pimp Blueprint</div>
+  <ul class="nav-tabs">
+    <li><a href="#" class="active">Classroom</a></li>
+    <li><a href="#">Community</a></li>
+    <li><a href="#">Tools</a></li>
+    <li><a href="#">Leaderboard</a></li>
+  </ul>
+  <div class="nav-right">
+    <span class="tier-badge">Beginner</span>
+    <div class="avatar">JP</div>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <sidebar>
+    <div class="sidebar-header">
+      <div class="course-title">AI Pimp 1.0 — Beginner</div>
+      <div class="progress-wrap">
+        <div class="progress-bar-outer">
+          <div class="progress-bar-inner" style="width: 22%"></div>
+        </div>
+        <span class="progress-pct">22%</span>
+      </div>
+    </div>
+
+    <!-- MODULE 1 -->
+    <div class="module-section">
+      <div class="module-header open" onclick="toggleModule(this)">
+        <span class="module-num">01</span>
+        <span class="module-title-text">Welcome</span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+      </div>
+      <div class="module-lessons open">
+        <div class="lesson-item active" onclick="selectLesson(this, 'mindset')">
+          <div class="lesson-dot done">
+            <svg viewBox="0 0 10 10" fill="none" stroke="#000" stroke-width="2"><path d="M2 5l2.5 2.5L8 3"/></svg>
+          </div>
+          <span class="lesson-label">The operator mindset</span>
+          <span class="lesson-duration">4:22</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 'overview')">
+          <div class="lesson-dot active-dot"></div>
+          <span class="lesson-label">How this works</span>
+          <span class="lesson-duration">3:10</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 'tools-overview')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Software & links</span>
+          <span class="lesson-duration">5:44</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE 2 -->
+    <div class="module-section">
+      <div class="module-header" onclick="toggleModule(this)">
+        <span class="module-num">02</span>
+        <span class="module-title-text">Picking Your Niche</span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+      </div>
+      <div class="module-lessons">
+        <div class="lesson-item" onclick="selectLesson(this, 'niche-research')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">What makes money in 2025</span>
+          <span class="lesson-duration">6:14</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 'niche-examples')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Niche breakdowns & examples</span>
+          <span class="lesson-duration">8:32</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 'niche-decision')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Locking in your model concept</span>
+          <span class="lesson-duration">4:55</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE 3 -->
+    <div class="module-section">
+      <div class="module-header" onclick="toggleModule(this)">
+        <span class="module-num">03</span>
+        <span class="module-title-text">AI Model Creation</span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+      </div>
+      <div class="module-lessons">
+        <div class="lesson-item" onclick="selectLesson(this, 'persona')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Building the persona</span>
+          <span class="lesson-duration">7:20</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 'image-gen')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Generating your model (tool walkthrough)</span>
+          <span class="lesson-duration">12:08</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 'consistency')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Consistency & vault setup</span>
+          <span class="lesson-duration">9:41</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 'nsfw')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">The NSFW tab — Fanvue content</span>
+          <span class="lesson-duration">10:15</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE 4 -->
+    <div class="module-section">
+      <div class="module-header" onclick="toggleModule(this)">
+        <span class="module-num">04</span>
+        <span class="module-title-text">Image to Video</span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+      </div>
+      <div class="module-lessons">
+        <div class="lesson-item" onclick="selectLesson(this, 'motion')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Motion control basics (Kling 3.0)</span>
+          <span class="lesson-duration">8:30</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 'reels')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Reel recreation for IG & TikTok</span>
+          <span class="lesson-duration">11:22</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE 5 -->
+    <div class="module-section">
+      <div class="module-header" onclick="toggleModule(this)">
+        <span class="module-num">05</span>
+        <span class="module-title-text">Fanvue Setup</span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+      </div>
+      <div class="module-lessons">
+        <div class="lesson-item" onclick="selectLesson(this, 'fanvue-setup')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Profile & verification</span>
+          <span class="lesson-duration">5:18</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 'fanvue-pricing')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Pricing your subscriptions & PPV</span>
+          <span class="lesson-duration">7:44</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 'fanvue-content')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Content batching & scheduling</span>
+          <span class="lesson-duration">9:02</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE 6 -->
+    <div class="module-section">
+      <div class="module-header" onclick="toggleModule(this)">
+        <span class="module-num">06</span>
+        <span class="module-title-text">Marketing on IG</span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+      </div>
+      <div class="module-lessons">
+        <div class="lesson-item" onclick="selectLesson(this, 'ig-bio')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Profile setup & bio psychology</span>
+          <span class="lesson-duration">6:00</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 'ig-content')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">What to post & when</span>
+          <span class="lesson-duration">8:15</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 'ig-growth')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Growing to first 1k followers</span>
+          <span class="lesson-duration">10:33</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE 7 -->
+    <div class="module-section">
+      <div class="module-header" onclick="toggleModule(this)">
+        <span class="module-num">07</span>
+        <span class="module-title-text">Tips & Tricks</span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+      </div>
+      <div class="module-lessons">
+        <div class="lesson-item" onclick="selectLesson(this, 'tips')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">Operator secrets & shortcuts</span>
+          <span class="lesson-duration">15:00</span>
+        </div>
+      </div>
+    </div>
+
+  </sidebar>
+
+  <!-- MAIN -->
+  <main id="main-content">
+
+    <div class="video-zone" onclick="playVideo()">
+      <div class="play-btn">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+      <span class="video-label">The operator mindset — 4:22</span>
+    </div>
+
+    <div class="lesson-content" id="lesson-body">
+
+      <div class="lesson-meta">
+        <span class="lesson-tag">Module 01</span>
+        <span class="lesson-num-label">Lesson 1 of 3</span>
+      </div>
+
+      <h1 class="lesson-main-title">The Operator Mindset</h1>
+      <p class="lesson-subtitle">Before you generate a single image, you need to think like a business owner. This lesson covers the psychology behind building AI models that print — and why most people fail before they start.</p>
+
+      <div class="key-points">
+        <div class="key-point">
+          <div class="kp-icon">🎯</div>
+          <div class="kp-text">
+            <strong>Treat it like a brand</strong>
+            <span>Your model is a business. Every post, message, and image is a brand touchpoint.</span>
+          </div>
+        </div>
+        <div class="key-point">
+          <div class="kp-icon">🔁</div>
+          <div class="kp-text">
+            <strong>Systems over grind</strong>
+            <span>Operators batch, schedule, and automate. They don't hustle daily — they build machines.</span>
+          </div>
+        </div>
+        <div class="key-point">
+          <div class="kp-icon">📊</div>
+          <div class="kp-text">
+            <strong>Revenue is the scoreboard</strong>
+            <span>Followers are vanity. Subscribers are revenue. Track the right number.</span>
+          </div>
+        </div>
+        <div class="key-point">
+          <div class="kp-icon">⚡</div>
+          <div class="kp-text">
+            <strong>Speed of execution</strong>
+            <span>The window is open now. The ones who move fastest capture the most territory.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Resources</div>
+      <div class="resource-list">
+        <a href="#" class="resource-item">
+          <span class="resource-icon">📄</span>
+          <span class="resource-name">Operator Mindset PDF — Workbook</span>
+          <span class="resource-tag">PDF</span>
+        </a>
+        <a href="#" class="resource-item">
+          <span class="resource-icon">🔗</span>
+          <span class="resource-name">AI Pimp Tool — Access Link</span>
+          <span class="resource-tag">Tool</span>
+        </a>
+        <a href="#" class="resource-item">
+          <span class="resource-icon">💬</span>
+          <span class="resource-name">Community Discord — Operators Only</span>
+          <span class="resource-tag">Community</span>
+        </a>
+      </div>
+
+      <button class="complete-btn" onclick="markComplete()">
+        Mark complete →
+      </button>
+
+    </div>
+  </main>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+
+    <div>
+      <div class="panel-section-title">Your progress</div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-value">2</div>
+          <div class="stat-label">Lessons done</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">7</div>
+          <div class="stat-label">Modules total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">22%</div>
+          <div class="stat-label">Complete</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">~3h</div>
+          <div class="stat-label">Remaining</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel-section-title">Your tier</div>
+      <div class="tier-card current">
+        <div class="tier-name">
+          Beginner
+          <div class="tier-check">
+            <svg viewBox="0 0 10 10"><path d="M2 5l2.5 2.5L8 3"/></svg>
+          </div>
+        </div>
+        <div class="tier-price">$99</div>
+        <div class="tier-desc">Full beginner course + AI Pimp Tool access</div>
+      </div>
+      <div class="tier-card locked">
+        <div class="tier-name">Advanced</div>
+        <div class="tier-price">$299</div>
+        <div class="tier-desc">Agency scaling, automation, team operations — coming soon</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel-section-title">Operator feed</div>
+      <div class="community-item">
+        <div class="comm-avatar">MK</div>
+        <div class="comm-text">
+          <strong>MikeK</strong> just hit £1,200/mo on Fanvue with model #2
+          <span class="comm-time">2h ago</span>
+        </div>
+      </div>
+      <div class="community-item">
+        <div class="comm-avatar">AS</div>
+        <div class="comm-text">
+          <strong>AlexS</strong> completed the full beginner course
+          <span class="comm-time">5h ago</span>
+        </div>
+      </div>
+      <div class="community-item">
+        <div class="comm-avatar">JR</div>
+        <div class="comm-text">
+          <strong>JadeR</strong> posted: "vault system is a game changer"
+          <span class="comm-time">8h ago</span>
+        </div>
+      </div>
+      <div class="community-item">
+        <div class="comm-avatar">TW</div>
+        <div class="comm-text">
+          <strong>TomW</strong> unlocked Advanced tier
+          <span class="comm-time">1d ago</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  function toggleModule(header) {
+    const lessons = header.nextElementSibling;
+    const isOpen = header.classList.contains('open');
+    header.classList.toggle('open', !isOpen);
+    lessons.classList.toggle('open', !isOpen);
+  }
+
+  function selectLesson(item, id) {
+    document.querySelectorAll('.lesson-item').forEach(l => l.classList.remove('active'));
+    item.classList.add('active');
+
+    const labels = {
+      'mindset': { mod: '01', num: '1 of 3', title: 'The Operator Mindset', sub: 'Before you generate a single image, you need to think like a business owner. This lesson covers the psychology behind building AI models that print — and why most people fail before they start.', dur: '4:22' },
+      'overview': { mod: '01', num: '2 of 3', title: 'How This Works', sub: 'A complete overview of the blueprint — how the course is structured, how the tool integrates, and the fastest path from zero to first revenue.', dur: '3:10' },
+      'tools-overview': { mod: '01', num: '3 of 3', title: 'Software & Links', sub: 'Every tool you need, every link, every API — all in one place. Bookmark this lesson.', dur: '5:44' },
+      'niche-research': { mod: '02', num: '1 of 3', title: 'What Makes Money in 2025', sub: 'Not all niches are equal. This lesson breaks down the models generating the most revenue right now and why.', dur: '6:14' },
+      'niche-examples': { mod: '02', num: '2 of 3', title: 'Niche Breakdowns & Examples', sub: 'Real model examples across different niches — fitness, alt, cosplay, lifestyle. What works, what doesn\'t.', dur: '8:32' },
+      'niche-decision': { mod: '02', num: '3 of 3', title: 'Locking In Your Model Concept', sub: 'By the end of this lesson you\'ll have a defined model concept ready to build. No more overthinking.', dur: '4:55' },
+      'persona': { mod: '03', num: '1 of 4', title: 'Building the Persona', sub: 'Name, backstory, personality, aesthetic. The deeper the persona, the stronger the parasocial bond — and the higher the LTV.', dur: '7:20' },
+      'image-gen': { mod: '03', num: '2 of 4', title: 'Generating Your Model', sub: 'Full tool walkthrough — prompts, settings, getting consistent results on the first batch.', dur: '12:08' },
+      'consistency': { mod: '03', num: '3 of 4', title: 'Consistency & Vault Setup', sub: 'The vault system is what separates professionals from amateurs. Set it up right and your model looks identical across every generation.', dur: '9:41' },
+      'nsfw': { mod: '03', num: '4 of 4', title: 'The NSFW Tab — Fanvue Content', sub: 'Purpose-built for Fanvue. How to use the NSFW tab, what converts, and how to stay compliant.', dur: '10:15' },
+      'motion': { mod: '04', num: '1 of 2', title: 'Motion Control Basics', sub: 'Kling 3.0 walkthrough — bring your static images to life with motion that looks cinematic.', dur: '8:30' },
+      'reels': { mod: '04', num: '2 of 2', title: 'Reel Recreation for IG & TikTok', sub: 'Copy the format of viral reels using your AI model. The fastest way to get free traffic.', dur: '11:22' },
+      'fanvue-setup': { mod: '05', num: '1 of 3', title: 'Profile & Verification', sub: 'Get verified, set up correctly, and avoid the common mistakes that get accounts flagged.', dur: '5:18' },
+      'fanvue-pricing': { mod: '05', num: '2 of 3', title: 'Pricing Your Subscriptions & PPV', sub: 'The pricing psychology behind subscriptions, PPV, and tips. Where most operators leave money on the table.', dur: '7:44' },
+      'fanvue-content': { mod: '05', num: '3 of 3', title: 'Content Batching & Scheduling', sub: 'One session per week. That\'s all it takes when you batch properly. Full workflow walkthrough.', dur: '9:02' },
+      'ig-bio': { mod: '06', num: '1 of 3', title: 'Profile Setup & Bio Psychology', sub: 'Your bio is your funnel. Every word is deliberate. This lesson covers the exact formula.', dur: '6:00' },
+      'ig-content': { mod: '06', num: '2 of 3', title: 'What to Post & When', sub: 'Content that drives follows, warms the audience, and converts to Fanvue — the full content matrix.', dur: '8:15' },
+      'ig-growth': { mod: '06', num: '3 of 3', title: 'Growing to First 1k Followers', sub: 'The fastest path to 1,000 followers without paid ads. Exact methods, no fluff.', dur: '10:33' },
+      'tips': { mod: '07', num: '1 of 1', title: 'Operator Secrets & Shortcuts', sub: 'The things you only learn after doing this for months — condensed into one lesson.', dur: '15:00' }
+    };
+
+    const l = labels[id] || labels['mindset'];
+
+    document.querySelector('.video-label').textContent = l.title + ' — ' + l.dur;
+    document.querySelector('.lesson-tag').textContent = 'Module ' + l.mod;
+    document.querySelector('.lesson-num-label').textContent = 'Lesson ' + l.num;
+    document.querySelector('.lesson-main-title').textContent = l.title;
+    document.querySelector('.lesson-subtitle').textContent = l.sub;
+  }
+
+  function playVideo() {
+    const zone = document.querySelector('.video-zone');
+    zone.style.background = '#0a0a0a';
+    zone.innerHTML = '<span style="font-family:DM Mono,monospace;font-size:11px;color:#6b6b6b;letter-spacing:0.1em;text-transform:uppercase">[ Video placeholder — embed your video here ]</span>';
+  }
+
+  function markComplete() {
+    const activeLesson = document.querySelector('.lesson-item.active');
+    if (activeLesson) {
+      const dot = activeLesson.querySelector('.lesson-dot');
+      dot.className = 'lesson-dot done';
+      dot.innerHTML = '<svg viewBox="0 0 10 10" fill="none" stroke="#000" stroke-width="2"><path d="M2 5l2.5 2.5L8 3"/></svg>';
+
+      const nextLesson = activeLesson.nextElementSibling;
+      if (nextLesson && nextLesson.classList.contains('lesson-item')) {
+        nextLesson.click();
+      }
+    }
+  }
+</script>
+</body>
+</html>

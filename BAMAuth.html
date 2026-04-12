@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuildAIModels — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg: #0a0a0a;
+  --panel: #111111;
+  --panel2: #161616;
+  --border: #222222;
+  --border2: #2a2a2a;
+  --text: #e8e8e8;
+  --muted: #888;
+  --muted2: #555;
+  --accent: #b8f054;
+  --accent2: rgba(184,240,84,0.08);
+  --accent3: rgba(184,240,84,0.15);
+  --red: #ff4f6a;
+  --red2: rgba(255,79,106,0.1);
+  --font: 'DM Sans', sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* BG GRID */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(184,240,84,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184,240,84,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+/* GLOW */
+.glow {
+  position: fixed;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(184,240,84,0.06) 0%, transparent 70%);
+  top: -200px; left: 50%; transform: translateX(-50%);
+  pointer-events: none; z-index: 0;
+}
+
+nav {
+  position: relative; z-index: 10;
+  padding: 0 32px;
+  height: 56px;
+  display: flex; align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: rgba(10,10,10,0.8);
+  backdrop-filter: blur(12px);
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 17px;
+  color: var(--accent); letter-spacing: -0.5px;
+  text-decoration: none;
+}
+.nav-logo span { color: var(--muted); font-weight: 400; }
+
+.page-wrap {
+  flex: 1; display: flex;
+  align-items: center; justify-content: center;
+  padding: 48px 24px;
+  position: relative; z-index: 1;
+}
+
+.auth-card {
+  width: 100%; max-width: 420px;
+  background: var(--panel);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 40px 36px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+}
+
+.auth-header { margin-bottom: 28px; text-align: center; }
+.auth-title {
+  font-family: var(--font-display);
+  font-size: 26px; font-weight: 800;
+  letter-spacing: -0.5px; color: var(--text);
+  margin-bottom: 6px;
+}
+.auth-sub { font-size: 13px; color: var(--muted); }
+
+/* FORM */
+.field { margin-bottom: 16px; }
+.field-label {
+  display: block;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 7px;
+  font-family: var(--font-mono);
+}
+.field input {
+  width: 100%;
+  background: var(--panel2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 11px 14px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+}
+.field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(184,240,84,0.1);
+}
+.field input::placeholder { color: var(--muted2); }
+.field input.error { border-color: var(--red); }
+
+.field-hint {
+  font-size: 11px; color: var(--muted2);
+  margin-top: 5px; line-height: 1.5;
+}
+
+/* PASSWORD TOGGLE */
+.input-wrap { position: relative; }
+.input-wrap input { padding-right: 42px; }
+.pwd-toggle {
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none;
+  color: var(--muted); cursor: pointer;
+  font-size: 14px; padding: 4px;
+  transition: color .15s;
+}
+.pwd-toggle:hover { color: var(--text); }
+
+/* CHECKBOX */
+.check-field {
+  display: flex; align-items: flex-start;
+  gap: 10px; margin-bottom: 14px;
+  cursor: pointer;
+}
+.check-field input[type="checkbox"] {
+  width: 16px; height: 16px; min-width: 16px;
+  margin-top: 2px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.check-label {
+  font-size: 12px; color: var(--muted); line-height: 1.5;
+}
+.check-label a { color: var(--accent); text-decoration: none; }
+.check-label a:hover { text-decoration: underline; }
+
+/* DIVIDER */
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 20px 0;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1;
+  height: 1px; background: var(--border2);
+}
+.divider span {
+  font-size: 11px; color: var(--muted2);
+  font-family: var(--font-mono); white-space: nowrap;
+}
+
+/* BUTTONS */
+.btn {
+  width: 100%; padding: 12px;
+  border-radius: 8px; border: none;
+  font-family: var(--font-display);
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all .15s;
+  letter-spacing: 0.3px;
+}
+.btn-primary {
+  background: var(--accent); color: #000;
+}
+.btn-primary:hover { background: #ceff6b; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled {
+  background: var(--border2); color: var(--muted);
+  cursor: not-allowed; transform: none;
+}
+.btn-secondary {
+  background: var(--panel2);
+  border: 1px solid var(--border2);
+  color: var(--text);
+}
+.btn-secondary:hover { border-color: var(--muted2); background: #1a1a1a; }
+
+.btn-loading { opacity: 0.7; cursor: not-allowed; }
+
+/* ALERT */
+.alert {
+  padding: 11px 14px; border-radius: 8px;
+  font-size: 13px; margin-bottom: 16px;
+  display: none;
+}
+.alert.error {
+  background: var(--red2);
+  border: 1px solid rgba(255,79,106,0.3);
+  color: #ff8fa0; display: block;
+}
+.alert.success {
+  background: var(--accent2);
+  border: 1px solid rgba(184,240,84,0.2);
+  color: var(--accent); display: block;
+}
+
+/* SWITCH LINK */
+.switch-link {
+  text-align: center; margin-top: 24px;
+  font-size: 13px; color: var(--muted);
+}
+.switch-link a {
+  color: var(--accent); text-decoration: none; font-weight: 600;
+}
+.switch-link a:hover { text-decoration: underline; }
+
+.back-link {
+  text-align: center; margin-top: 16px;
+  font-size: 12px;
+}
+.back-link a { color: var(--muted); text-decoration: none; }
+.back-link a:hover { color: var(--text); }
+
+/* PASSWORD STRENGTH */
+.pwd-strength { margin-top: 6px; }
+.pwd-strength-bar {
+  height: 3px; border-radius: 2px;
+  background: var(--border2); overflow: hidden;
+}
+.pwd-strength-fill {
+  height: 100%; border-radius: 2px;
+  transition: width .3s, background .3s;
+  width: 0;
+}
+.pwd-strength-label {
+  font-size: 10px; color: var(--muted2);
+  margin-top: 4px; font-family: var(--font-mono);
+}
+
+footer {
+  position: relative; z-index: 1;
+  text-align: center; padding: 20px;
+  font-size: 11px; color: var(--muted2);
+  border-top: 1px solid var(--border);
+}
+footer a { color: var(--muted); text-decoration: none; margin: 0 8px; }
+footer a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+
+<nav>
+  <a class="nav-logo" href="/">BuildAI<span>Models</span></a>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- ══════ SIGN IN ══════ -->
+  <div id="view-signin" class="auth-card">
+    <div class="auth-header">
+      <div class="auth-title">Welcome back</div>
+      <div class="auth-sub">Sign in to your Synthia studio</div>
+    </div>
+    <div id="signin-alert" class="alert"></div>
+    <div class="field">
+      <label class="field-label" for="si-email">Email</label>
+      <input type="email" id="si-email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label class="field-label" for="si-password">Password</label>
+      <div class="input-wrap">
+        <input type="password" id="si-password" placeholder="••••••••" autocomplete="current-password">
+        <button class="pwd-toggle" onclick="togglePwd('si-password', this)" type="button">👁</button>
+      </div>
+    </div>
+    <div style="text-align:right;margin-bottom:20px">
+      <a href="#" onclick="showView('forgot')" style="font-size:12px;color:var(--muted);text-decoration:none">Forgot password?</a>
+    </div>
+    <button class="btn btn-primary" id="signin-btn" onclick="handleSignIn()">Sign In</button>
+    <div class="switch-link">
+      Don't have an account? <a href="#" onclick="showView('signup')">Sign up free</a>
+    </div>
+  </div>
+
+  <!-- ══════ SIGN UP ══════ -->
+  <div id="view-signup" class="auth-card" style="display:none">
+    <div class="auth-header">
+      <div class="auth-title">Create account</div>
+      <div class="auth-sub">Start building AI models today</div>
+    </div>
+    <div id="signup-alert" class="alert"></div>
+    <div class="field">
+      <label class="field-label" for="su-name">Display Name</label>
+      <input type="text" id="su-name" placeholder="Your name or handle" autocomplete="name">
+    </div>
+    <div class="field">
+      <label class="field-label" for="su-email">Email</label>
+      <input type="email" id="su-email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label class="field-label" for="su-password">Password</label>
+      <div class="input-wrap">
+        <input type="password" id="su-password" placeholder="Min. 8 characters" autocomplete="new-password" oninput="checkPwdStrength(this.value)">
+        <button class="pwd-toggle" onclick="togglePwd('su-password', this)" type="button">👁</button>
+      </div>
+      <div class="pwd-strength">
+        <div class="pwd-strength-bar"><div class="pwd-strength-fill" id="pwd-fill"></div></div>
+        <div class="pwd-strength-label" id="pwd-label"></div>
+      </div>
+    </div>
+    <div class="divider"><span>before you continue</span></div>
+    <label class="check-field">
+      <input type="checkbox" id="su-age">
+      <span class="check-label">I confirm I am <strong style="color:var(--text)">18 years of age or older</strong></span>
+    </label>
+    <label class="check-field">
+      <input type="checkbox" id="su-terms">
+      <span class="check-label">I agree to the <a href="/legal" target="_blank">Terms & Conditions</a> and <a href="/legal" target="_blank">Privacy Policy</a></span>
+    </label>
+    <label class="check-field">
+      <input type="checkbox" id="su-aup">
+      <span class="check-label">I have read and agree to the <a href="/legal" target="_blank">Acceptable Use Policy</a></span>
+    </label>
+    <div style="margin-top:8px">
+      <button class="btn btn-primary" id="signup-btn" onclick="handleSignUp()">Create Account</button>
+    </div>
+    <div class="switch-link">
+      Already have an account? <a href="#" onclick="showView('signin')">Sign in</a>
+    </div>
+  </div>
+
+  <!-- ══════ FORGOT PASSWORD ══════ -->
+  <div id="view-forgot" class="auth-card" style="display:none">
+    <div class="auth-header">
+      <div class="auth-title">Reset password</div>
+      <div class="auth-sub">We'll send a reset link to your email</div>
+    </div>
+    <div id="forgot-alert" class="alert"></div>
+    <div class="field">
+      <label class="field-label" for="fp-email">Email</label>
+      <input type="email" id="fp-email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <button class="btn btn-primary" id="forgot-btn" onclick="handleForgot()">Send Reset Link</button>
+    <div class="back-link">
+      <a href="#" onclick="showView('signin')">← Back to sign in</a>
+    </div>
+  </div>
+
+  <!-- ══════ RESET PASSWORD ══════ -->
+  <div id="view-reset" class="auth-card" style="display:none">
+    <div class="auth-header">
+      <div class="auth-title">New password</div>
+      <div class="auth-sub">Choose a strong password for your account</div>
+    </div>
+    <div id="reset-alert" class="alert"></div>
+    <div class="field">
+      <label class="field-label" for="rp-password">New Password</label>
+      <div class="input-wrap">
+        <input type="password" id="rp-password" placeholder="Min. 8 characters" autocomplete="new-password" oninput="checkPwdStrength(this.value, 'rp')">
+        <button class="pwd-toggle" onclick="togglePwd('rp-password', this)" type="button">👁</button>
+      </div>
+      <div class="pwd-strength">
+        <div class="pwd-strength-bar"><div class="pwd-strength-fill" id="rp-pwd-fill"></div></div>
+        <div class="pwd-strength-label" id="rp-pwd-label"></div>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label" for="rp-confirm">Confirm Password</label>
+      <div class="input-wrap">
+        <input type="password" id="rp-confirm" placeholder="••••••••" autocomplete="new-password">
+        <button class="pwd-toggle" onclick="togglePwd('rp-confirm', this)" type="button">👁</button>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="reset-btn" onclick="handleReset()">Update Password</button>
+  </div>
+
+  <!-- ══════ EMAIL VERIFY ══════ -->
+  <div id="view-verify" class="auth-card" style="display:none">
+    <div class="auth-header">
+      <div style="font-size:48px;margin-bottom:16px">📬</div>
+      <div class="auth-title">Check your email</div>
+      <div class="auth-sub">We've sent a verification link to <strong id="verify-email-display" style="color:var(--text)"></strong></div>
+    </div>
+    <div style="font-size:13px;color:var(--muted);text-align:center;line-height:1.7;margin-bottom:24px">
+      Click the link in the email to activate your account. Check your spam folder if you don't see it within a minute.
+    </div>
+    <button class="btn btn-secondary" onclick="showView('signin')">Back to Sign In</button>
+  </div>
+
+</div>
+
+<footer>
+  <span>© 2026 BuildAIModels.co.uk</span>
+  <a href="/legal">Terms</a>
+  <a href="/legal">Privacy</a>
+  <a href="/legal">Acceptable Use</a>
+  <a href="mailto:support@buildaimodels.co.uk">Support</a>
+</footer>
+
+<script>
+// ── Supabase init ──
+const { createClient } = supabase;
+const sb = createClient(
+  'https://cbufoyjjjmaimmzmwrpr.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNidWZveWpqam1haW1tem13cnByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5NzU2NTYsImV4cCI6MjA4NjU1MTY1Nn0.zYH7YsV6pcHiiFuTKyHDQEX-4IK6DX1QUxMQHT64NZM'
+);
+
+// ── Route on load ──
+window.addEventListener('load', async () => {
+  // Check if this is a password reset callback
+  const hash = window.location.hash;
+  if (hash.includes('type=recovery')) {
+    showView('reset');
+    return;
+  }
+  // Check if already logged in
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    window.location.href = '/studio';
+  }
+});
+
+// ── View switcher ──
+function showView(v) {
+  ['signin','signup','forgot','reset','verify'].forEach(id => {
+    const el = document.getElementById('view-' + id);
+    if (el) el.style.display = id === v ? 'block' : 'none';
+  });
+  clearAlerts();
+}
+
+function clearAlerts() {
+  document.querySelectorAll('.alert').forEach(a => {
+    a.className = 'alert'; a.textContent = '';
+  });
+}
+
+function showAlert(id, msg, type = 'error') {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'alert ' + type;
+}
+
+function setLoading(btnId, loading, text) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  btn.textContent = loading ? '...' : text;
+  btn.classList.toggle('btn-loading', loading);
+}
+
+// ── Password toggle ──
+function togglePwd(inputId, btn) {
+  const input = document.getElementById(inputId);
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  btn.textContent = show ? '🙈' : '👁';
+}
+
+// ── Password strength ──
+function checkPwdStrength(val, prefix = '') {
+  const fillId = prefix ? prefix + '-pwd-fill' : 'pwd-fill';
+  const labelId = prefix ? prefix + '-pwd-label' : 'pwd-label';
+  const fill = document.getElementById(fillId);
+  const label = document.getElementById(labelId);
+  if (!fill) return;
+  let score = 0;
+  if (val.length >= 8) score++;
+  if (val.length >= 12) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  const levels = [
+    { w: '0%', color: 'transparent', text: '' },
+    { w: '25%', color: '#ff4f6a', text: 'Weak' },
+    { w: '50%', color: '#f5a623', text: 'Fair' },
+    { w: '75%', color: '#5ba8f5', text: 'Good' },
+    { w: '100%', color: '#b8f054', text: 'Strong' },
+  ];
+  const lvl = Math.min(score, 4);
+  fill.style.width = levels[lvl].w;
+  fill.style.background = levels[lvl].color;
+  label.textContent = levels[lvl].text;
+  label.style.color = levels[lvl].color;
+}
+
+// ── Sign In ──
+async function handleSignIn() {
+  const email = document.getElementById('si-email').value.trim();
+  const password = document.getElementById('si-password').value;
+  if (!email || !password) { showAlert('signin-alert', 'Please enter your email and password.'); return; }
+  setLoading('signin-btn', true, 'Sign In');
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  setLoading('signin-btn', false, 'Sign In');
+  if (error) {
+    const msg = error.message.includes('Invalid login') ? 'Incorrect email or password.' : error.message;
+    showAlert('signin-alert', msg);
+  } else {
+    window.location.href = '/studio';
+  }
+}
+
+// ── Sign Up ──
+async function handleSignUp() {
+  const name = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const password = document.getElementById('su-password').value;
+  const age = document.getElementById('su-age').checked;
+  const terms = document.getElementById('su-terms').checked;
+  const aup = document.getElementById('su-aup').checked;
+
+  if (!name) { showAlert('signup-alert', 'Please enter your display name.'); return; }
+  if (!email) { showAlert('signup-alert', 'Please enter your email address.'); return; }
+  if (password.length < 8) { showAlert('signup-alert', 'Password must be at least 8 characters.'); return; }
+  if (!age) { showAlert('signup-alert', 'You must confirm you are 18 or older to use this platform.'); return; }
+  if (!terms) { showAlert('signup-alert', 'Please accept the Terms & Conditions and Privacy Policy.'); return; }
+  if (!aup) { showAlert('signup-alert', 'Please accept the Acceptable Use Policy.'); return; }
+
+  setLoading('signup-btn', true, 'Create Account');
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: {
+      data: { display_name: name, age_confirmed: true, terms_accepted: true, aup_accepted: true },
+      emailRedirectTo: 'https://buildaimodels.co.uk/studio'
+    }
+  });
+  setLoading('signup-btn', false, 'Create Account');
+
+  if (error) {
+    showAlert('signup-alert', error.message);
+  } else {
+    // Show verify screen
+    document.getElementById('verify-email-display').textContent = email;
+    showView('verify');
+  }
+}
+
+// ── Forgot Password ──
+async function handleForgot() {
+  const email = document.getElementById('fp-email').value.trim();
+  if (!email) { showAlert('forgot-alert', 'Please enter your email address.'); return; }
+  setLoading('forgot-btn', true, 'Send Reset Link');
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: 'https://buildaimodels.co.uk/auth?view=reset'
+  });
+  setLoading('forgot-btn', false, 'Send Reset Link');
+  if (error) {
+    showAlert('forgot-alert', error.message);
+  } else {
+    showAlert('forgot-alert', 'Reset link sent — check your inbox.', 'success');
+  }
+}
+
+// ── Reset Password ──
+async function handleReset() {
+  const password = document.getElementById('rp-password').value;
+  const confirm = document.getElementById('rp-confirm').value;
+  if (password.length < 8) { showAlert('reset-alert', 'Password must be at least 8 characters.'); return; }
+  if (password !== confirm) { showAlert('reset-alert', 'Passwords do not match.'); return; }
+  setLoading('reset-btn', true, 'Update Password');
+  const { error } = await sb.auth.updateUser({ password });
+  setLoading('reset-btn', false, 'Update Password');
+  if (error) {
+    showAlert('reset-alert', error.message);
+  } else {
+    showAlert('reset-alert', 'Password updated — redirecting to sign in...', 'success');
+    setTimeout(() => showView('signin'), 2000);
+  }
+}
+
+// ── Enter key support ──
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const active = document.querySelector('.auth-card:not([style*="display:none"])');
+  if (!active) return;
+  const id = active.id;
+  if (id === 'view-signin') handleSignIn();
+  else if (id === 'view-signup') handleSignUp();
+  else if (id === 'view-forgot') handleForgot();
+  else if (id === 'view-reset') handleReset();
+});
+</script>
+</body>
+</html>
