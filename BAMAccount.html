@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BuildAIModels — Account</title>
 <link rel="stylesheet" href="global.css">
+<script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
@@ -360,6 +361,23 @@
         </table>
       </div>
 
+      <!-- Course access -->
+      <div class="card" id="billing-alert" style="display:none"></div>
+      <div class="card" style="background:linear-gradient(135deg,var(--panel2) 0%,#0f1a08 100%);border-color:rgba(184,240,84,0.15)">
+        <div class="card-title">Course Access <span class="badge badge-accent" id="course-tier-badge" style="display:none"></span></div>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:20px;line-height:1.7">
+          Unlock the full <strong style="color:var(--text)">Build AI Models</strong> course — every module, lesson, and future update included.
+        </p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-primary" id="course-buy-btn" onclick="handleBuyCourse('beginner')" style="font-size:14px;padding:12px 28px">
+            Unlock Full Course →
+          </button>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:var(--muted2);font-family:var(--font-mono)">
+          One-time payment · Lifetime access · No subscription
+        </div>
+      </div>
+
       <!-- Transaction history -->
       <div class="card">
         <div class="card-title">Transaction History</div>
@@ -483,8 +501,8 @@
         <div class="topup-label">Starter</div>
         <div class="topup-bonus">&nbsp;</div>
       </div>
-      <div class="topup-card popular" onclick="selectTopup(25, this)">
-        <div class="topup-amount">£25</div>
+      <div class="topup-card popular" onclick="selectTopup(20, this)">
+        <div class="topup-amount">£20</div>
         <div class="topup-label">Standard</div>
         <div class="topup-bonus">+8% bonus</div>
       </div>
@@ -520,12 +538,13 @@
 <script>
 const { createClient } = supabase;
 const sb = createClient(
-  'https://cbufoyjjjmaimmzmwrpr.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNidWZveWpqam1haW1tem13cnByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5NzU2NTYsImV4cCI6MjA4NjU1MTY1Nn0.zYH7YsV6pcHiiFuTKyHDQEX-4IK6DX1QUxMQHT64NZM'
+  window.KIRA_CONFIG.supabase_url,
+  window.KIRA_CONFIG.supabase_anon
 );
 
 let currentUser = null;
 let selectedTopupAmount = null;
+let selectedTopupType = null;
 
 // ── Init ──
 window.addEventListener('load', async () => {
@@ -535,7 +554,35 @@ window.addEventListener('load', async () => {
   loadUserData();
   loadTransactions();
   loadSettings();
+  checkCourseAccess();
+
+  // Show payment result banner if redirected from Stripe
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('payment') === 'success') {
+    showAlert('billing-alert', '✅ Payment successful — your account has been updated.', 'success');
+    document.getElementById('billing-alert').style.display = 'block';
+  } else if (params.get('payment') === 'cancelled') {
+    showAlert('billing-alert', 'Payment was cancelled. No charge was made.', 'error');
+    document.getElementById('billing-alert').style.display = 'block';
+  }
 });
+
+async function checkCourseAccess() {
+  const { data: access } = await sb
+    .from('course_access')
+    .select('tier')
+    .eq('user_id', currentUser.id)
+    .single();
+  if (access) {
+    const badge = document.getElementById('course-tier-badge');
+    const btn = document.getElementById('course-buy-btn');
+    badge.textContent = access.tier.charAt(0).toUpperCase() + access.tier.slice(1) + ' — Unlocked';
+    badge.style.display = 'inline';
+    btn.textContent = '✓ Course Unlocked';
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+  }
+}
 
 async function loadUserData() {
   const meta = currentUser.user_metadata || {};
@@ -650,35 +697,54 @@ function closeTopup() {
   document.getElementById('topup-modal').classList.remove('open');
   document.querySelectorAll('.topup-card').forEach(c => c.style.outline = '');
   selectedTopupAmount = null;
+  selectedTopupType = null;
   document.getElementById('topup-pay-btn').disabled = true;
 }
 function selectTopup(amount, el) {
+  const typeMap = { 10: 'topup_10', 20: 'topup_20', 50: 'topup_50' };
   document.querySelectorAll('.topup-card').forEach(c => c.style.outline = '');
   el.style.outline = '2px solid var(--accent)';
   selectedTopupAmount = amount;
+  selectedTopupType = typeMap[amount];
   document.getElementById('topup-pay-btn').disabled = false;
 }
 async function handleTopup() {
-  if (!selectedTopupAmount) return;
+  if (!selectedTopupType) return;
   const btn = document.getElementById('topup-pay-btn');
   btn.textContent = 'Redirecting...'; btn.disabled = true;
-  // TODO: Replace with your Stripe Checkout session creation endpoint
-  // This calls your Vercel API route which creates a Stripe session and returns the URL
   try {
     const res = await fetch('/api/create-checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        amount: selectedTopupAmount,
+        type: selectedTopupType,
         userId: currentUser.id,
         userEmail: currentUser.email
       })
     });
-    const { url } = await res.json();
+    const { url, error } = await res.json();
+    if (error) throw new Error(error);
     window.location.href = url;
   } catch(e) {
     showAlert('topup-alert', 'Payment setup failed. Please try again or contact support.');
     btn.textContent = 'Pay with Stripe'; btn.disabled = false;
+  }
+}
+async function handleBuyCourse(tier) {
+  const btn = event.currentTarget;
+  btn.textContent = 'Redirecting...'; btn.disabled = true;
+  try {
+    const res = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: tier, userId: currentUser.id, userEmail: currentUser.email })
+    });
+    const { url, error } = await res.json();
+    if (error) throw new Error(error);
+    window.location.href = url;
+  } catch(e) {
+    showAlert('billing-alert', 'Payment setup failed. Please try again.');
+    btn.textContent = 'Unlock Course'; btn.disabled = false;
   }
 }
 

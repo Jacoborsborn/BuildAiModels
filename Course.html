@@ -905,6 +905,27 @@ const FOUNDER_PW = window.KIRA_CONFIG?.founder_password || 'founder';
 const STORAGE_KEY = 'bam_founder_session';
 const CONTENT_KEY = 'bam_course_content';
 
+// ── SUPABASE ─────────────────────────────────────────────────────
+const { createClient } = supabase;
+const sb = createClient(window.KIRA_CONFIG.supabase_url, window.KIRA_CONFIG.supabase_anon);
+
+// ── AUTH + ACCESS GATE ───────────────────────────────────────────
+window.addEventListener('load', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '/auth'; return; }
+
+  // Founders always get full access
+  if (isFounder()) return;
+
+  const { data: access } = await sb
+    .from('course_access')
+    .select('tier')
+    .eq('user_id', session.user.id)
+    .single();
+
+  if (!access) lockCourse();
+});
+
 // ── LESSON DATA ─────────────────────────────────────────────────
 const LESSONS = {
   'mindset':       { mod:'01', num:'1 of 3', title:'The Operator Mindset',          sub:'Before you generate a single image, you need to think like a business owner. This lesson covers the psychology behind building AI models that generate revenue — and why most people fail before they start.',  dur:'4:22' },
@@ -1141,6 +1162,58 @@ function markComplete() {
 function switchTab(el, tab) {
   document.querySelectorAll('.nav-tabs li a').forEach(a => a.classList.remove('active'));
   el.classList.add('active');
+}
+
+// ── LOCK COURSE ──────────────────────────────────────────────────
+function lockCourse() {
+  // Upgrade banner at top of main content area
+  const main = document.getElementById('main-content');
+  const banner = document.createElement('div');
+  banner.style.cssText = [
+    'background:var(--panel2)',
+    'border-bottom:1px solid var(--border2)',
+    'padding:14px 24px',
+    'display:flex',
+    'align-items:center',
+    'justify-content:space-between',
+    'gap:16px',
+    'font-size:13px',
+    'color:var(--muted)',
+    'position:relative',
+    'z-index:10',
+  ].join(';');
+  banner.innerHTML = `
+    <span>👀 You're previewing Module 1 — unlock the full course to access all lessons</span>
+    <a href="/account" style="background:var(--accent);color:#000;padding:7px 18px;border-radius:6px;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap;flex-shrink:0">
+      Unlock Full Course →
+    </a>`;
+  main.prepend(banner);
+
+  // Lock modules 02+ in the sidebar
+  const modules = document.querySelectorAll('.module-section');
+  modules.forEach((mod, i) => {
+    if (i === 0) return; // Module 01 stays fully open
+
+    // Add lock icon to module title
+    const titleEl = mod.querySelector('.module-title-text');
+    if (titleEl && !titleEl.querySelector('.lock-icon')) {
+      const lock = document.createElement('span');
+      lock.className = 'lock-icon';
+      lock.textContent = ' 🔒';
+      lock.style.cssText = 'font-size:10px;opacity:0.5;font-style:normal';
+      titleEl.appendChild(lock);
+    }
+
+    // Dim and intercept clicks on all lessons in this module
+    mod.querySelectorAll('.lesson-item').forEach(item => {
+      item.style.opacity = '0.4';
+      item.style.cursor = 'not-allowed';
+      item.onclick = (e) => {
+        e.stopImmediatePropagation();
+        window.location.href = '/account';
+      };
+    });
+  });
 }
 
 // ── INIT ─────────────────────────────────────────────────────────

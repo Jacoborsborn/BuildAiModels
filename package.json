@@ -1,0 +1,13 @@
+{
+  "name": "bam",
+  "private": true,
+  "version": "0.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "stripe": "^17"
+  }
+}
