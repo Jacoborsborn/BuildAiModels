@@ -3,54 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Synthia.ai — Legal</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<title>BuildAIModels — Legal</title>
+<link rel="stylesheet" href="global.css">
 <style>
 :root {
-  --bg: #0a0a0a;
-  --panel: #111111;
-  --panel2: #161616;
-  --border: #222222;
-  --border2: #2a2a2a;
-  --text: #e8e8e8;
-  --muted: #888;
-  --muted2: #555;
-  --accent: #b8f054;
   --accent2: rgba(184,240,84,0.08);
   --accent3: rgba(184,240,84,0.15);
-  --red: #ff4f6a;
-  --font: 'DM Sans', sans-serif;
-  --font-display: 'Syne', sans-serif;
-  --font-mono: 'DM Mono', monospace;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font);
-  font-size: 14px;
-  line-height: 1.7;
-  min-height: 100vh;
-}
+body { line-height: 1.7; }
 
-/* NAV */
-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(10,10,10,0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 32px;
-  height: 56px;
-  display: flex; align-items: center; gap: 24px;
-}
-.nav-logo {
-  font-family: var(--font-display);
-  font-weight: 800; font-size: 18px;
-  color: var(--accent); letter-spacing: -0.5px;
-  text-decoration: none; margin-right: auto;
-}
+/* Nav doc-tabs */
 .nav-tab {
   font-size: 12px; font-weight: 500; letter-spacing: 0.5px;
   color: var(--muted); text-decoration: none;
@@ -59,10 +21,7 @@ nav {
   cursor: pointer; background: none;
   font-family: var(--font);
 }
-.nav-tab:hover, .nav-tab.active {
-  color: var(--text); border-color: var(--border2);
-  background: var(--panel2);
-}
+.nav-tab:hover { color: var(--text); border-color: var(--border2); background: var(--panel2); }
 .nav-tab.active { color: var(--accent); border-color: var(--accent); background: var(--accent2); }
 
 /* LAYOUT */
@@ -166,15 +125,11 @@ li strong { color: var(--text); }
 .contact-block p { margin: 4px 0; font-size: 13px; }
 .contact-block a { color: var(--accent); text-decoration: none; }
 
-/* FOOTER */
 footer {
-  border-top: 1px solid var(--border);
   padding: 24px 64px;
   display: flex; align-items: center; justify-content: space-between;
-  font-size: 11px; color: var(--muted2);
+  font-size: 11px;
 }
-footer a { color: var(--muted); text-decoration: none; }
-footer a:hover { color: var(--accent); }
 
 @media (max-width: 768px) {
   .sidebar { display: none; }
@@ -186,10 +141,13 @@ footer a:hover { color: var(--accent); }
 <body>
 
 <nav>
-  <a class="nav-logo" href="#">Synthia.ai</a>
+  <a class="nav-logo" href="/">BUILD<em>AI</em>MODELS</a>
   <button class="nav-tab active" onclick="showDoc('terms')">Terms & Conditions</button>
   <button class="nav-tab" onclick="showDoc('privacy')">Privacy Policy</button>
   <button class="nav-tab" onclick="showDoc('aup')">Acceptable Use</button>
+  <a href="/" class="nav-link" style="margin-left:auto">Home</a>
+  <a href="/auth" class="nav-signin">Sign In</a>
+  <a href="/auth" class="nav-cta">Get Started →</a>
 </nav>
 
 <div class="layout">
@@ -250,15 +208,15 @@ footer a:hover { color: var(--accent); }
       <div class="doc-header">
         <div class="doc-badge">Legal</div>
         <h1 class="doc-title">Terms &amp; Conditions</h1>
-        <div class="doc-meta">Synthia.ai · Last updated: April 2026 · Effective immediately</div>
+        <div class="doc-meta">BuildAIModels · Last updated: April 2026 · Effective immediately</div>
       </div>
 
       <h2 id="t-intro">1. Introduction</h2>
-      <p>These Terms and Conditions ("Terms") govern your access to and use of Synthia.ai ("the Platform", "we", "us", "our"), an AI-powered image and video generation service. By creating an account or using the Platform you agree to be bound by these Terms in full.</p>
-      <p>Synthia.ai is operated as an independent platform. References to "you" or "user" mean any individual accessing the Platform.</p>
+      <p>These Terms and Conditions ("Terms") govern your access to and use of BuildAIModels ("the Platform", "we", "us", "our"), an AI-powered image and video generation service. By creating an account or using the Platform you agree to be bound by these Terms in full.</p>
+      <p>BuildAIModels is operated as an independent platform. References to "you" or "user" mean any individual accessing the Platform.</p>
 
       <h2 id="t-eligibility">2. Eligibility</h2>
-      <p>You must be <strong>at least 18 years of age</strong> to create an account or use Synthia.ai. By registering you confirm that you meet this requirement. We reserve the right to terminate accounts where we have reasonable belief a user is under 18.</p>
+      <p>You must be <strong>at least 18 years of age</strong> to create an account or use BuildAIModels. By registering you confirm that you meet this requirement. We reserve the right to terminate accounts where we have reasonable belief a user is under 18.</p>
       <p>You must not be located in a jurisdiction where accessing or using AI generation services is prohibited by law.</p>
 
       <h2 id="t-account">3. Account Registration</h2>
@@ -267,7 +225,7 @@ footer a:hover { color: var(--accent); }
       <p>We reserve the right to suspend or terminate accounts at our sole discretion where we believe these Terms have been violated.</p>
 
       <h2 id="t-credits">4. Credits &amp; Payments</h2>
-      <p>Synthia.ai operates on a <strong>prepaid credit system</strong>. Credits are purchased in advance and deducted per generation based on the model and output type used. Current per-generation costs are displayed within the Platform before each generation.</p>
+      <p>BuildAIModels operates on a <strong>prepaid credit system</strong>. Credits are purchased in advance and deducted per generation based on the model and output type used. Current per-generation costs are displayed within the Platform before each generation.</p>
       <p>Credits are purchased in GBP (£) via Stripe. All payments are processed securely by Stripe; we do not store your card details.</p>
       <p><strong>Credits have no cash value</strong> and cannot be transferred to other accounts, exchanged for currency, or carried over upon account termination.</p>
       <p>We reserve the right to adjust credit pricing with reasonable notice displayed within the Platform. Existing purchased credits are not affected by price changes.</p>
@@ -278,13 +236,13 @@ footer a:hover { color: var(--accent); }
       <p>We do not offer refunds on credits consumed where the output was technically delivered, regardless of satisfaction with the result — AI generation output is inherently variable.</p>
 
       <h2 id="t-content">6. Generated Content</h2>
-      <p>You are solely responsible for the prompts you submit and the content you generate using Synthia.ai. We do not review generated outputs in real time.</p>
-      <p>You must not use Synthia.ai to generate content that violates our <strong>Acceptable Use Policy</strong>, which forms part of these Terms by reference.</p>
+      <p>You are solely responsible for the prompts you submit and the content you generate using BuildAIModels. We do not review generated outputs in real time.</p>
+      <p>You must not use BuildAIModels to generate content that violates our <strong>Acceptable Use Policy</strong>, which forms part of these Terms by reference.</p>
       <p>We reserve the right to implement automated and manual content moderation and to remove content or terminate accounts where violations are detected.</p>
 
       <h2 id="t-ip">7. Intellectual Property</h2>
-      <p>Images and videos generated through Synthia.ai using your prompts and reference inputs are owned by <strong>you</strong>, subject to the limitations of the underlying AI model providers' terms.</p>
-      <p>The Synthia.ai platform, branding, interface, and all non-generated content remain the intellectual property of Synthia.ai and may not be reproduced, copied, or resold without written permission.</p>
+      <p>Images and videos generated through BuildAIModels using your prompts and reference inputs are owned by <strong>you</strong>, subject to the limitations of the underlying AI model providers' terms.</p>
+      <p>The BuildAIModels platform, branding, interface, and all non-generated content remain the intellectual property of BuildAIModels and may not be reproduced, copied, or resold without written permission.</p>
       <p>You grant us a limited, non-exclusive licence to process your inputs solely for the purpose of delivering the generation service.</p>
 
       <h2 id="t-prohibited">8. Prohibited Use</h2>
@@ -301,7 +259,7 @@ footer a:hover { color: var(--accent); }
       <p>Violation of these prohibitions may result in immediate account termination without refund of remaining credits.</p>
 
       <h2 id="t-liability">9. Limitation of Liability</h2>
-      <p>Synthia.ai provides the Platform on an "as is" basis. We make no warranties, express or implied, regarding uptime, output quality, or fitness for a particular purpose.</p>
+      <p>BuildAIModels provides the Platform on an "as is" basis. We make no warranties, express or implied, regarding uptime, output quality, or fitness for a particular purpose.</p>
       <p>To the maximum extent permitted by law, our total liability to you for any claim arising from your use of the Platform shall not exceed the value of credits purchased by you in the <strong>30 days preceding the claim</strong>.</p>
       <p>We are not liable for any indirect, incidental, special, or consequential damages including but not limited to lost profits, data loss, or reputational damage.</p>
 
@@ -318,8 +276,8 @@ footer a:hover { color: var(--accent); }
 
       <h2 id="t-contact">13. Contact</h2>
       <div class="contact-block">
-        <p><strong>Synthia.ai Support</strong></p>
-        <p>Email: <a href="mailto:legal@synthia.ai">legal@synthia.ai</a></p>
+        <p><strong>BuildAIModels Support</strong></p>
+        <p>Email: <a href="/cdn-cgi/l/email-protection#74181113151834070d1a001c1d155a151d"><span class="__cf_email__" data-cfemail="cda1a8aaaca18dbeb4a3b9a5a4ace3aca4">[email&#160;protected]</span></a></p>
         <p>For billing disputes, account issues, or legal enquiries.</p>
       </div>
     </div>
@@ -331,7 +289,7 @@ footer a:hover { color: var(--accent); }
       <div class="doc-header">
         <div class="doc-badge">Legal</div>
         <h1 class="doc-title">Privacy Policy</h1>
-        <div class="doc-meta">Synthia.ai · Last updated: April 2026 · GDPR &amp; UK GDPR Compliant</div>
+        <div class="doc-meta">BuildAIModels · Last updated: April 2026 · GDPR &amp; UK GDPR Compliant</div>
       </div>
 
       <div class="info-box">
@@ -339,7 +297,7 @@ footer a:hover { color: var(--accent); }
       </div>
 
       <h2 id="p-intro">1. Introduction</h2>
-      <p>Synthia.ai ("we", "us", "our") is committed to protecting your personal data. This Privacy Policy explains what data we collect, how we use it, and your rights under the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.</p>
+      <p>BuildAIModels ("we", "us", "our") is committed to protecting your personal data. This Privacy Policy explains what data we collect, how we use it, and your rights under the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.</p>
       <p>Our lawful bases for processing your data are: <strong>contractual necessity</strong> (to deliver the service), <strong>legitimate interests</strong> (to operate and improve the platform), and <strong>legal obligation</strong> (compliance with applicable law).</p>
 
       <h2 id="p-collect">2. Data We Collect</h2>
@@ -412,7 +370,7 @@ footer a:hover { color: var(--accent); }
         <li><strong>Right to portability</strong> — receive your data in a machine-readable format</li>
         <li><strong>Right to object</strong> — object to processing based on legitimate interests</li>
       </ul>
-      <p>To exercise any of these rights, email <a href="mailto:privacy@synthia.ai" style="color:var(--accent)">privacy@synthia.ai</a>. We will respond within <strong>30 days</strong>.</p>
+      <p>To exercise any of these rights, email <a href="/cdn-cgi/l/email-protection#48383a213e292b31083b31263c202129662921" style="color:var(--accent)"><span class="__cf_email__" data-cfemail="c0b0b2a9b6a1a3b980b3b9aeb4a8a9a1eea1a9">[email&#160;protected]</span></a>. We will respond within <strong>30 days</strong>.</p>
       <p>You also have the right to lodge a complaint with the <strong>Information Commissioner's Office (ICO)</strong> at ico.org.uk.</p>
 
       <h2 id="p-cookies">8. Cookies</h2>
@@ -424,15 +382,15 @@ footer a:hover { color: var(--accent); }
       <p>You can disable cookies in your browser settings but this will prevent you from logging in.</p>
 
       <h2 id="p-children">9. Children</h2>
-      <p>Synthia.ai is strictly for users aged 18 and over. We do not knowingly collect personal data from anyone under 18. If we become aware that a user is under 18, their account will be terminated and their data deleted promptly.</p>
+      <p>BuildAIModels is strictly for users aged 18 and over. We do not knowingly collect personal data from anyone under 18. If we become aware that a user is under 18, their account will be terminated and their data deleted promptly.</p>
 
       <h2 id="p-changes">10. Changes to This Policy</h2>
       <p>We will notify you of material changes to this Privacy Policy by email or in-platform notice at least 14 days before changes take effect.</p>
 
       <h2 id="p-contact">11. Contact &amp; Data Controller</h2>
       <div class="contact-block">
-        <p><strong>Data Controller: Synthia.ai</strong></p>
-        <p>Privacy enquiries: <a href="mailto:privacy@synthia.ai">privacy@synthia.ai</a></p>
+        <p><strong>Data Controller: BuildAIModels</strong></p>
+        <p>Privacy enquiries: <a href="/cdn-cgi/l/email-protection#cbbbb9a2bdaaa8b28bb8b2a5bfa3a2aae5aaa2"><span class="__cf_email__" data-cfemail="94e4e6fde2f5f7edd4e7edfae0fcfdf5baf5fd">[email&#160;protected]</span></a></p>
         <p>ICO (supervisory authority): <a href="https://ico.org.uk" target="_blank">ico.org.uk</a></p>
       </div>
     </div>
@@ -444,7 +402,7 @@ footer a:hover { color: var(--accent); }
       <div class="doc-header">
         <div class="doc-badge">Legal</div>
         <h1 class="doc-title">Acceptable Use Policy</h1>
-        <div class="doc-meta">Synthia.ai · Last updated: April 2026 · Applies to all users</div>
+        <div class="doc-meta">BuildAIModels · Last updated: April 2026 · Applies to all users</div>
       </div>
 
       <div class="warning-box">
@@ -452,11 +410,11 @@ footer a:hover { color: var(--accent); }
       </div>
 
       <h2 id="a-intro">1. Introduction</h2>
-      <p>This Acceptable Use Policy ("AUP") sets out the rules governing what content may and may not be generated using Synthia.ai. It applies to all users without exception and forms part of our Terms and Conditions.</p>
-      <p>Synthia.ai provides powerful AI generation capabilities. With that power comes responsibility. These rules exist to protect individuals, protect you legally, and maintain the integrity of the platform.</p>
+      <p>This Acceptable Use Policy ("AUP") sets out the rules governing what content may and may not be generated using BuildAIModels. It applies to all users without exception and forms part of our Terms and Conditions.</p>
+      <p>BuildAIModels provides powerful AI generation capabilities. With that power comes responsibility. These rules exist to protect individuals, protect you legally, and maintain the integrity of the platform.</p>
 
       <h2 id="a-age">2. Age Requirement</h2>
-      <p>You must be <strong>18 or older</strong> to use Synthia.ai. This applies to all features including those unrelated to adult content. By using the platform you confirm you are 18 or older.</p>
+      <p>You must be <strong>18 or older</strong> to use BuildAIModels. This applies to all features including those unrelated to adult content. By using the platform you confirm you are 18 or older.</p>
       <p>Any attempt to circumvent age verification or create accounts on behalf of minors will result in permanent account termination and may be reported to appropriate authorities.</p>
 
       <h2 id="a-prohibited">3. Absolutely Prohibited Content</h2>
@@ -470,11 +428,11 @@ footer a:hover { color: var(--accent); }
       </ul>
 
       <h2 id="a-nsfw">4. Adult / NSFW Content Rules</h2>
-      <p>Synthia.ai includes NSFW generation capabilities. Access to these features is subject to the following rules:</p>
+      <p>BuildAIModels includes NSFW generation capabilities. Access to these features is subject to the following rules:</p>
       <ul>
         <li>All subjects must be depicted as <strong>clearly adult</strong> (18+) in appearance and context</li>
         <li>Do not generate content that ambiguously depicts or could be interpreted as depicting minors — if in doubt, do not generate it</li>
-        <li>NSFW content generated on Synthia.ai is for <strong>personal or commercial use within legal limits</strong> of your jurisdiction</li>
+        <li>NSFW content generated on BuildAIModels is for <strong>personal or commercial use within legal limits</strong> of your jurisdiction</li>
         <li>You are responsible for ensuring any NSFW content you publish or distribute complies with the platform and laws of the jurisdiction where it is published</li>
         <li>Do not attempt to use NSFW features to generate real persons without their consent</li>
       </ul>
@@ -493,7 +451,7 @@ footer a:hover { color: var(--accent); }
       </ul>
 
       <h2 id="a-commercial">6. Commercial Use</h2>
-      <p>You may use Synthia.ai outputs for commercial purposes including:</p>
+      <p>You may use BuildAIModels outputs for commercial purposes including:</p>
       <ul>
         <li>Social media content and marketing</li>
         <li>AI influencer personas (subject to platform rules of the publishing platform)</li>
@@ -513,26 +471,31 @@ footer a:hover { color: var(--accent); }
       <p>Account termination for AUP violations does not entitle you to a refund of remaining credits.</p>
 
       <h2 id="a-reporting">8. Reporting Violations</h2>
-      <p>If you become aware of content or activity on Synthia.ai that violates this policy, please report it immediately.</p>
+      <p>If you become aware of content or activity on BuildAIModels that violates this policy, please report it immediately.</p>
       <div class="contact-block">
-        <p><strong>Report abuse:</strong> <a href="mailto:abuse@synthia.ai">abuse@synthia.ai</a></p>
+        <p><strong>Report abuse:</strong> <a href="/cdn-cgi/l/email-protection#b0d1d2c5c3d5f0c3c9dec4d8d9d19ed1d9"><span class="__cf_email__" data-cfemail="e78685929482a7949e89938f8e86c9868e">[email&#160;protected]</span></a></p>
         <p>Reports are reviewed promptly. We take all reports seriously.</p>
         <p style="margin-top:12px;font-size:12px;color:var(--muted2)">For child safety concerns you can also report directly to the Internet Watch Foundation at <a href="https://www.iwf.org.uk" target="_blank">iwf.org.uk</a></p>
       </div>
 
       <h2 id="a-contact">9. Contact</h2>
       <div class="contact-block">
-        <p><strong>Synthia.ai Policy Team</strong></p>
-        <p>General: <a href="mailto:legal@synthia.ai">legal@synthia.ai</a></p>
-        <p>Abuse reports: <a href="mailto:abuse@synthia.ai">abuse@synthia.ai</a></p>
+        <p><strong>BuildAIModels Policy Team</strong></p>
+        <p>General: <a href="/cdn-cgi/l/email-protection#0c60696b6d604c7f75627864656d226d65"><span class="__cf_email__" data-cfemail="09656c6e6865497a70677d616068276860">[email&#160;protected]</span></a></p>
+        <p>Abuse reports: <a href="/cdn-cgi/l/email-protection#81e0e3f4f2e4c1f2f8eff5e9e8e0afe0e8"><span class="__cf_email__" data-cfemail="4e2f2c3b3d2b0e3d37203a26272f602f27">[email&#160;protected]</span></a></p>
       </div>
     </div>
 
   </div>
 </div>
 
+<div style="text-align:center; padding: 60px 40px;">
+  <p>Ready to start?</p>
+  <a href="/auth" class="nav-cta" style="display:inline-block;margin-top:16px">Create Account →</a>
+</div>
+
 <footer>
-  <span>© 2026 Synthia.ai · All rights reserved</span>
+  <span>© 2026 BuildAIModels · All rights reserved</span>
   <div style="display:flex;gap:20px">
     <a href="#" onclick="showDoc('terms')">Terms</a>
     <a href="#" onclick="showDoc('privacy')">Privacy</a>
@@ -540,7 +503,7 @@ footer a:hover { color: var(--accent); }
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 function showDoc(doc) {
   // Hide all
   document.querySelectorAll('.doc-section').forEach(s => s.classList.remove('active'));
@@ -548,30 +511,4 @@ function showDoc(doc) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
 
   // Show target
-  document.getElementById('doc-' + doc).classList.add('active');
-  document.getElementById('sidebar-' + doc).style.display = 'block';
-
-  // Activate nav tab
-  const tabs = document.querySelectorAll('.nav-tab');
-  const map = { terms: 0, privacy: 1, aup: 2 };
-  tabs[map[doc]].classList.add('active');
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// Sidebar active state on scroll
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = entry.target.id;
-      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-      const link = document.querySelector(`.sidebar-link[href="#${id}"]`);
-      if (link) link.classList.add('active');
-    }
-  });
-}, { threshold: 0.5, rootMargin: '-100px 0px -60% 0px' });
-
-document.querySelectorAll('h2[id]').forEach(el => observer.observe(el));
-</script>
-</body>
-</html>
+  document.getElementById('doc-' + do

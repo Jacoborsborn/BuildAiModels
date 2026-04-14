@@ -3,939 +3,717 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI PIMP BLUEPRINT</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<title>BuildAIModels — Course</title>
+<link rel="stylesheet" href="global.css">
 <style>
-  :root {
-    --gold: #C9A84C;
-    --gold-dim: #8a6e2f;
-    --gold-glow: rgba(201,168,76,0.15);
-    --bg: #0a0a0a;
-    --bg-card: #111111;
-    --bg-elevated: #161616;
-    --border: rgba(255,255,255,0.06);
-    --border-gold: rgba(201,168,76,0.3);
-    --text: #f0ede6;
-    --text-muted: #6b6b6b;
-    --text-dim: #3a3a3a;
-    --green: #4ade80;
-    --green-dim: rgba(74,222,128,0.1);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Syne', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* TOP NAV */
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
-    height: 56px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .nav-logo {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    color: var(--gold);
-    text-transform: uppercase;
-  }
-
-  .nav-tabs {
-    display: flex;
-    gap: 0;
-    list-style: none;
-  }
-
-  .nav-tabs li a {
-    display: block;
-    padding: 0 18px;
-    height: 56px;
-    line-height: 56px;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    color: var(--text-muted);
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: color 0.2s;
-    border-bottom: 2px solid transparent;
-  }
-
-  .nav-tabs li a:hover { color: var(--text); }
-  .nav-tabs li a.active {
-    color: var(--gold);
-    border-bottom: 2px solid var(--gold);
-  }
-
-  .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .tier-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    padding: 4px 10px;
-    border: 1px solid var(--border-gold);
-    color: var(--gold);
-    border-radius: 2px;
-    text-transform: uppercase;
-  }
-
-  .avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: var(--gold-dim);
-    border: 1px solid var(--border-gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--gold);
-  }
-
-  /* LAYOUT */
-  .layout {
-    display: flex;
-    flex: 1;
-    height: calc(100vh - 56px);
-    overflow: hidden;
-  }
-
-  /* SIDEBAR */
-  sidebar {
-    width: 300px;
-    min-width: 300px;
-    background: var(--bg-card);
-    border-right: 1px solid var(--border);
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  }
-
-  sidebar::-webkit-scrollbar { width: 3px; }
-  sidebar::-webkit-scrollbar-thumb { background: var(--border); }
-
-  .sidebar-header {
-    padding: 20px 20px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .course-title {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 12px;
-  }
-
-  .progress-wrap {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .progress-bar-outer {
-    flex: 1;
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .progress-bar-inner {
-    height: 100%;
-    background: var(--gold);
-    border-radius: 2px;
-    transition: width 0.6s ease;
-  }
-
-  .progress-pct {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--gold);
-    min-width: 30px;
-  }
-
-  /* MODULE SECTIONS */
-  .module-section {
-    border-bottom: 1px solid var(--border);
-  }
-
-  .module-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 20px;
-    cursor: pointer;
-    transition: background 0.15s;
-    user-select: none;
-  }
-
-  .module-header:hover { background: rgba(255,255,255,0.02); }
-
-  .module-num {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--text-dim);
-    min-width: 18px;
-  }
-
-  .module-title-text {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    flex: 1;
-    transition: color 0.2s;
-  }
-
-  .module-header:hover .module-title-text,
-  .module-header.open .module-title-text { color: var(--text); }
-
-  .module-header.open .module-title-text { color: var(--gold); }
-
-  .module-chevron {
-    width: 14px;
-    height: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s;
-    color: var(--text-dim);
-  }
-
-  .module-header.open .module-chevron { transform: rotate(90deg); color: var(--gold); }
-
-  .module-chevron svg { width: 10px; height: 10px; }
-
-  .module-lessons {
-    display: none;
-    flex-direction: column;
-  }
-
-  .module-lessons.open { display: flex; }
-
-  .lesson-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 20px 10px 48px;
-    cursor: pointer;
-    transition: background 0.15s;
-    border-left: 2px solid transparent;
-    text-decoration: none;
-  }
-
-  .lesson-item:hover { background: rgba(255,255,255,0.02); }
-
-  .lesson-item.active {
-    background: var(--gold-glow);
-    border-left: 2px solid var(--gold);
-  }
-
-  .lesson-dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    border: 1.5px solid var(--text-dim);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.2s;
-  }
-
-  .lesson-dot.done {
-    background: var(--green);
-    border-color: var(--green);
-  }
-
-  .lesson-dot.done svg { display: block; }
-  .lesson-dot svg { display: none; width: 8px; height: 8px; }
-
-  .lesson-dot.active-dot {
-    border-color: var(--gold);
-  }
-
-  .lesson-dot.active-dot::after {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--gold);
-  }
-
-  .lesson-label {
-    font-size: 12px;
-    color: var(--text-muted);
-    flex: 1;
-    transition: color 0.2s;
-    line-height: 1.4;
-  }
-
-  .lesson-item:hover .lesson-label,
-  .lesson-item.active .lesson-label { color: var(--text); }
-
-  .lesson-duration {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--text-dim);
-  }
-
-  .lesson-lock {
-    width: 12px;
-    height: 12px;
-    opacity: 0.3;
-  }
-
-  /* MAIN CONTENT */
-  main {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  }
-
-  main::-webkit-scrollbar { width: 3px; }
-  main::-webkit-scrollbar-thumb { background: var(--border); }
-
-  /* VIDEO AREA */
-  .video-zone {
-    background: #000;
-    aspect-ratio: 16/9;
-    max-height: 60vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 16px;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .video-zone::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center, rgba(201,168,76,0.04) 0%, transparent 70%);
-  }
-
-  .play-btn {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(201,168,76,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s;
-    background: rgba(201,168,76,0.08);
-    position: relative;
-    z-index: 1;
-  }
-
-  .video-zone:hover .play-btn {
-    background: rgba(201,168,76,0.18);
-    border-color: var(--gold);
-    transform: scale(1.06);
-  }
-
-  .play-btn svg {
-    width: 22px;
-    height: 22px;
-    fill: var(--gold);
-    margin-left: 3px;
-  }
-
-  .video-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* LESSON CONTENT */
-  .lesson-content {
-    padding: 36px 48px;
-    max-width: 780px;
-  }
-
-  .lesson-meta {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 20px;
-  }
-
-  .lesson-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    color: var(--gold);
-    text-transform: uppercase;
-    border: 1px solid var(--border-gold);
-    padding: 3px 8px;
-    border-radius: 2px;
-  }
-
-  .lesson-num-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text-dim);
-  }
-
-  .lesson-main-title {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-    margin-bottom: 12px;
-    color: var(--text);
-  }
-
-  .lesson-subtitle {
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.7;
-    margin-bottom: 32px;
-    max-width: 540px;
-  }
-
-  /* KEY POINTS */
-  .key-points {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 36px;
-  }
-
-  .key-point {
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 16px;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    transition: border-color 0.2s;
-  }
-
-  .key-point:hover { border-color: var(--border-gold); }
-
-  .kp-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 3px;
-    background: var(--gold-glow);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 13px;
-  }
-
-  .kp-text strong {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 3px;
-    letter-spacing: 0.02em;
-  }
-
-  .kp-text span {
-    font-size: 11px;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  /* RESOURCES */
-  .section-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 14px;
-  }
-
-  .resource-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 36px;
-  }
-
-  .resource-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.15s;
-    text-decoration: none;
-  }
-
-  .resource-item:hover {
-    border-color: var(--border-gold);
-    background: var(--gold-glow);
-  }
-
-  .resource-icon {
-    font-size: 14px;
-    width: 20px;
-    text-align: center;
-    flex-shrink: 0;
-  }
-
-  .resource-name {
-    font-size: 13px;
-    color: var(--text);
-    flex: 1;
-  }
-
-  .resource-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    color: var(--text-dim);
-    text-transform: uppercase;
-  }
-
-  /* COMPLETE BTN */
-  .complete-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 28px;
-    background: var(--gold);
-    color: #000;
-    font-family: 'Syne', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border: none;
-    border-radius: 2px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .complete-btn:hover {
-    background: #e0b955;
-    transform: translateY(-1px);
-  }
-
-  .complete-btn:active { transform: translateY(0); }
-
-  /* RIGHT PANEL */
-  .right-panel {
-    width: 260px;
-    min-width: 260px;
-    background: var(--bg-card);
-    border-left: 1px solid var(--border);
-    overflow-y: auto;
-    padding: 24px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .right-panel::-webkit-scrollbar { width: 3px; }
-  .right-panel::-webkit-scrollbar-thumb { background: var(--border); }
-
-  .panel-section-title {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 12px;
-  }
-
-  /* STATS */
-  .stat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .stat-card {
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 12px;
-  }
-
-  .stat-value {
-    font-family: 'DM Mono', monospace;
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--gold);
-    margin-bottom: 2px;
-  }
-
-  .stat-label {
-    font-size: 10px;
-    color: var(--text-muted);
-    letter-spacing: 0.04em;
-  }
-
-  /* TIER CARDS */
-  .tier-card {
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 16px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .tier-card:hover { border-color: var(--border-gold); }
-
-  .tier-card.current {
-    border-color: var(--gold);
-    background: var(--gold-glow);
-  }
-
-  .tier-card.locked { opacity: 0.4; cursor: not-allowed; }
-
-  .tier-name {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text);
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .tier-price {
-    font-family: 'DM Mono', monospace;
-    font-size: 14px;
-    color: var(--gold);
-    margin-bottom: 6px;
-  }
-
-  .tier-desc {
-    font-size: 11px;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  .tier-check {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .tier-check svg {
-    width: 9px;
-    height: 9px;
-    stroke: #000;
-    stroke-width: 2.5;
-    fill: none;
-  }
-
-  /* COMMUNITY FEED */
-  .community-item {
-    display: flex;
-    gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .community-item:last-child { border-bottom: none; }
-
-  .comm-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--text-muted);
-    flex-shrink: 0;
-  }
-
-  .comm-text {
-    font-size: 11px;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  .comm-text strong {
-    color: var(--text);
-    font-weight: 600;
-  }
-
-  .comm-time {
-    display: block;
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    color: var(--text-dim);
-    margin-top: 3px;
-  }
-
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .lesson-content > * {
-    animation: fadeUp 0.4s ease both;
-  }
-
-  .lesson-content > *:nth-child(1) { animation-delay: 0.05s; }
-  .lesson-content > *:nth-child(2) { animation-delay: 0.1s; }
-  .lesson-content > *:nth-child(3) { animation-delay: 0.15s; }
-  .lesson-content > *:nth-child(4) { animation-delay: 0.2s; }
-  .lesson-content > *:nth-child(5) { animation-delay: 0.25s; }
-  .lesson-content > *:nth-child(6) { animation-delay: 0.3s; }
-
+:root {
+  --accent-dim: rgba(184,240,84,0.35);
+  --green2: rgba(79,209,138,0.1);
+  --muted: #666;
+  --muted2: #3a3a3a;
+  --accent2: rgba(184,240,84,0.08);
+  --accent3: rgba(184,240,84,0.16);
+}
+html { height: 100%; }
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.tier-badge {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.12em; padding: 4px 10px;
+  border: 1px solid rgba(184,240,84,0.25);
+  color: var(--accent); border-radius: 3px; text-transform: uppercase;
+}
+.avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--accent2);
+  border: 1px solid rgba(184,240,84,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+  font-family: var(--font-mono); color: var(--accent);
+}
+
+/* ── LAYOUT ── */
+.layout { display: flex; flex: 1; height: calc(100vh - 56px); overflow: hidden; }
+
+/* ── SIDEBAR ── */
+sidebar {
+  width: 288px; min-width: 288px;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  overflow-y: auto; display: flex; flex-direction: column;
+}
+sidebar::-webkit-scrollbar { width: 3px; }
+sidebar::-webkit-scrollbar-thumb { background: var(--border2); }
+
+.sidebar-header {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.course-label {
+  font-family: var(--font-mono); font-size: 8px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 4px;
+}
+.course-title-sidebar {
+  font-family: var(--font-display); font-size: 13px;
+  font-weight: 800; color: var(--accent);
+  letter-spacing: 0.5px; margin-bottom: 14px;
+}
+.progress-wrap { display: flex; align-items: center; gap: 10px; }
+.progress-bar-outer {
+  flex: 1; height: 2px;
+  background: var(--border2); border-radius: 2px; overflow: hidden;
+}
+.progress-bar-inner {
+  height: 100%; background: var(--accent);
+  border-radius: 2px; transition: width .6s ease;
+}
+.progress-pct {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--accent); min-width: 28px;
+}
+
+/* ── MODULE SECTIONS ── */
+.module-section { border-bottom: 1px solid var(--border); }
+.module-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 20px; cursor: pointer;
+  transition: background .15s; user-select: none;
+}
+.module-header:hover { background: rgba(255,255,255,0.02); }
+.module-num {
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--muted2); min-width: 16px;
+}
+.module-title-text {
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted); flex: 1;
+  transition: color .2s;
+}
+.module-header:hover .module-title-text { color: var(--text); }
+.module-header.open .module-title-text { color: var(--accent); }
+.module-chevron {
+  width: 14px; height: 14px; display: flex;
+  align-items: center; justify-content: center;
+  transition: transform .2s; color: var(--muted2);
+}
+.module-header.open .module-chevron { transform: rotate(90deg); color: var(--accent); }
+.module-chevron svg { width: 10px; height: 10px; }
+.module-lessons { display: none; flex-direction: column; }
+.module-lessons.open { display: flex; }
+
+.lesson-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px 9px 46px; cursor: pointer;
+  transition: background .15s;
+  border-left: 2px solid transparent;
+  text-decoration: none;
+}
+.lesson-item:hover { background: rgba(255,255,255,0.02); }
+.lesson-item.active {
+  background: var(--accent2);
+  border-left: 2px solid var(--accent);
+}
+.lesson-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1.5px solid var(--muted2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .2s;
+}
+.lesson-dot.done { background: var(--green); border-color: var(--green); }
+.lesson-dot.done svg { display: block; }
+.lesson-dot svg { display: none; width: 8px; height: 8px; }
+.lesson-dot.active-dot { border-color: var(--accent); }
+.lesson-dot.active-dot::after {
+  content: ''; width: 5px; height: 5px;
+  border-radius: 50%; background: var(--accent);
+}
+.lesson-label {
+  font-size: 11px; color: var(--muted); flex: 1;
+  transition: color .2s; line-height: 1.4;
+  font-family: var(--font);
+}
+.lesson-item:hover .lesson-label,
+.lesson-item.active .lesson-label { color: var(--text); }
+.lesson-duration {
+  font-family: var(--font-mono); font-size: 9px; color: var(--muted2);
+}
+.lesson-lock { width: 10px; height: 10px; opacity: 0.2; }
+
+/* ── MAIN ── */
+main {
+  flex: 1; overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+main::-webkit-scrollbar { width: 3px; }
+main::-webkit-scrollbar-thumb { background: var(--border2); }
+
+/* ── VIDEO AREA ── */
+.video-zone {
+  background: #000; aspect-ratio: 16/9;
+  max-height: 58vh;
+  display: flex; align-items: center;
+  justify-content: center; flex-direction: column; gap: 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; position: relative; overflow: hidden;
+}
+.video-zone::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(184,240,84,0.03) 0%, transparent 65%);
+}
+.play-btn {
+  width: 60px; height: 60px; border-radius: 50%;
+  border: 1.5px solid var(--accent-dim);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .25s; background: var(--accent2);
+  position: relative; z-index: 1;
+}
+.video-zone:hover .play-btn {
+  background: var(--accent3); border-color: var(--accent);
+  transform: scale(1.06);
+}
+.play-btn svg { width: 20px; height: 20px; fill: var(--accent); margin-left: 3px; }
+.video-label {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.1em; color: var(--muted);
+  text-transform: uppercase; position: relative; z-index: 1;
+}
+
+/* ── LESSON CONTENT ── */
+.lesson-content { padding: 36px 48px; max-width: 760px; }
+.lesson-meta {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+}
+.lesson-tag {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.12em; color: var(--accent); text-transform: uppercase;
+  border: 1px solid rgba(184,240,84,0.25); padding: 3px 8px; border-radius: 3px;
+}
+.lesson-num-label {
+  font-family: var(--font-mono); font-size: 10px; color: var(--muted2);
+}
+.lesson-main-title {
+  font-family: var(--font-display);
+  font-size: 28px; font-weight: 800;
+  letter-spacing: -0.5px; line-height: 1.15;
+  margin-bottom: 12px;
+}
+.lesson-subtitle {
+  font-size: 13px; color: var(--muted);
+  line-height: 1.75; margin-bottom: 32px; max-width: 520px;
+}
+
+/* ── KEY POINTS ── */
+.key-points {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-bottom: 36px;
+}
+.key-point {
+  background: var(--panel2); border: 1px solid var(--border2);
+  border-radius: 6px; padding: 14px;
+  display: flex; gap: 12px; align-items: flex-start;
+  transition: border-color .2s;
+}
+.key-point:hover { border-color: rgba(184,240,84,0.2); }
+.kp-icon {
+  width: 26px; height: 26px; border-radius: 4px;
+  background: var(--accent2); display: flex;
+  align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 12px;
+}
+.kp-text strong {
+  display: block; font-size: 11px; font-weight: 600;
+  color: var(--text); margin-bottom: 3px;
+  font-family: var(--font-display); letter-spacing: 0.02em;
+}
+.kp-text span { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* ── RESOURCES ── */
+.section-label {
+  font-family: var(--font-mono); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted2); margin-bottom: 12px;
+}
+.resource-list {
+  display: flex; flex-direction: column;
+  gap: 6px; margin-bottom: 36px;
+}
+.resource-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px; background: var(--panel2);
+  border: 1px solid var(--border2); border-radius: 5px;
+  cursor: pointer; transition: all .15s; text-decoration: none;
+}
+.resource-item:hover {
+  border-color: rgba(184,240,84,0.25); background: var(--accent2);
+}
+.resource-icon { font-size: 13px; width: 18px; text-align: center; flex-shrink: 0; }
+.resource-name { font-size: 12px; color: var(--text); flex: 1; }
+.resource-tag {
+  font-family: var(--font-mono); font-size: 8px;
+  letter-spacing: 0.1em; color: var(--muted2); text-transform: uppercase;
+}
+
+/* ── COMPLETE BTN ── */
+.complete-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px; background: var(--accent); color: #000;
+  font-family: var(--font-display); font-size: 13px;
+  font-weight: 800; letter-spacing: 0.5px;
+  border: none; border-radius: 5px; cursor: pointer;
+  transition: all .2s;
+}
+.complete-btn:hover { background: #cbff5e; transform: translateY(-1px); }
+.complete-btn:active { transform: translateY(0); }
+
+/* ── RIGHT PANEL ── */
+.right-panel {
+  width: 240px; min-width: 240px;
+  background: var(--panel); border-left: 1px solid var(--border);
+  overflow-y: auto; padding: 20px 16px;
+  display: flex; flex-direction: column; gap: 28px;
+}
+.right-panel::-webkit-scrollbar { width: 3px; }
+.right-panel::-webkit-scrollbar-thumb { background: var(--border2); }
+.panel-section-title {
+  font-family: var(--font-mono); font-size: 8px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted2); margin-bottom: 12px;
+}
+
+/* ── STAT GRID ── */
+.stat-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+}
+.stat-card {
+  background: var(--panel2); border: 1px solid var(--border2);
+  border-radius: 5px; padding: 12px 10px;
+}
+.stat-value {
+  font-family: var(--font-display); font-size: 22px;
+  font-weight: 800; color: var(--accent); line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-label { font-size: 10px; color: var(--muted); }
+
+/* ── TIER CARDS ── */
+.tier-card {
+  border: 1px solid var(--border2);
+  border-radius: 6px; padding: 14px;
+  margin-bottom: 8px; transition: border-color .15s;
+}
+.tier-card.current {
+  border-color: rgba(184,240,84,0.3);
+  background: var(--accent2);
+}
+.tier-card.locked { opacity: 0.45; }
+.tier-name {
+  font-family: var(--font-display); font-size: 13px;
+  font-weight: 800; color: var(--text);
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 4px;
+}
+.tier-check {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--accent); display: flex;
+  align-items: center; justify-content: center;
+}
+.tier-check svg { width: 8px; height: 8px; stroke: #000; stroke-width: 2; fill: none; }
+.tier-price {
+  font-family: var(--font-mono); font-size: 16px;
+  font-weight: 500; color: var(--accent); margin-bottom: 4px;
+}
+.tier-desc { font-size: 10px; color: var(--muted); line-height: 1.5; }
+
+/* ── COMMUNITY FEED ── */
+.community-item {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.community-item:last-child { border-bottom: none; }
+.comm-avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--panel3); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 8px;
+  font-weight: 700; color: var(--muted); flex-shrink: 0;
+}
+.comm-text {
+  font-size: 11px; color: var(--muted); line-height: 1.5;
+}
+.comm-text strong { color: var(--text); font-weight: 600; }
+.comm-time {
+  display: block; font-family: var(--font-mono);
+  font-size: 9px; color: var(--muted2); margin-top: 2px;
+}
+
+/* ── FOUNDER MODE ── */
+.founder-bar {
+  display: none; align-items: center; gap: 10px;
+  padding: 6px 16px; background: rgba(184,240,84,0.08);
+  border-bottom: 1px solid rgba(184,240,84,0.2);
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent);
+}
+.founder-bar.visible { display: flex; }
+.founder-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.founder-bar span { flex:1; }
+.founder-exit { cursor:pointer; color:var(--muted); transition:color .15s; padding: 2px 6px; border-radius:3px; border: 1px solid var(--border2); }
+.founder-exit:hover { color: var(--red); border-color: var(--red); }
+
+/* founder editable fields */
+.f-edit {
+  background: transparent; border: none; outline: none;
+  font: inherit; color: inherit; width: 100%;
+  cursor: text; border-radius: 3px;
+  transition: background .15s, box-shadow .15s;
+}
+body.founder-active .f-edit:hover {
+  background: rgba(184,240,84,0.06);
+  box-shadow: 0 0 0 1px rgba(184,240,84,0.2);
+}
+body.founder-active .f-edit:focus {
+  background: rgba(184,240,84,0.1);
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+body.founder-active [data-editable]:hover { outline: 1px dashed rgba(184,240,84,0.25); outline-offset: 2px; border-radius:3px; }
+
+/* video founder controls */
+.video-founder-wrap { position: relative; }
+.video-add-btn {
+  display: none; position: absolute; inset:0;
+  align-items: center; justify-content: center; flex-direction: column; gap: 10px;
+  background: rgba(0,0,0,0.7); cursor: pointer; z-index: 10;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--accent);
+}
+.video-add-btn svg { width: 32px; height: 32px; stroke: var(--accent); stroke-width: 1.5; fill: none; }
+body.founder-active .video-add-btn { display: flex; }
+body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
+
+/* video edit panel */
+.video-edit-panel {
+  display: none; background: var(--panel2);
+  border-bottom: 1px solid var(--border2);
+  padding: 14px 20px; gap: 10px; align-items: center;
+  font-family: var(--font-mono); font-size: 11px;
+}
+.video-edit-panel.open { display: flex; }
+.video-edit-panel input {
+  flex: 1; background: var(--bg); border: 1px solid var(--border2);
+  border-radius: 4px; padding: 7px 10px; color: var(--text);
+  font-family: var(--font-mono); font-size: 11px; outline: none;
+  transition: border-color .15s;
+}
+.video-edit-panel input:focus { border-color: var(--accent); }
+.video-edit-panel input::placeholder { color: var(--muted2); }
+.vid-save-btn {
+  padding: 7px 16px; background: var(--accent); color: #000;
+  border: none; border-radius: 4px; cursor: pointer;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;
+  transition: background .15s;
+}
+.vid-save-btn:hover { background: #cbff5e; }
+.vid-clear-btn {
+  padding: 7px 12px; background: transparent; color: var(--muted);
+  border: 1px solid var(--border2); border-radius: 4px; cursor: pointer;
+  font-family: var(--font-mono); font-size: 10px; white-space: nowrap;
+  transition: all .15s;
+}
+.vid-clear-btn:hover { color: var(--red); border-color: var(--red); }
+
+/* founder modal */
+.founder-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+  align-items: center; justify-content: center;
+}
+.founder-modal-overlay.open { display: flex; }
+.founder-modal {
+  background: var(--panel); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 32px; width: 360px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.founder-modal-title {
+  font-family: var(--font-display); font-size: 18px; font-weight: 800;
+  color: var(--accent); letter-spacing: 0.5px;
+}
+.founder-modal-sub {
+  font-size: 11px; color: var(--muted); margin-top: -8px; line-height:1.5;
+}
+.founder-modal input {
+  width: 100%; padding: 10px 14px; background: var(--bg);
+  border: 1px solid var(--border2); border-radius: 5px;
+  color: var(--text); font-family: var(--font-mono); font-size: 13px;
+  outline: none; letter-spacing: 2px; transition: border-color .15s;
+}
+.founder-modal input:focus { border-color: var(--accent); }
+.founder-modal input.error { border-color: var(--red); animation: shake .3s; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+.founder-modal-actions { display: flex; gap: 8px; }
+.founder-modal-confirm {
+  flex:1; padding: 10px; background: var(--accent); color: #000;
+  border: none; border-radius: 5px; cursor: pointer;
+  font-family: var(--font-display); font-size: 13px; font-weight: 800;
+  transition: background .15s;
+}
+.founder-modal-confirm:hover { background: #cbff5e; }
+.founder-modal-cancel {
+  padding: 10px 16px; background: transparent; color: var(--muted);
+  border: 1px solid var(--border2); border-radius: 5px; cursor: pointer;
+  font-family: var(--font-mono); font-size: 11px; transition: all .15s;
+}
+.founder-modal-cancel:hover { color: var(--text); border-color: var(--muted); }
+
+/* ── TOOL CTA ── */
+.tool-cta {
+  background: var(--panel2); border: 1px solid rgba(184,240,84,0.2);
+  border-radius: 6px; padding: 14px;
+}
+.tool-cta-label {
+  font-family: var(--font-mono); font-size: 8px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--muted2); margin-bottom: 6px;
+}
+.tool-cta-title {
+  font-family: var(--font-display); font-size: 13px;
+  font-weight: 800; color: var(--accent); margin-bottom: 8px;
+}
+.tool-cta-btn {
+  display: block; width: 100%; padding: 8px 0;
+  background: var(--accent); color: #000;
+  font-family: var(--font-display); font-size: 11px;
+  font-weight: 800; letter-spacing: 0.5px;
+  border: none; border-radius: 4px; cursor: pointer;
+  text-align: center; text-decoration: none;
+  transition: background .15s;
+}
+.tool-cta-btn:hover { background: #cbff5e; }
 </style>
 </head>
 <body>
 
+<!-- FOUNDER MODE MODAL -->
+<div class="founder-modal-overlay" id="founder-modal">
+  <div class="founder-modal">
+    <div class="founder-modal-title">⚡ Founder Access</div>
+    <div class="founder-modal-sub">Enter your founder password to unlock edit mode.</div>
+    <input type="password" id="founder-pw-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')founderConfirm()">
+    <div class="founder-modal-actions">
+      <button class="founder-modal-cancel" onclick="founderModalClose()">Cancel</button>
+      <button class="founder-modal-confirm" onclick="founderConfirm()">Unlock</button>
+    </div>
+  </div>
+</div>
+
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">AI Pimp Blueprint</div>
-  <ul class="nav-tabs">
-    <li><a href="#" class="active">Classroom</a></li>
-    <li><a href="#">Community</a></li>
-    <li><a href="#">Tools</a></li>
-    <li><a href="#">Leaderboard</a></li>
-  </ul>
-  <div class="nav-right">
-    <span class="tier-badge">Beginner</span>
-    <div class="avatar">JP</div>
+  <a href="/" class="nav-logo" id="nav-logo-trigger">BUILD<em>AI</em>MODELS</a>
+  <a href="/course" class="nav-link">Course</a>
+  <a href="/studio" class="nav-link">Studio</a>
+  <a href="/account" class="nav-link">Account</a>
+  <div class="nav-right" style="margin-left:auto;display:flex;align-items:center;gap:12px">
+    <div class="tier-badge">Beginner</div>
+    <div class="avatar">JA</div>
+    <button class="nav-btn" onclick="handleSignOut()">Sign Out</button>
   </div>
 </nav>
+
+<!-- FOUNDER BAR -->
+<div class="founder-bar" id="founder-bar">
+  <div class="founder-dot"></div>
+  <span>FOUNDER MODE — click any text to edit · video zones unlocked · changes saved to localStorage</span>
+  <button class="founder-exit" onclick="founderExit()">Exit</button>
+</div>
 
 <div class="layout">
 
   <!-- SIDEBAR -->
   <sidebar>
     <div class="sidebar-header">
-      <div class="course-title">AI Pimp 1.0 — Beginner</div>
+      <div class="course-label">You're enrolled in</div>
+      <div class="course-title-sidebar">AI MODEL BLUEPRINT</div>
       <div class="progress-wrap">
         <div class="progress-bar-outer">
-          <div class="progress-bar-inner" style="width: 22%"></div>
+          <div class="progress-bar-inner" id="progress-bar" style="width:22%"></div>
         </div>
-        <span class="progress-pct">22%</span>
+        <span class="progress-pct" id="progress-pct">22%</span>
       </div>
     </div>
 
-    <!-- MODULE 1 -->
+    <!-- MODULE 01 -->
     <div class="module-section">
       <div class="module-header open" onclick="toggleModule(this)">
         <span class="module-num">01</span>
-        <span class="module-title-text">Welcome</span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod01-title">Foundation</span></span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
       </div>
       <div class="module-lessons open">
-        <div class="lesson-item active" onclick="selectLesson(this, 'mindset')">
-          <div class="lesson-dot done">
-            <svg viewBox="0 0 10 10" fill="none" stroke="#000" stroke-width="2"><path d="M2 5l2.5 2.5L8 3"/></svg>
-          </div>
-          <span class="lesson-label">The operator mindset</span>
+        <div class="lesson-item active" onclick="selectLesson(this,'mindset')">
+          <div class="lesson-dot active-dot"></div>
+          <span class="lesson-label">The Operator Mindset</span>
           <span class="lesson-duration">4:22</span>
         </div>
-        <div class="lesson-item" onclick="selectLesson(this, 'overview')">
-          <div class="lesson-dot active-dot"></div>
-          <span class="lesson-label">How this works</span>
+        <div class="lesson-item" onclick="selectLesson(this,'overview')">
+          <div class="lesson-dot"></div>
+          <span class="lesson-label">How This Works</span>
           <span class="lesson-duration">3:10</span>
         </div>
-        <div class="lesson-item" onclick="selectLesson(this, 'tools-overview')">
+        <div class="lesson-item" onclick="selectLesson(this,'tools-overview')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Software & links</span>
+          <span class="lesson-label">Software & Links</span>
           <span class="lesson-duration">5:44</span>
         </div>
       </div>
     </div>
 
-    <!-- MODULE 2 -->
+    <!-- MODULE 02 -->
     <div class="module-section">
       <div class="module-header" onclick="toggleModule(this)">
         <span class="module-num">02</span>
-        <span class="module-title-text">Picking Your Niche</span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod02-title">Model Concept</span></span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
       </div>
       <div class="module-lessons">
-        <div class="lesson-item" onclick="selectLesson(this, 'niche-research')">
+        <div class="lesson-item" onclick="selectLesson(this,'niche-research')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">What makes money in 2025</span>
+          <span class="lesson-label">What Makes Money in 2025</span>
           <span class="lesson-duration">6:14</span>
         </div>
-        <div class="lesson-item" onclick="selectLesson(this, 'niche-examples')">
+        <div class="lesson-item" onclick="selectLesson(this,'niche-examples')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Niche breakdowns & examples</span>
+          <span class="lesson-label">Niche Breakdowns & Examples</span>
           <span class="lesson-duration">8:32</span>
         </div>
-        <div class="lesson-item" onclick="selectLesson(this, 'niche-decision')">
+        <div class="lesson-item" onclick="selectLesson(this,'niche-decision')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Locking in your model concept</span>
+          <span class="lesson-label">Locking In Your Model Concept</span>
           <span class="lesson-duration">4:55</span>
         </div>
       </div>
     </div>
 
-    <!-- MODULE 3 -->
+    <!-- MODULE 03 -->
     <div class="module-section">
       <div class="module-header" onclick="toggleModule(this)">
         <span class="module-num">03</span>
-        <span class="module-title-text">AI Model Creation</span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod03-title">Building Your Model</span></span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
       </div>
       <div class="module-lessons">
-        <div class="lesson-item" onclick="selectLesson(this, 'persona')">
+        <div class="lesson-item" onclick="selectLesson(this,'persona')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Building the persona</span>
+          <span class="lesson-label">Building the Persona</span>
           <span class="lesson-duration">7:20</span>
         </div>
-        <div class="lesson-item" onclick="selectLesson(this, 'image-gen')">
+        <div class="lesson-item" onclick="selectLesson(this,'image-gen')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Generating your model (tool walkthrough)</span>
+          <span class="lesson-label">Generating Your Model</span>
           <span class="lesson-duration">12:08</span>
         </div>
-        <div class="lesson-item" onclick="selectLesson(this, 'consistency')">
+        <div class="lesson-item" onclick="selectLesson(this,'consistency')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Consistency & vault setup</span>
+          <span class="lesson-label">DreamPrint Vault Setup</span>
           <span class="lesson-duration">9:41</span>
         </div>
-        <div class="lesson-item" onclick="selectLesson(this, 'nsfw')">
+        <div class="lesson-item" onclick="selectLesson(this,'nsfw')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">The NSFW tab — Fanvue content</span>
+          <span class="lesson-label">NSFW Studio — Fanvue Content</span>
           <span class="lesson-duration">10:15</span>
         </div>
       </div>
     </div>
 
-    <!-- MODULE 4 -->
+    <!-- MODULE 04 -->
     <div class="module-section">
       <div class="module-header" onclick="toggleModule(this)">
         <span class="module-num">04</span>
-        <span class="module-title-text">Image to Video</span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod04-title">Video & Reels</span></span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
       </div>
       <div class="module-lessons">
-        <div class="lesson-item" onclick="selectLesson(this, 'motion')">
+        <div class="lesson-item" onclick="selectLesson(this,'motion')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Motion control basics (Kling 3.0)</span>
+          <span class="lesson-label">Motion Control Basics</span>
           <span class="lesson-duration">8:30</span>
         </div>
-        <div class="lesson-item" onclick="selectLesson(this, 'reels')">
+        <div class="lesson-item" onclick="selectLesson(this,'reels')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Reel recreation for IG & TikTok</span>
+          <span class="lesson-label">Reel Recreation for IG & TikTok</span>
           <span class="lesson-duration">11:22</span>
         </div>
       </div>
     </div>
 
-    <!-- MODULE 5 -->
+    <!-- MODULE 05 -->
     <div class="module-section">
       <div class="module-header" onclick="toggleModule(this)">
         <span class="module-num">05</span>
-        <span class="module-title-text">Fanvue Setup</span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod05-title">Fanvue Monetisation</span></span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
       </div>
       <div class="module-lessons">
-        <div class="lesson-item" onclick="selectLesson(this, 'fanvue-setup')">
+        <div class="lesson-item" onclick="selectLesson(this,'fanvue-setup')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Profile & verification</span>
+          <span class="lesson-label">Profile & Verification</span>
           <span class="lesson-duration">5:18</span>
         </div>
-        <div class="lesson-item" onclick="selectLesson(this, 'fanvue-pricing')">
+        <div class="lesson-item" onclick="selectLesson(this,'fanvue-pricing')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Pricing your subscriptions & PPV</span>
+          <span class="lesson-label">Pricing Subscriptions & PPV</span>
           <span class="lesson-duration">7:44</span>
         </div>
-        <div class="lesson-item" onclick="selectLesson(this, 'fanvue-content')">
+        <div class="lesson-item" onclick="selectLesson(this,'fanvue-content')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Content batching & scheduling</span>
+          <span class="lesson-label">Content Batching & Scheduling</span>
           <span class="lesson-duration">9:02</span>
         </div>
       </div>
     </div>
 
-    <!-- MODULE 6 -->
+    <!-- MODULE 06 -->
     <div class="module-section">
       <div class="module-header" onclick="toggleModule(this)">
         <span class="module-num">06</span>
-        <span class="module-title-text">Marketing on IG</span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod06-title">Social Growth</span></span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
       </div>
       <div class="module-lessons">
-        <div class="lesson-item" onclick="selectLesson(this, 'ig-bio')">
+        <div class="lesson-item" onclick="selectLesson(this,'ig-bio')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Profile setup & bio psychology</span>
+          <span class="lesson-label">Profile Setup & Bio Psychology</span>
           <span class="lesson-duration">6:00</span>
         </div>
-        <div class="lesson-item" onclick="selectLesson(this, 'ig-content')">
+        <div class="lesson-item" onclick="selectLesson(this,'ig-content')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">What to post & when</span>
+          <span class="lesson-label">What to Post & When</span>
           <span class="lesson-duration">8:15</span>
         </div>
-        <div class="lesson-item" onclick="selectLesson(this, 'ig-growth')">
+        <div class="lesson-item" onclick="selectLesson(this,'ig-growth')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Growing to first 1k followers</span>
+          <span class="lesson-label">Growing to First 1k Followers</span>
           <span class="lesson-duration">10:33</span>
         </div>
       </div>
     </div>
 
-    <!-- MODULE 7 -->
+    <!-- MODULE 07 -->
     <div class="module-section">
       <div class="module-header" onclick="toggleModule(this)">
         <span class="module-num">07</span>
-        <span class="module-title-text">Tips & Tricks</span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2l4 3-4 3"/></svg></span>
+        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod07-title">Advanced & Secrets</span></span>
+        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
       </div>
       <div class="module-lessons">
-        <div class="lesson-item" onclick="selectLesson(this, 'tips')">
+        <div class="lesson-item" onclick="selectLesson(this,'tips')">
           <div class="lesson-dot"></div>
-          <span class="lesson-label">Operator secrets & shortcuts</span>
+          <span class="lesson-label">Operator Secrets & Shortcuts</span>
           <span class="lesson-duration">15:00</span>
         </div>
       </div>
@@ -946,50 +724,63 @@
   <!-- MAIN -->
   <main id="main-content">
 
-    <div class="video-zone" onclick="playVideo()">
-      <div class="play-btn">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    <div class="video-founder-wrap">
+      <div class="video-zone" id="video-zone" onclick="videoZoneClick()">
+        <div class="play-btn" id="play-btn-el">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span class="video-label" id="video-label-text">The operator mindset — 4:22</span>
       </div>
-      <span class="video-label">The operator mindset — 4:22</span>
+      <!-- founder overlay shown in founder mode when no video set -->
+      <div class="video-add-btn" id="video-add-btn" onclick="openVideoPanel()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Add / Replace Video
+      </div>
+    </div>
+
+    <!-- video edit panel (founder only) -->
+    <div class="video-edit-panel" id="video-edit-panel">
+      <span style="color:var(--muted);white-space:nowrap">Video URL</span>
+      <input type="text" id="video-url-input" placeholder="YouTube, Vimeo, or direct MP4 URL…">
+      <button class="vid-clear-btn" onclick="clearVideo()">Clear</button>
+      <button class="vid-save-btn" onclick="saveVideo()">Save & Embed</button>
     </div>
 
     <div class="lesson-content" id="lesson-body">
-
       <div class="lesson-meta">
-        <span class="lesson-tag">Module 01</span>
-        <span class="lesson-num-label">Lesson 1 of 3</span>
+        <span class="lesson-tag" id="lesson-tag-el">Module 01</span>
+        <span class="lesson-num-label" id="lesson-num-el">Lesson 1 of 3</span>
       </div>
+      <h1 class="lesson-main-title" id="lesson-title-el"><span class="f-edit" contenteditable="false" data-key="title">The Operator Mindset</span></h1>
+      <p class="lesson-subtitle" id="lesson-sub-el"><span class="f-edit" contenteditable="false" data-key="sub">Before you generate a single image, you need to think like a business owner. This lesson covers the psychology behind building AI models that generate revenue — and why most people fail before they start.</span></p>
 
-      <h1 class="lesson-main-title">The Operator Mindset</h1>
-      <p class="lesson-subtitle">Before you generate a single image, you need to think like a business owner. This lesson covers the psychology behind building AI models that print — and why most people fail before they start.</p>
-
-      <div class="key-points">
+      <div class="key-points" id="key-points-container">
         <div class="key-point">
-          <div class="kp-icon">🎯</div>
+          <div class="kp-icon"><span class="f-edit" contenteditable="false" data-key="kp0-icon">🎯</span></div>
           <div class="kp-text">
-            <strong>Treat it like a brand</strong>
-            <span>Your model is a business. Every post, message, and image is a brand touchpoint.</span>
+            <strong><span class="f-edit" contenteditable="false" data-key="kp0-title">Treat it like a brand</span></strong>
+            <span><span class="f-edit" contenteditable="false" data-key="kp0-body">Your model is a business. Every post, message, and image is a brand touchpoint.</span></span>
           </div>
         </div>
         <div class="key-point">
-          <div class="kp-icon">🔁</div>
+          <div class="kp-icon"><span class="f-edit" contenteditable="false" data-key="kp1-icon">🔁</span></div>
           <div class="kp-text">
-            <strong>Systems over grind</strong>
-            <span>Operators batch, schedule, and automate. They don't hustle daily — they build machines.</span>
+            <strong><span class="f-edit" contenteditable="false" data-key="kp1-title">Systems over grind</span></strong>
+            <span><span class="f-edit" contenteditable="false" data-key="kp1-body">Operators batch, schedule, and automate. They don't hustle daily — they build machines.</span></span>
           </div>
         </div>
         <div class="key-point">
-          <div class="kp-icon">📊</div>
+          <div class="kp-icon"><span class="f-edit" contenteditable="false" data-key="kp2-icon">📊</span></div>
           <div class="kp-text">
-            <strong>Revenue is the scoreboard</strong>
-            <span>Followers are vanity. Subscribers are revenue. Track the right number.</span>
+            <strong><span class="f-edit" contenteditable="false" data-key="kp2-title">Revenue is the scoreboard</span></strong>
+            <span><span class="f-edit" contenteditable="false" data-key="kp2-body">Followers are vanity. Subscribers are revenue. Track the right number.</span></span>
           </div>
         </div>
         <div class="key-point">
-          <div class="kp-icon">⚡</div>
+          <div class="kp-icon"><span class="f-edit" contenteditable="false" data-key="kp3-icon">⚡</span></div>
           <div class="kp-text">
-            <strong>Speed of execution</strong>
-            <span>The window is open now. The ones who move fastest capture the most territory.</span>
+            <strong><span class="f-edit" contenteditable="false" data-key="kp3-title">Speed of execution</span></strong>
+            <span><span class="f-edit" contenteditable="false" data-key="kp3-body">The window is open now. The ones who move fastest capture the most territory.</span></span>
           </div>
         </div>
       </div>
@@ -1003,7 +794,7 @@
         </a>
         <a href="#" class="resource-item">
           <span class="resource-icon">🔗</span>
-          <span class="resource-name">AI Pimp Tool — Access Link</span>
+          <span class="resource-name">BuildAIModels Studio — Access Link</span>
           <span class="resource-tag">Tool</span>
         </a>
         <a href="#" class="resource-item">
@@ -1013,10 +804,7 @@
         </a>
       </div>
 
-      <button class="complete-btn" onclick="markComplete()">
-        Mark complete →
-      </button>
-
+      <button class="complete-btn" onclick="markComplete()">Mark complete →</button>
     </div>
   </main>
 
@@ -1027,15 +815,15 @@
       <div class="panel-section-title">Your progress</div>
       <div class="stat-grid">
         <div class="stat-card">
-          <div class="stat-value">2</div>
+          <div class="stat-value" id="stat-done">2</div>
           <div class="stat-label">Lessons done</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">7</div>
-          <div class="stat-label">Modules total</div>
+          <div class="stat-label">Modules</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">22%</div>
+          <div class="stat-value" id="stat-pct">22%</div>
           <div class="stat-label">Complete</div>
         </div>
         <div class="stat-card">
@@ -1046,7 +834,7 @@
     </div>
 
     <div>
-      <div class="panel-section-title">Your tier</div>
+      <div class="panel-section-title">Your plan</div>
       <div class="tier-card current">
         <div class="tier-name">
           Beginner
@@ -1054,13 +842,22 @@
             <svg viewBox="0 0 10 10"><path d="M2 5l2.5 2.5L8 3"/></svg>
           </div>
         </div>
-        <div class="tier-price">$99</div>
-        <div class="tier-desc">Full beginner course + AI Pimp Tool access</div>
+        <div class="tier-price">£99</div>
+        <div class="tier-desc">Full beginner course + BuildAIModels studio access</div>
       </div>
       <div class="tier-card locked">
         <div class="tier-name">Advanced</div>
-        <div class="tier-price">$299</div>
-        <div class="tier-desc">Agency scaling, automation, team operations — coming soon</div>
+        <div class="tier-price">£299</div>
+        <div class="tier-desc">Agency scaling, automation, multi-model ops — coming soon</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel-section-title">Studio</div>
+      <div class="tool-cta">
+        <div class="tool-cta-label">BuildAIModels</div>
+        <div class="tool-cta-title">Open Your Studio →</div>
+        <a href="/studio" class="tool-cta-btn">Launch Studio</a>
       </div>
     </div>
 
@@ -1083,7 +880,7 @@
       <div class="community-item">
         <div class="comm-avatar">JR</div>
         <div class="comm-text">
-          <strong>JadeR</strong> posted: "vault system is a game changer"
+          <strong>JadeR</strong> posted: "DreamPrint vault is a game changer"
           <span class="comm-time">8h ago</span>
         </div>
       </div>
@@ -1101,67 +898,258 @@
 </div>
 
 <script>
-  function toggleModule(header) {
-    const lessons = header.nextElementSibling;
-    const isOpen = header.classList.contains('open');
-    header.classList.toggle('open', !isOpen);
-    lessons.classList.toggle('open', !isOpen);
+// ── CONFIG ──────────────────────────────────────────────────────
+// Loads founder password from config.js (window.KIRA_CONFIG.founder_password)
+// Falls back to 'founder' if config not present (local testing)
+const FOUNDER_PW = window.KIRA_CONFIG?.founder_password || 'founder';
+const STORAGE_KEY = 'bam_founder_session';
+const CONTENT_KEY = 'bam_course_content';
+
+// ── LESSON DATA ─────────────────────────────────────────────────
+const LESSONS = {
+  'mindset':       { mod:'01', num:'1 of 3', title:'The Operator Mindset',          sub:'Before you generate a single image, you need to think like a business owner. This lesson covers the psychology behind building AI models that generate revenue — and why most people fail before they start.',  dur:'4:22' },
+  'overview':      { mod:'01', num:'2 of 3', title:'How This Works',                sub:'A complete overview of the blueprint — how the course is structured, how the tool integrates, and the fastest path from zero to first revenue.', dur:'3:10' },
+  'tools-overview':{ mod:'01', num:'3 of 3', title:'Software & Links',              sub:'Every tool you need, every link, every API — all in one place. Bookmark this lesson.', dur:'5:44' },
+  'niche-research':{ mod:'02', num:'1 of 3', title:'What Makes Money in 2025',      sub:'Not all niches are equal. This lesson breaks down the models generating the most revenue right now and why.',  dur:'6:14' },
+  'niche-examples':{ mod:'02', num:'2 of 3', title:'Niche Breakdowns & Examples',   sub:"Real model examples across different niches — fitness, alt, cosplay, lifestyle. What works, what doesn't.", dur:'8:32' },
+  'niche-decision':{ mod:'02', num:'3 of 3', title:'Locking In Your Model Concept', sub:"By the end of this lesson you'll have a defined model concept ready to build. No more overthinking.", dur:'4:55' },
+  'persona':       { mod:'03', num:'1 of 4', title:'Building the Persona',          sub:'Name, backstory, personality, aesthetic. The deeper the persona, the stronger the parasocial bond — and the higher the LTV.', dur:'7:20' },
+  'image-gen':     { mod:'03', num:'2 of 4', title:'Generating Your Model',         sub:'Full studio walkthrough — prompts, settings, getting consistent results on the first batch.', dur:'12:08' },
+  'consistency':   { mod:'03', num:'3 of 4', title:'DreamPrint Vault Setup',        sub:'The DreamPrint system is what separates professionals from amateurs. Set it up right and your model looks identical across every generation.', dur:'9:41' },
+  'nsfw':          { mod:'03', num:'4 of 4', title:'NSFW Studio — Fanvue Content',  sub:'Purpose-built for Fanvue. How to use the NSFW studio tab, what converts, and how to stay compliant.', dur:'10:15' },
+  'motion':        { mod:'04', num:'1 of 2', title:'Motion Control Basics',         sub:'Kling 3.0 walkthrough — bring your static images to life with motion that looks cinematic.', dur:'8:30' },
+  'reels':         { mod:'04', num:'2 of 2', title:'Reel Recreation for IG & TikTok', sub:'Copy the format of viral reels using your AI model. The fastest way to get free traffic.', dur:'11:22' },
+  'fanvue-setup':  { mod:'05', num:'1 of 3', title:'Profile & Verification',        sub:'Get verified, set up correctly, and avoid the common mistakes that get accounts flagged.', dur:'5:18' },
+  'fanvue-pricing':{ mod:'05', num:'2 of 3', title:'Pricing Subscriptions & PPV',   sub:'The pricing psychology behind subscriptions, PPV, and tips. Where most operators leave money on the table.', dur:'7:44' },
+  'fanvue-content':{ mod:'05', num:'3 of 3', title:'Content Batching & Scheduling', sub:"One session per week. That's all it takes when you batch properly. Full workflow walkthrough.", dur:'9:02' },
+  'ig-bio':        { mod:'06', num:'1 of 3', title:'Profile Setup & Bio Psychology', sub:'Your bio is your funnel. Every word is deliberate. This lesson covers the exact formula.', dur:'6:00' },
+  'ig-content':    { mod:'06', num:'2 of 3', title:'What to Post & When',           sub:'Content that drives follows, warms the audience, and converts to Fanvue — the full content matrix.', dur:'8:15' },
+  'ig-growth':     { mod:'06', num:'3 of 3', title:'Growing to First 1k Followers', sub:'The fastest path to 1,000 followers without paid ads. Exact methods, no fluff.', dur:'10:33' },
+  'tips':          { mod:'07', num:'1 of 1', title:'Operator Secrets & Shortcuts',  sub:'The things you only learn after doing this for months — condensed into one lesson.', dur:'15:00' }
+};
+
+let completedCount = 2;
+const totalLessons = Object.keys(LESSONS).length;
+let currentLessonId = 'mindset';
+
+// ── CONTENT STORE ────────────────────────────────────────────────
+// Saves all founder edits to localStorage keyed by lesson id
+function getContent() {
+  try { return JSON.parse(localStorage.getItem(CONTENT_KEY) || '{}'); } catch { return {}; }
+}
+function saveContent(lessonId, key, value) {
+  const data = getContent();
+  if (!data[lessonId]) data[lessonId] = {};
+  data[lessonId][key] = value;
+  localStorage.setItem(CONTENT_KEY, JSON.stringify(data));
+}
+function getField(lessonId, key, fallback) {
+  const data = getContent();
+  return data[lessonId]?.[key] ?? fallback;
+}
+
+// ── FOUNDER AUTH ─────────────────────────────────────────────────
+let logoClickCount = 0, logoClickTimer = null;
+
+document.getElementById('nav-logo-trigger').addEventListener('click', function(e) {
+  e.preventDefault();
+  if (isFounder()) return; // already in founder mode
+  logoClickCount++;
+  clearTimeout(logoClickTimer);
+  logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 600);
+  if (logoClickCount >= 3) {
+    logoClickCount = 0;
+    founderModalOpen();
+  }
+});
+
+function isFounder() { return localStorage.getItem(STORAGE_KEY) === '1'; }
+
+function founderModalOpen() {
+  document.getElementById('founder-modal').classList.add('open');
+  setTimeout(() => document.getElementById('founder-pw-input').focus(), 100);
+}
+function founderModalClose() {
+  document.getElementById('founder-modal').classList.remove('open');
+  document.getElementById('founder-pw-input').value = '';
+  document.getElementById('founder-pw-input').classList.remove('error');
+}
+function founderConfirm() {
+  const val = document.getElementById('founder-pw-input').value;
+  if (val === FOUNDER_PW) {
+    localStorage.setItem(STORAGE_KEY, '1');
+    founderModalClose();
+    founderActivate();
+  } else {
+    const inp = document.getElementById('founder-pw-input');
+    inp.classList.add('error');
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('error'), 400);
+  }
+}
+function founderExit() {
+  localStorage.removeItem(STORAGE_KEY);
+  document.body.classList.remove('founder-active');
+  document.getElementById('founder-bar').classList.remove('visible');
+  setEditable(false);
+}
+function founderActivate() {
+  document.body.classList.add('founder-active');
+  document.getElementById('founder-bar').classList.add('visible');
+  setEditable(true);
+  loadSavedEdits();
+}
+function setEditable(on) {
+  document.querySelectorAll('.f-edit').forEach(el => {
+    el.contentEditable = on ? 'true' : 'false';
+    el.addEventListener('blur', onFieldBlur);
+  });
+}
+function onFieldBlur(e) {
+  const key = e.target.dataset.key;
+  if (key) saveContent(currentLessonId, key, e.target.textContent);
+}
+
+// ── VIDEO MANAGEMENT ─────────────────────────────────────────────
+function videoZoneClick() {
+  if (isFounder()) { openVideoPanel(); return; }
+  playVideo();
+}
+function openVideoPanel() {
+  const panel = document.getElementById('video-edit-panel');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) {
+    const saved = getField(currentLessonId, 'video_url', '');
+    document.getElementById('video-url-input').value = saved;
+    document.getElementById('video-url-input').focus();
+  }
+}
+function saveVideo() {
+  const url = document.getElementById('video-url-input').value.trim();
+  if (!url) return;
+  saveContent(currentLessonId, 'video_url', url);
+  embedVideo(url);
+  document.getElementById('video-edit-panel').classList.remove('open');
+}
+function clearVideo() {
+  saveContent(currentLessonId, 'video_url', '');
+  document.getElementById('video-url-input').value = '';
+  resetVideoZone(LESSONS[currentLessonId]);
+  document.getElementById('video-edit-panel').classList.remove('open');
+}
+function embedVideo(url) {
+  const zone = document.getElementById('video-zone');
+  let embedUrl = url;
+  // YouTube
+  const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+  if (ytMatch) embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0`;
+  // Vimeo
+  const viMatch = url.match(/vimeo\.com\/(\d+)/);
+  if (viMatch) embedUrl = `https://player.vimeo.com/video/${viMatch[1]}?autoplay=1`;
+
+  if (ytMatch || viMatch) {
+    zone.innerHTML = `<iframe src="${embedUrl}" style="width:100%;height:100%;border:none" allowfullscreen allow="autoplay"></iframe>`;
+  } else {
+    // direct MP4
+    zone.innerHTML = `<video src="${url}" controls autoplay style="width:100%;height:100%;background:#000"></video>`;
+  }
+  zone.style.cursor = 'default';
+  zone.onclick = null;
+}
+function resetVideoZone(l) {
+  const zone = document.getElementById('video-zone');
+  zone.style.cursor = 'pointer';
+  zone.onclick = videoZoneClick;
+  zone.innerHTML = `<div class="play-btn" id="play-btn-el"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><span class="video-label" id="video-label-text">${l.title} — ${l.dur}</span>`;
+}
+function playVideo() {
+  const l = LESSONS[currentLessonId];
+  const savedUrl = getField(currentLessonId, 'video_url', '');
+  if (savedUrl) { embedVideo(savedUrl); return; }
+  const zone = document.getElementById('video-zone');
+  zone.style.background = '#000';
+  zone.innerHTML = '<span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase">[ No video added yet ]</span>';
+}
+
+// ── SAVED EDITS LOADER ───────────────────────────────────────────
+function loadSavedEdits() {
+  const data = getContent();
+  const lessonData = data[currentLessonId] || {};
+  document.querySelectorAll('.f-edit[data-key]').forEach(el => {
+    const key = el.dataset.key;
+    if (lessonData[key] !== undefined) el.textContent = lessonData[key];
+  });
+}
+
+// ── LESSON NAVIGATION ────────────────────────────────────────────
+function toggleModule(header) {
+  const lessons = header.nextElementSibling;
+  const isOpen = header.classList.contains('open');
+  header.classList.toggle('open', !isOpen);
+  lessons.classList.toggle('open', !isOpen);
+}
+
+function selectLesson(item, id) {
+  currentLessonId = id;
+  document.querySelectorAll('.lesson-item').forEach(l => l.classList.remove('active'));
+  item.classList.add('active');
+  const l = LESSONS[id] || LESSONS['mindset'];
+
+  // close video panel if open
+  document.getElementById('video-edit-panel').classList.remove('open');
+
+  // restore or reset video zone
+  const savedUrl = getField(id, 'video_url', '');
+  if (savedUrl) {
+    embedVideo(savedUrl);
+  } else {
+    resetVideoZone(l);
   }
 
-  function selectLesson(item, id) {
-    document.querySelectorAll('.lesson-item').forEach(l => l.classList.remove('active'));
-    item.classList.add('active');
+  // update lesson header info
+  document.getElementById('lesson-tag-el').textContent = 'Module ' + l.mod;
+  document.getElementById('lesson-num-el').textContent = 'Lesson ' + l.num;
 
-    const labels = {
-      'mindset': { mod: '01', num: '1 of 3', title: 'The Operator Mindset', sub: 'Before you generate a single image, you need to think like a business owner. This lesson covers the psychology behind building AI models that print — and why most people fail before they start.', dur: '4:22' },
-      'overview': { mod: '01', num: '2 of 3', title: 'How This Works', sub: 'A complete overview of the blueprint — how the course is structured, how the tool integrates, and the fastest path from zero to first revenue.', dur: '3:10' },
-      'tools-overview': { mod: '01', num: '3 of 3', title: 'Software & Links', sub: 'Every tool you need, every link, every API — all in one place. Bookmark this lesson.', dur: '5:44' },
-      'niche-research': { mod: '02', num: '1 of 3', title: 'What Makes Money in 2025', sub: 'Not all niches are equal. This lesson breaks down the models generating the most revenue right now and why.', dur: '6:14' },
-      'niche-examples': { mod: '02', num: '2 of 3', title: 'Niche Breakdowns & Examples', sub: 'Real model examples across different niches — fitness, alt, cosplay, lifestyle. What works, what doesn\'t.', dur: '8:32' },
-      'niche-decision': { mod: '02', num: '3 of 3', title: 'Locking In Your Model Concept', sub: 'By the end of this lesson you\'ll have a defined model concept ready to build. No more overthinking.', dur: '4:55' },
-      'persona': { mod: '03', num: '1 of 4', title: 'Building the Persona', sub: 'Name, backstory, personality, aesthetic. The deeper the persona, the stronger the parasocial bond — and the higher the LTV.', dur: '7:20' },
-      'image-gen': { mod: '03', num: '2 of 4', title: 'Generating Your Model', sub: 'Full tool walkthrough — prompts, settings, getting consistent results on the first batch.', dur: '12:08' },
-      'consistency': { mod: '03', num: '3 of 4', title: 'Consistency & Vault Setup', sub: 'The vault system is what separates professionals from amateurs. Set it up right and your model looks identical across every generation.', dur: '9:41' },
-      'nsfw': { mod: '03', num: '4 of 4', title: 'The NSFW Tab — Fanvue Content', sub: 'Purpose-built for Fanvue. How to use the NSFW tab, what converts, and how to stay compliant.', dur: '10:15' },
-      'motion': { mod: '04', num: '1 of 2', title: 'Motion Control Basics', sub: 'Kling 3.0 walkthrough — bring your static images to life with motion that looks cinematic.', dur: '8:30' },
-      'reels': { mod: '04', num: '2 of 2', title: 'Reel Recreation for IG & TikTok', sub: 'Copy the format of viral reels using your AI model. The fastest way to get free traffic.', dur: '11:22' },
-      'fanvue-setup': { mod: '05', num: '1 of 3', title: 'Profile & Verification', sub: 'Get verified, set up correctly, and avoid the common mistakes that get accounts flagged.', dur: '5:18' },
-      'fanvue-pricing': { mod: '05', num: '2 of 3', title: 'Pricing Your Subscriptions & PPV', sub: 'The pricing psychology behind subscriptions, PPV, and tips. Where most operators leave money on the table.', dur: '7:44' },
-      'fanvue-content': { mod: '05', num: '3 of 3', title: 'Content Batching & Scheduling', sub: 'One session per week. That\'s all it takes when you batch properly. Full workflow walkthrough.', dur: '9:02' },
-      'ig-bio': { mod: '06', num: '1 of 3', title: 'Profile Setup & Bio Psychology', sub: 'Your bio is your funnel. Every word is deliberate. This lesson covers the exact formula.', dur: '6:00' },
-      'ig-content': { mod: '06', num: '2 of 3', title: 'What to Post & When', sub: 'Content that drives follows, warms the audience, and converts to Fanvue — the full content matrix.', dur: '8:15' },
-      'ig-growth': { mod: '06', num: '3 of 3', title: 'Growing to First 1k Followers', sub: 'The fastest path to 1,000 followers without paid ads. Exact methods, no fluff.', dur: '10:33' },
-      'tips': { mod: '07', num: '1 of 1', title: 'Operator Secrets & Shortcuts', sub: 'The things you only learn after doing this for months — condensed into one lesson.', dur: '15:00' }
-    };
+  // update editable fields with saved or default content
+  const data = getContent();
+  const saved = data[id] || {};
 
-    const l = labels[id] || labels['mindset'];
+  document.querySelector('[data-key="title"]').textContent = saved.title ?? l.title;
+  document.querySelector('[data-key="sub"]').textContent = saved.sub ?? l.sub;
+}
 
-    document.querySelector('.video-label').textContent = l.title + ' — ' + l.dur;
-    document.querySelector('.lesson-tag').textContent = 'Module ' + l.mod;
-    document.querySelector('.lesson-num-label').textContent = 'Lesson ' + l.num;
-    document.querySelector('.lesson-main-title').textContent = l.title;
-    document.querySelector('.lesson-subtitle').textContent = l.sub;
-  }
-
-  function playVideo() {
-    const zone = document.querySelector('.video-zone');
-    zone.style.background = '#0a0a0a';
-    zone.innerHTML = '<span style="font-family:DM Mono,monospace;font-size:11px;color:#6b6b6b;letter-spacing:0.1em;text-transform:uppercase">[ Video placeholder — embed your video here ]</span>';
-  }
-
-  function markComplete() {
-    const activeLesson = document.querySelector('.lesson-item.active');
-    if (activeLesson) {
-      const dot = activeLesson.querySelector('.lesson-dot');
+// ── PROGRESS ────────────────────────────────────────────────────
+function markComplete() {
+  const activeLesson = document.querySelector('.lesson-item.active');
+  if (activeLesson) {
+    const dot = activeLesson.querySelector('.lesson-dot');
+    if (!dot.classList.contains('done')) {
       dot.className = 'lesson-dot done';
       dot.innerHTML = '<svg viewBox="0 0 10 10" fill="none" stroke="#000" stroke-width="2"><path d="M2 5l2.5 2.5L8 3"/></svg>';
-
-      const nextLesson = activeLesson.nextElementSibling;
-      if (nextLesson && nextLesson.classList.contains('lesson-item')) {
-        nextLesson.click();
-      }
+      completedCount++;
+      const pct = Math.round((completedCount / totalLessons) * 100);
+      document.getElementById('progress-bar').style.width = pct + '%';
+      document.getElementById('progress-pct').textContent = pct + '%';
+      document.getElementById('stat-done').textContent = completedCount;
+      document.getElementById('stat-pct').textContent = pct + '%';
     }
+    const next = activeLesson.nextElementSibling;
+    if (next && next.classList.contains('lesson-item')) next.click();
   }
+}
+
+function switchTab(el, tab) {
+  document.querySelectorAll('.nav-tabs li a').forEach(a => a.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────
+if (isFounder()) founderActivate();
+
+function handleSignOut() {
+  localStorage.clear();
+  window.location.href = '/auth';
+}
 </script>
 </body>
 </html>

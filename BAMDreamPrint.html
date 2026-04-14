@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuildAIModels — DreamPrint</title>
+<link rel="stylesheet" href="global.css">
+<style>
+:root {
+  --red2: rgba(255,79,106,0.08);
+  --blue: #5ba8f5;
+  --accent2: rgba(184,240,84,0.08);
+  --accent3: rgba(184,240,84,0.18);
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(184,240,84,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184,240,84,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+.nav-btn.primary {
+  background: var(--accent); color: #000;
+  border-color: var(--accent);
+}
+.nav-btn.primary:hover { background: #cbff5e; }
+
+/* ── LAYOUT ── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 28px 80px;
+  position: relative; z-index: 1;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 24px;
+  margin-bottom: 40px;
+}
+.page-header-left {}
+.page-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 8px;
+}
+.page-title {
+  font-family: var(--font-display);
+  font-size: 36px; font-weight: 800;
+  line-height: 1; letter-spacing: -1px;
+  margin-bottom: 10px;
+}
+.page-title em { color: var(--accent); font-style: normal; }
+.page-desc {
+  font-size: 13px; color: var(--muted);
+  max-width: 480px; line-height: 1.7;
+}
+.page-header-right {
+  display: flex; flex-direction: column;
+  align-items: flex-end; gap: 10px; flex-shrink: 0;
+}
+
+/* ── VAULT SELECTOR ── */
+.vault-selector-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.vault-selector-label {
+  font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--muted2); white-space: nowrap;
+}
+.vault-tabs {
+  display: flex; gap: 4px; flex: 1; flex-wrap: wrap;
+}
+.vault-tab {
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 500;
+  padding: 5px 14px; border-radius: 4px;
+  border: 1px solid var(--border2);
+  background: var(--panel); color: var(--muted);
+  cursor: pointer; transition: all .15s;
+  white-space: nowrap;
+}
+.vault-tab:hover { border-color: var(--muted2); color: var(--text); }
+.vault-tab.active {
+  background: var(--accent2);
+  border-color: rgba(184,240,84,0.3);
+  color: var(--accent);
+}
+.vault-tab-add {
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 700;
+  padding: 5px 12px; border-radius: 4px;
+  border: 1px dashed var(--border2);
+  background: none; color: var(--muted2);
+  cursor: pointer; transition: all .15s;
+}
+.vault-tab-add:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── VAULT CARD ── */
+.vault-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.vault-card-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel2);
+}
+.vault-name-input {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 700;
+  background: none; border: none;
+  color: var(--text); outline: none;
+  flex: 1; min-width: 0;
+}
+.vault-name-input::placeholder { color: var(--muted2); }
+.vault-name-input:focus { color: var(--accent); }
+.vault-status-pill {
+  font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 3px;
+  border: 1px solid var(--border2);
+  color: var(--muted); white-space: nowrap;
+}
+.vault-status-pill.ready {
+  color: var(--green); border-color: rgba(79,209,138,0.25);
+  background: rgba(79,209,138,0.06);
+}
+.vault-status-pill.partial {
+  color: var(--orange); border-color: rgba(245,166,35,0.25);
+  background: rgba(245,166,35,0.06);
+}
+.vault-header-actions {
+  display: flex; gap: 6px; margin-left: auto;
+}
+.vault-action-btn {
+  font-family: var(--font);
+  font-size: 11px; font-weight: 600;
+  padding: 6px 14px; border-radius: 5px;
+  border: 1px solid var(--border2);
+  background: none; color: var(--muted);
+  cursor: pointer; transition: all .15s;
+}
+.vault-action-btn:hover { color: var(--text); border-color: var(--muted2); }
+.vault-action-btn.danger:hover { color: var(--red); border-color: rgba(255,79,106,0.3); background: var(--red2); }
+
+/* ── LORI BUTTON ── */
+.lori-btn {
+  font-family: var(--font-display);
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 8px 20px; border-radius: 6px;
+  border: 1px solid rgba(184,240,84,0.4);
+  background: var(--accent3);
+  color: var(--accent);
+  cursor: pointer; transition: all .2s;
+  white-space: nowrap;
+  display: flex; align-items: center; gap: 8px;
+}
+.lori-btn:hover {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.lori-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+.lori-btn.applied {
+  background: rgba(79,209,138,0.1);
+  border-color: rgba(79,209,138,0.3);
+  color: var(--green);
+}
+
+/* ── SLOT GRID ── */
+.slots-section {
+  padding: 24px;
+}
+.slots-section-title {
+  font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted2); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.slots-section-title::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--border);
+}
+.slot-group {
+  margin-bottom: 28px;
+}
+.slot-group-label {
+  font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 12px;
+  padding-left: 2px;
+}
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+.slot {
+  position: relative;
+  aspect-ratio: 3/4;
+  border-radius: 8px;
+  border: 1px dashed var(--border2);
+  background: var(--panel2);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all .15s;
+}
+.slot:hover { border-color: var(--accent); }
+.slot.filled { border-style: solid; border-color: var(--border2); }
+.slot.filled:hover { border-color: var(--accent); }
+.slot img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.slot-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 6px; padding: 8px;
+  background: rgba(10,10,10,0.5);
+  opacity: 0; transition: opacity .15s;
+  text-align: center;
+}
+.slot.filled:hover .slot-overlay { opacity: 1; }
+.slot:not(.filled) .slot-overlay { opacity: 1; background: none; }
+.slot-icon { font-size: 20px; color: var(--muted2); }
+.slot-label {
+  font-family: var(--font-mono);
+  font-size: 8px; letter-spacing: 0.5px; text-transform: uppercase;
+  color: var(--muted); line-height: 1.3; text-align: center;
+}
+.slot:not(.filled) .slot-label { color: var(--muted2); }
+.slot:hover .slot-label { color: var(--text); }
+.slot-remove {
+  position: absolute; top: 5px; right: 5px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(10,10,10,0.8);
+  border: 1px solid var(--border2);
+  color: var(--red); font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; opacity: 0; transition: opacity .15s;
+  z-index: 2; line-height: 1;
+}
+.slot.filled:hover .slot-remove { opacity: 1; }
+.slot-input { display: none; }
+.slot-filled-icon {
+  position: absolute; bottom: 5px; left: 5px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--green); display: flex; align-items: center;
+  justify-content: center; font-size: 8px;
+}
+
+/* ── PROGRESS BAR ── */
+.progress-row {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 14px;
+}
+.progress-label {
+  font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--muted); white-space: nowrap;
+}
+.progress-track {
+  flex: 1; height: 3px;
+  background: var(--border2); border-radius: 2px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; border-radius: 2px;
+  background: var(--accent);
+  transition: width .3s ease;
+}
+.progress-count {
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--accent); white-space: nowrap;
+}
+
+/* ── SAVE ROW ── */
+.save-row {
+  padding: 18px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--panel2);
+  display: flex; align-items: center; gap: 12px;
+}
+.save-note {
+  font-size: 11px; color: var(--muted2);
+  flex: 1; line-height: 1.5;
+}
+.save-note strong { color: var(--muted); }
+.save-btn {
+  font-family: var(--font-display);
+  font-size: 14px; font-weight: 700;
+  padding: 10px 28px; border-radius: 6px;
+  background: var(--accent); color: #000;
+  border: none; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
+}
+.save-btn:hover { background: #cbff5e; transform: translateY(-1px); }
+.save-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.save-btn.saved {
+  background: rgba(79,209,138,0.15);
+  color: var(--green); border: 1px solid rgba(79,209,138,0.3);
+}
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+  font-family: var(--font-mono); font-size: 11px;
+  padding: 10px 18px; border-radius: 6px;
+  background: var(--panel3); border: 1px solid var(--border2);
+  color: var(--text); pointer-events: none;
+  opacity: 0; transform: translateY(8px);
+  transition: all .2s;
+}
+#toast.show { opacity: 1; transform: translateY(0); }
+#toast.success { color: var(--green); border-color: rgba(79,209,138,0.3); }
+#toast.error { color: var(--red); border-color: rgba(255,79,106,0.3); }
+
+/* ── INFO BOX ── */
+.info-box {
+  background: var(--panel2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  display: flex; gap: 14px;
+}
+.info-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.info-text { font-size: 12px; color: var(--muted); line-height: 1.7; }
+.info-text strong { color: var(--text); }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  color: var(--muted2);
+}
+.empty-state-icon { font-size: 40px; margin-bottom: 16px; }
+.empty-state-title {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 700;
+  color: var(--muted); margin-bottom: 8px;
+}
+.empty-state-desc { font-size: 12px; line-height: 1.7; margin-bottom: 20px; }
+
+/* ── MODAL ── */
+.modal-bg {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 28px; width: 380px; max-width: 90vw;
+}
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 800;
+  margin-bottom: 6px;
+}
+.modal-sub { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+.modal-input {
+  width: 100%; padding: 10px 14px;
+  background: var(--panel2);
+  border: 1px solid var(--border2);
+  border-radius: 6px; color: var(--text);
+  font-family: var(--font); font-size: 14px;
+  outline: none; margin-bottom: 16px;
+  transition: border-color .15s;
+}
+.modal-input:focus { border-color: var(--accent); }
+.modal-actions { display: flex; gap: 8px; }
+.modal-btn {
+  flex: 1; padding: 9px 0;
+  border-radius: 6px; font-family: var(--font);
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--border2);
+  background: none; color: var(--muted);
+  transition: all .15s;
+}
+.modal-btn:hover { color: var(--text); border-color: var(--muted2); }
+.modal-btn.confirm {
+  background: var(--accent); color: #000;
+  border-color: var(--accent);
+}
+.modal-btn.confirm:hover { background: #cbff5e; }
+
+@media (max-width: 700px) {
+  .container { padding: 24px 16px 60px; }
+  .page-header { flex-direction: column; }
+  .page-header-right { align-items: flex-start; }
+  .page-title { font-size: 26px; }
+  .slot-grid { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- MODAL: New Vault -->
+<div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-title">New DreamPrint</div>
+    <div class="modal-sub">Give your AI model a name to identify this vault.</div>
+    <input class="modal-input" id="modal-name-input" placeholder="e.g. Kira, Tyla, Sofia..." maxlength="32">
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModalDirect()">Cancel</button>
+      <button class="modal-btn confirm" onclick="confirmCreateVault()">Create</button>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <a href="/" class="nav-logo">BUILD<em>AI</em>MODELS</a>
+  <a href="/course" class="nav-btn">Course</a>
+  <a href="/studio" class="nav-btn">Studio</a>
+  <a href="/account" class="nav-btn">Account</a>
+  <button class="nav-btn" onclick="handleSignOut()">Sign Out</button>
+</nav>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-eyebrow">Model Identity System</div>
+      <h1 class="page-title">DREAM<em>PRINT</em></h1>
+      <p class="page-desc">Upload up to 14 reference photos to lock your AI model's face, body, and identity. Hit <strong style="color:var(--text)">Lori</strong> in the studio to auto-inject your DreamPrint into any generation.</p>
+    </div>
+    <div class="page-header-right">
+      <button class="save-btn" id="main-lori-btn" onclick="loriApplyActive()" style="background:var(--accent3);color:var(--accent);border:1px solid rgba(184,240,84,0.3);font-size:13px">
+        ⚡ Lori — Apply to Studio
+      </button>
+    </div>
+  </div>
+
+  <!-- Info -->
+  <div class="info-box">
+    <div class="info-icon">💡</div>
+    <div class="info-text">
+      <strong>How DreamPrint works:</strong> Your reference images are uploaded and stored as URLs. When you hit Lori, all images inject into the Seedream 5.0 Lite edit endpoint — no LoRA training, no GPU rental. Works across all generations instantly. Images are stored in your browser (IndexedDB) — no server required.
+    </div>
+  </div>
+
+  <!-- Vault selector -->
+  <div class="vault-selector-row">
+    <span class="vault-selector-label">Vault</span>
+    <div class="vault-tabs" id="vault-tabs"></div>
+    <button class="vault-tab-add" onclick="openCreateModal()">＋ New</button>
+  </div>
+
+  <!-- Vault content -->
+  <div id="vault-content">
+    <div class="empty-state">
+      <div class="empty-state-icon">🧬</div>
+      <div class="empty-state-title">No DreamPrints Yet</div>
+      <div class="empty-state-desc">Create your first vault to start building a consistent AI model identity.</div>
+      <button class="save-btn" onclick="openCreateModal()">＋ Create DreamPrint</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// SLOT DEFINITIONS — 14 guided slots
+// ═══════════════════════════════════════
+const SLOT_GROUPS = [
+  {
+    label: 'Face — 5 angles',
+    slots: [
+      { id: 'face_front',    icon: '😊', label: 'Face\nFront' },
+      { id: 'face_left',     icon: '👤', label: 'Face\nLeft' },
+      { id: 'face_right',    icon: '👤', label: 'Face\nRight' },
+      { id: 'face_34l',      icon: '↙️', label: '3/4\nLeft' },
+      { id: 'face_34r',      icon: '↘️', label: '3/4\nRight' },
+    ]
+  },
+  {
+    label: 'Body — 4 angles',
+    slots: [
+      { id: 'body_front',    icon: '🧍', label: 'Body\nFront' },
+      { id: 'body_back',     icon: '🧍', label: 'Body\nBack' },
+      { id: 'body_side_l',   icon: '👁', label: 'Body\nSide L' },
+      { id: 'body_side_r',   icon: '👁', label: 'Body\nSide R' },
+    ]
+  },
+  {
+    label: 'Lifestyle — 5 context shots',
+    slots: [
+      { id: 'lifestyle_1',   icon: '📸', label: 'Lifestyle\n1' },
+      { id: 'lifestyle_2',   icon: '📸', label: 'Lifestyle\n2' },
+      { id: 'lifestyle_3',   icon: '📸', label: 'Lifestyle\n3' },
+      { id: 'lifestyle_4',   icon: '📸', label: 'Lifestyle\n4' },
+      { id: 'lifestyle_5',   icon: '📸', label: 'Lifestyle\n5' },
+    ]
+  }
+];
+
+// ═══════════════════════════════════════
+// IDB STORAGE
+// ═══════════════════════════════════════
+const IDB_NAME = 'bam_dreamprint';
+const IDB_STORE = 'vaults';
+let db;
+
+function idbOpen() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(IDB_STORE);
+    req.onsuccess = e => { db = e.target.result; res(db); };
+    req.onerror = () => rej(req.error);
+  });
+}
+function idbSet(key, val) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).put(val, key);
+    tx.oncomplete = () => res();
+    tx.onerror = () => rej(tx.error);
+  });
+}
+function idbGet(key) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(IDB_STORE, 'readonly');
+    const req = tx.objectStore(IDB_STORE).get(key);
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+function idbDel(key) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).delete(key);
+    tx.oncomplete = () => res();
+    tx.onerror = () => rej(tx.error);
+  });
+}
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+const META_KEY = '__dp_meta_v1__';
+let vaults = [];      // [{id, name, images: {slotId: dataUrl}}]
+let activeId = null;
+
+function genId() { return 'dp_' + Date.now() + Math.random().toString(36).slice(2, 6); }
+
+// ═══════════════════════════════════════
+// PERSIST
+// ═══════════════════════════════════════
+async function saveMeta() {
+  await idbSet(META_KEY, { vaults: vaults.map(v => ({ id: v.id, name: v.name })), activeId });
+}
+async function saveVaultImages(id) {
+  const v = vaults.find(v => v.id === id);
+  if (v) await idbSet('dp_imgs_' + id, v.images);
+}
+async function loadAll() {
+  try {
+    await idbOpen();
+    const meta = await idbGet(META_KEY);
+    if (meta && Array.isArray(meta.vaults) && meta.vaults.length) {
+      vaults = await Promise.all(meta.vaults.map(async m => {
+        const imgs = await idbGet('dp_imgs_' + m.id).catch(() => ({}));
+        return { id: m.id, name: m.name, images: imgs || {} };
+      }));
+      activeId = meta.activeId || vaults[0].id;
+    }
+  } catch(e) { console.warn('DreamPrint load error', e); }
+}
+
+// ═══════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════
+function renderTabs() {
+  const el = document.getElementById('vault-tabs');
+  el.innerHTML = vaults.map(v => `
+    <button class="vault-tab ${v.id === activeId ? 'active' : ''}" onclick="switchVault('${v.id}')">${v.name}</button>
+  `).join('');
+}
+
+function renderVault() {
+  const vc = document.getElementById('vault-content');
+  if (!vaults.length) {
+    vc.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🧬</div>
+        <div class="empty-state-title">No DreamPrints Yet</div>
+        <div class="empty-state-desc">Create your first vault to start building a consistent AI model identity.</div>
+        <button class="save-btn" onclick="openCreateModal()">＋ Create DreamPrint</button>
+      </div>`;
+    return;
+  }
+  const v = vaults.find(v => v.id === activeId);
+  if (!v) return;
+
+  const filled = Object.keys(v.images).length;
+  const total = 14;
+  const pct = Math.round((filled / total) * 100);
+  const status = filled === total ? 'ready' : filled > 0 ? 'partial' : '';
+  const statusLabel = filled === total ? '✓ Complete' : filled > 0 ? `${filled}/14 uploaded` : 'Empty';
+
+  vc.innerHTML = `
+    <div class="vault-card">
+      <div class="vault-card-header">
+        <input class="vault-name-input" id="vault-name-input" value="${v.name}" 
+          placeholder="Model name..."
+          onblur="renameActiveVault(this.value)"
+          onkeydown="if(event.key==='Enter')this.blur()">
+        <div class="vault-status-pill ${status}">${statusLabel}</div>
+        <div class="vault-header-actions">
+          <button class="lori-btn ${filled > 0 ? '' : 'disabled'}" id="lori-btn" onclick="loriApplyActive()" ${filled === 0 ? 'disabled' : ''} title="Inject all DreamPrint refs into studio generation">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 1L10.5 6H15L11 9.5L12.5 15L8 11.5L3.5 15L5 9.5L1 6H5.5L8 1Z" fill="currentColor"/>
+            </svg>
+            Lori
+          </button>
+          <button class="vault-action-btn danger" onclick="deleteActiveVault()">Delete</button>
+        </div>
+      </div>
+
+      <div class="slots-section">
+        ${SLOT_GROUPS.map(g => `
+          <div class="slot-group">
+            <div class="slot-group-label">${g.label}</div>
+            <div class="slot-grid">
+              ${g.slots.map(s => renderSlot(v, s)).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="progress-row">
+        <span class="progress-label">Completeness</span>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:${pct}%"></div>
+        </div>
+        <span class="progress-count">${filled}/14</span>
+      </div>
+
+      <div class="save-row">
+        <div class="save-note">
+          Images save automatically to your browser. <strong>Hit Lori</strong> from any generation to auto-inject these refs into Seedream 5.0 Lite.
+        </div>
+        <button class="save-btn" id="save-btn" onclick="saveCurrentVault()">Save DreamPrint</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderSlot(vault, slotDef) {
+  const img = vault.images[slotDef.id];
+  const filled = !!img;
+  return `
+    <div class="slot ${filled ? 'filled' : ''}" id="slot-${slotDef.id}" 
+      onclick="slotClick('${slotDef.id}')" title="${slotDef.label.replace('\n', ' ')}">
+      ${filled ? `<img src="${img}" alt="${slotDef.label}">` : ''}
+      ${filled ? `<div class="slot-filled-icon">✓</div>` : ''}
+      <div class="slot-overlay">
+        ${filled ? `
+          <div class="slot-label" style="color:var(--text);font-size:8px">↺ Replace</div>
+        ` : `
+          <div class="slot-icon">${slotDef.icon}</div>
+          <div class="slot-label">${slotDef.label}</div>
+        `}
+      </div>
+      ${filled ? `<div class="slot-remove" onclick="removeSlotImg(event,'${slotDef.id}')">✕</div>` : ''}
+      <input type="file" accept="image/*" class="slot-input" id="slot-input-${slotDef.id}" 
+        onchange="handleSlotFile(event,'${slotDef.id}')">
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════
+// SLOT INTERACTIONS
+// ═══════════════════════════════════════
+function slotClick(slotId) {
+  document.getElementById(`slot-input-${slotId}`)?.click();
+}
+
+function handleSlotFile(e, slotId) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    const v = vaults.find(v => v.id === activeId);
+    if (!v) return;
+    v.images[slotId] = ev.target.result;
+    await saveVaultImages(activeId);
+    renderTabs();
+    renderVault();
+    toast(`✓ ${slotId.replace(/_/g,' ')} uploaded`, 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeSlotImg(e, slotId) {
+  e.stopPropagation();
+  const v = vaults.find(v => v.id === activeId);
+  if (!v) return;
+  delete v.images[slotId];
+  saveVaultImages(activeId);
+  renderVault();
+  toast('Image removed', '');
+}
+
+// ═══════════════════════════════════════
+// VAULT MANAGEMENT
+// ═══════════════════════════════════════
+function switchVault(id) {
+  activeId = id;
+  saveMeta();
+  renderTabs();
+  renderVault();
+}
+
+function openCreateModal() {
+  document.getElementById('modal-bg').classList.add('open');
+  setTimeout(() => document.getElementById('modal-name-input').focus(), 100);
+}
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-bg')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modal-bg').classList.remove('open');
+  document.getElementById('modal-name-input').value = '';
+}
+function confirmCreateVault() {
+  const name = document.getElementById('modal-name-input').value.trim() || 'Unnamed Model';
+  const id = genId();
+  vaults.push({ id, name, images: {} });
+  activeId = id;
+  saveMeta();
+  closeModalDirect();
+  renderTabs();
+  renderVault();
+  toast(`✓ "${name}" created`, 'success');
+}
+document.getElementById('modal-name-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') confirmCreateVault();
+});
+
+function renameActiveVault(name) {
+  const v = vaults.find(v => v.id === activeId);
+  if (!v || !name.trim()) return;
+  v.name = name.trim();
+  saveMeta();
+  renderTabs();
+}
+
+function deleteActiveVault() {
+  const v = vaults.find(v => v.id === activeId);
+  if (!v) return;
+  if (!confirm(`Delete DreamPrint "${v.name}"? This cannot be undone.`)) return;
+  idbDel('dp_imgs_' + activeId);
+  vaults = vaults.filter(vv => vv.id !== activeId);
+  activeId = vaults[0]?.id || null;
+  saveMeta();
+  renderTabs();
+  renderVault();
+  toast(`Deleted`, '');
+}
+
+async function saveCurrentVault() {
+  const btn = document.getElementById('save-btn');
+  if (!btn) return;
+  btn.textContent = '✓ Saved';
+  btn.classList.add('saved');
+  await saveVaultImages(activeId);
+  await saveMeta();
+  setTimeout(() => {
+    if (btn) { btn.textContent = 'Save DreamPrint'; btn.classList.remove('saved'); }
+  }, 2000);
+}
+
+// ═══════════════════════════════════════
+// LORI — auto-apply to studio
+// ═══════════════════════════════════════
+function loriApplyActive() {
+  const v = vaults.find(v => v.id === activeId);
+  if (!v) { toast('No vault selected', 'error'); return; }
+  const imgs = Object.values(v.images);
+  if (!imgs.length) { toast('No images in this DreamPrint yet', 'error'); return; }
+
+  // Store in localStorage for local2.html to pick up
+  try {
+    localStorage.setItem('bam_lori_vault_id', v.id);
+    localStorage.setItem('bam_lori_vault_name', v.name);
+    localStorage.setItem('bam_lori_applied_at', Date.now().toString());
+    localStorage.setItem('bam_lori_slot_ids', JSON.stringify(Object.keys(v.images)));
+
+    // Persist dataUrls directly for quick pickup
+    const slimRefs = {};
+    Object.entries(v.images).forEach(([k, dataUrl]) => {
+      slimRefs[k] = dataUrl;
+    });
+    localStorage.setItem('bam_lori_refs', JSON.stringify(slimRefs));
+  } catch(e) {
+    // localStorage might fail for large images — that's ok, studio reads from IDB
+  }
+
+  const btn = document.getElementById('lori-btn');
+  if (btn) {
+    btn.textContent = '✓ Applied!';
+    btn.classList.add('applied');
+    setTimeout(() => {
+      if (btn) { btn.innerHTML = `<svg viewBox="0 0 16 16" fill="none"><path d="M8 1L10.5 6H15L11 9.5L12.5 15L8 11.5L3.5 15L5 9.5L1 6H5.5L8 1Z" fill="currentColor"/></svg> Lori`; btn.classList.remove('applied'); }
+    }, 2000);
+  }
+
+  toast(`⚡ ${v.name} DreamPrint applied — ${imgs.length} refs ready`, 'success');
+}
+
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
+let toastTimer;
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.className = '', 2800);
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+(async () => {
+  await loadAll();
+  renderTabs();
+  renderVault();
+})();
+
+function handleSignOut() {
+  localStorage.clear();
+  window.location.href = '/auth';
+}
+</script>
+</body>
+</html>
