@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KIRA STUDIO</title>
+<title>BuildAIModels — Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -22,7 +25,9 @@
   --muted: #6b6b7e;
   --muted2: #45454f;
   --success: #4fd18a;
-  --font: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  --font: 'DM Mono', 'SF Mono', 'Fira Code', monospace;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-sans: 'DM Sans', sans-serif;
 }
 html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--font); font-size: 12px; }
 
@@ -33,7 +38,7 @@ html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(-
   background: var(--panel); border-bottom: 1px solid var(--border);
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
 }
-#topbar .logo { font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: 2px; flex-shrink: 0; }
+#topbar .logo { font-family: var(--font-display); font-size: 18px; font-weight: 400; color: var(--accent); letter-spacing: 2px; flex-shrink: 0; }
 #topbar .logo span { color: var(--muted); font-weight: 400; font-size: 11px; margin-left: 6px; letter-spacing: 0; }
 .tab-group { display: flex; gap: 2px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 2px; }
 .tab { padding: 5px 14px; border-radius: 4px; cursor: pointer; color: var(--muted); border: none; background: none; font-family: var(--font); font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.15s; }
@@ -447,6 +452,18 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
 .modal-btn.confirm { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
 .modal-btn:hover { opacity: 0.85; }
 
+/* ── SYNTHID MODAL ── */
+#synthid-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 250; align-items: center; justify-content: center; }
+#synthid-overlay.open { display: flex; }
+#synthid-modal { background: var(--panel); border: 1px solid var(--border2); border-radius: 10px; padding: 24px; width: 420px; max-width: 90vw; }
+#synthid-modal .synthid-icon { color: var(--red); font-size: 20px; margin-bottom: 10px; }
+#synthid-modal h3 { font-size: 14px; color: var(--text); margin-bottom: 10px; }
+#synthid-modal p { color: var(--muted); font-size: 11px; line-height: 1.6; margin-bottom: 18px; }
+.synthid-btns { display: flex; gap: 8px; justify-content: flex-end; }
+.synthid-btn { padding: 8px 18px; border-radius: 5px; cursor: pointer; font-family: var(--font); font-size: 12px; border: 1px solid var(--border2); background: var(--panel2); color: var(--text); transition: all 0.15s; }
+.synthid-btn.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+.synthid-btn:hover { opacity: 0.85; }
+
 /* ── TOAST ── */
 /* Fullscreen image viewer */
 #fullscreen-viewer {
@@ -553,7 +570,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div class="logo">KIRA<span>STUDIO v1.0</span></div>
+  <div class="logo">BUILD<em style="color:var(--accent);font-style:normal">AI</em>MODELS<span>STUDIO v1.0</span></div>
   <div class="tab-group">
     <button type="button" class="tab active" data-page="image" onclick="switchPage('image')">⚡ Image</button>
     <button type="button" class="tab" data-page="video" onclick="switchPage('video')">🎬 Video</button>
@@ -568,7 +585,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
     <span>Balance:</span>
     <span class="balance-val" id="balance-display">—</span>
   </div>
-  <button id="api-key-btn" onclick="openModal()">⚙ API KEY</button>
+  <button id="api-key-btn" onclick="openModal()" style="display:none">⚙ API KEY</button>
 </div>
 
 <!-- PAGES -->
@@ -582,6 +599,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
     <!-- Reference Sidebar -->
     <div id="ref-sidebar">
       <div class="sidebar-title">VAULTS<span id="ref-count">0/8 selected</span></div>
+
       <div id="ref-upload-status" class="ref-upload-status" aria-live="polite"></div>
       <!-- Vault tabs + create button -->
       <div id="vault-tabs-row">
@@ -592,25 +610,15 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
       <div id="vault-controls">
         <span class="vault-row-label">Vault:</span>
         <button type="button" class="vault-ctrl-btn" onclick="document.getElementById('vault-file-input').click()">📎 Files</button>
-        <button type="button" class="vault-ctrl-btn" onclick="document.getElementById('vault-folder-input').click()">📂 Folder</button>
         <input type="file" id="vault-file-input" multiple accept="image/*" style="display:none" onchange="vaultAddFiles(this.files);this.value=''">
         <input type="file" id="vault-folder-input" webkitdirectory directory multiple accept="image/*" style="display:none" onchange="vaultAddFiles(this.files);this.value=''">
       </div>
-      <!-- One-off upload — session only, no vault needed -->
-      <div id="onoff-upload-row">
-        <span class="vault-row-label">One-off:</span>
-        <button type="button" class="vault-ctrl-btn" onclick="document.getElementById('onoff-file-input').click()">📎 Upload</button>
+      <div id="onoff-upload-row" style="display:none">
         <input type="file" id="onoff-file-input" multiple accept="image/*" style="display:none" onchange="onoffAddFiles(this.files);this.value=''">
-        <button type="button" class="vault-ctrl-btn" onclick="clearOnoff()" style="margin-left:auto;color:var(--muted)">✕ Clear</button>
       </div>
       <div id="ref-sidebar-body">
         <div id="ref-empty-state"><div class="ref-empty-text">Click ＋ New Vault to get started, or use One-off to upload refs for this session only.</div></div>
         <div id="ref-grid"></div>
-      </div>
-      <div style="display:flex;gap:4px;padding:5px 8px;flex-wrap:wrap;border-top:1px solid var(--border);flex-shrink:0">
-        <button id="ref-clear" onclick="clearRefs()" style="flex:1;font-size:9px">Clear sel.</button>
-        <button class="ref-secondary-btn" onclick="vaultRename()" style="flex:1;font-size:9px">Rename</button>
-        <button class="ref-secondary-btn" onclick="vaultDelete()" style="flex:1;font-size:9px;color:var(--red)">Delete</button>
       </div>
     </div>
 
@@ -622,8 +630,13 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
         <div class="field-group">
           <div class="field-label">Model</div>
           <select class="model-select" id="img-model" onchange="updateImgCost()">
+            <optgroup label="── WaveSpeed · BEST QUALITY">
+              <option value="wan-edit-4k" selected>Wan 2.7 Edit · Max (2048px) — $0.03/img ✓ DEFAULT</option>
+              <option value="wan-edit-2k">Wan 2.7 Edit · Standard (1024px) — $0.03/img</option>
+            </optgroup>
             <optgroup label="── laozhang.ai · CHEAPEST">
-              <option value="nano-lz" selected>Nano Banana Pro · laozhang.ai — $0.05/img ✓ DEFAULT</option>
+              <option value="nano-lz-2">Nano Banana 2 · laozhang.ai — $0.03/img</option>
+              <option value="nano-lz">Nano Banana Pro · laozhang.ai — $0.05/img</option>
               <option value="seedream-lz">Seedream 4.5 · laozhang.ai — $0.04/img</option>
             </optgroup>
           </select>
@@ -1426,6 +1439,19 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
   </div>
 </div>
 
+<!-- SYNTHID MODAL -->
+<div id="synthid-overlay">
+  <div id="synthid-modal">
+    <div class="synthid-icon">⚠</div>
+    <h3>Invisible Watermark Detected</h3>
+    <p>We noticed this image contains a SynthID invisible watermark embedded by Google. This watermark can be detected by platforms and AI content scanners — on some platforms this could get your content flagged or restricted.<br><br>We can remove it for free in seconds. The image will look identical but the watermark signal will be disrupted.</p>
+    <div class="synthid-btns">
+      <button class="synthid-btn" onclick="closeSynthIDModal()">Dismiss</button>
+      <button class="synthid-btn primary" onclick="triggerSynthIDStrip()">Remove for Free</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -1450,14 +1476,20 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
 
 <!-- Loads window.KIRA_CONFIG when present (same folder layout as this repo: Local.html + Generator/config.js). -->
 <script src="Generator/config.js"></script>
+<script src="Generator/ETHANconfig.js"></script>
 <script>
 // ════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════
-let KIE_KEY = localStorage.getItem('kie_api_key') || window.KIRA_CONFIG?.kie_api_key || '';
-let LZ_KEY = localStorage.getItem('lz_api_key') || window.KIRA_CONFIG?.lz_api_key || '';
-let API_KEY = localStorage.getItem('ws_api_key') || window.KIRA_CONFIG?.ws_api_key || '';
-let EVOLINK_KEY = localStorage.getItem('evolink_key') || window.KIRA_CONFIG?.evolink_key || '';
+let sb = null;
+let supabaseSession = null;
+const _activeCfg = localStorage.getItem('bam_founder_session') === 'ethan'
+  ? (window.ETHAN_CONFIG || window.KIRA_CONFIG)
+  : window.KIRA_CONFIG;
+let KIE_KEY = _activeCfg?.kie_api_key || '';
+let LZ_KEY = _activeCfg?.lz_api_key || '';
+let API_KEY = _activeCfg?.ws_api_key || '';
+let EVOLINK_KEY = _activeCfg?.evolink_key || '';
 const LZ_BASE = 'https://api.laozhang.ai/v1';
 let sessionCost = 0;
 let outputCount = 0;
@@ -1801,8 +1833,11 @@ function buildNanoRefPrompt(fullPrompt) {
 // COST ENGINE
 // ════════════════════════════════════════════
 const IMG_PRICES = {
+  'wan-edit-2k': 0.03,
+  'wan-edit-4k': 0.03,
   'nano-kie': 0.12,
   'seedream-kie': 0.04,
+  'nano-lz-2': 0.03,
   'nano-lz': 0.05,
   'seedream-lz': 0.04,
   'nano-multi': 0.07,
@@ -1866,12 +1901,27 @@ function updateImgCost() {
     return;
   }
 
+  // Wan 2.7 Edit Pro models
+  if (isWanEditModel(model)) {
+    const price = IMG_PRICES[model];
+    const tier = model === 'wan-edit-4k' ? '4K' : '2K';
+    document.getElementById('img-cost-amount').textContent = `$${price.toFixed(3)}`;
+    document.getElementById('img-cost-breakdown').textContent = `Wan 2.7 Edit · ${tier === '4K' ? 'Max 2048px' : 'Standard 1024px'} · $${price}/img`;
+    document.getElementById('input-img-group').style.display = 'flex';
+    document.getElementById('input-img-label-line').innerHTML = `Source Image <span class="hint">— required for Wan 2.7 Edit Pro</span>`;
+    document.querySelectorAll('[data-n]').forEach(p => { p.style.opacity = '0.3'; p.classList.remove('pill-muted-nano'); });
+    const arNote = document.getElementById('img-ar-multi-note');
+    if (arNote) arNote.style.display = 'none';
+    return;
+  }
+
   // laozhang models
   if (isLzModel(model)) {
     const price = IMG_PRICES[model];
     const n = imgState.n;
     const total = (price * n).toFixed(2);
-    const label = model === 'nano-lz' ? 'Nano Banana Pro · laozhang.ai' : 'Seedream 4.5 · laozhang.ai';
+    const LZ_LABELS_COST = { 'nano-lz-2': 'Nano Banana 2 · laozhang.ai', 'nano-lz': 'Nano Banana Pro · laozhang.ai', 'seedream-lz': 'Seedream 4.5 · laozhang.ai' };
+    const label = LZ_LABELS_COST[model] || model;
     document.getElementById('img-cost-amount').textContent = `$${total}`;
     document.getElementById('img-cost-breakdown').textContent = `${label} · ${n === 1 ? '' : n + '× '}$${price}/img`;
     document.getElementById('input-img-group').style.display = 'none';
@@ -2702,10 +2752,11 @@ async function reelStep2Motion() {
 // ════════════════════════════════════════════
 // laozhang model IDs (OpenAI-compatible chat completions API)
 const LZ_MODEL_IDS = {
-  'nano-lz': 'gemini-3-pro-image-preview',
+  'nano-lz-2': 'gemini-2.0-flash-preview-image-generation',
+  'nano-lz':   'gemini-3-pro-image-preview',
   'seedream-lz': 'seedream-4.5'
 };
-function isLzModel(model) { return model === 'nano-lz' || model === 'seedream-lz'; }
+function isLzModel(model) { return model === 'nano-lz-2' || model === 'nano-lz' || model === 'seedream-lz'; }
 
 const KIE_MODEL_IDS = {
   'nano-kie': 'nano-banana-pro',
@@ -2719,6 +2770,8 @@ const EVOLINK_API = 'https://api.evolink.ai/v1';
 const EVOLINK_FILES = 'https://files-api.evolink.ai';
 
 const MODEL_ENDPOINTS = {
+  'wan-edit-2k': '/alibaba/wan-2.7/image-edit',
+  'wan-edit-4k': '/alibaba/wan-2.7/image-edit',
   'nano-multi': '/google/nano-banana-pro/text-to-image-multi',
   'nano-edit': '/google/nano-banana-pro/edit',
   'nano-single': '/google/nano-banana-pro/text-to-image',
@@ -3093,6 +3146,9 @@ async function generateImagesKIE(model, prompt) {
           throw new Error('kie.ai: no image URL in result');
         }
         replaceLoadingWithImage(slot, imgUrl, modelLabel, price);
+        if (isNanoBananaModel(model)) {
+          checkSynthID(imgUrl).then(r => { if (r.detected) showSynthIDModal(imgUrl); });
+        }
         addToLibrary({ type: 'image', urls: [imgUrl], model: modelLabel, cost: price });
         updateSession(price);
       } catch (e) {
@@ -3110,6 +3166,64 @@ async function generateImagesKIE(model, prompt) {
     slots.forEach(s => replaceLoadingWithError(s));
     toast(e.message || 'kie.ai failed', 'error');
   }
+  btn.disabled = false; btn.textContent = '▶ GENERATE'; btn.classList.remove('loading');
+}
+
+function isWanEditModel(model) { return model === 'wan-edit-2k' || model === 'wan-edit-4k'; }
+
+function computeWanSize(ar, tier) {
+  const parts = String(ar).split(':').map(Number);
+  const rw = parts[0] || 1;
+  const rh = parts[1] || 1;
+  const target = tier === '4K' ? 2048 : 1024;
+  let w, h;
+  if (rw >= rh) { w = target; h = Math.round(target * rh / rw); }
+  else { h = target; w = Math.round(target * rw / rh); }
+  w = Math.max(768, Math.min(2048, Math.round(w / 64) * 64));
+  h = Math.max(768, Math.min(2048, Math.round(h / 64) * 64));
+  return `${w}x${h}`;
+}
+
+async function generateImagesWan(model, prompt) {
+  const tier = model === 'wan-edit-4k' ? '4K' : '2K';
+  const size = computeWanSize(imgState.ar, tier);
+  const price = IMG_PRICES[model];
+  const btn = document.getElementById('img-generate-btn');
+  btn.disabled = true; btn.textContent = '⏳ GENERATING...'; btn.classList.add('loading');
+  const slot = addLoadingCard('image');
+
+  try {
+    let imageUrls = [];
+    if (selectedRefs.length > 0) {
+      toast('Uploading reference images...', '');
+      imageUrls = await ensureRefUrlsForSelection();
+    } else if (inputImgFile) {
+      toast('Uploading source image...', '');
+      const url = await uploadFile(inputImgFile);
+      imageUrls = [url];
+    }
+    if (imageUrls.length === 0) throw new Error('No source image — upload at least one image');
+
+    const body = { prompt, images: imageUrls, size, seed: -1, enable_sync_mode: false };
+    console.log('Wan 2.7 Edit Pro body:', JSON.stringify(body));
+    toast(`⚡ Generating with Wan 2.7 Edit (${tier === '4K' ? 'Max' : 'Standard'} · ${size})…`, 'success');
+
+    const taskRes = await submitTask(MODEL_ENDPOINTS[model], body);
+    const result = await pollResult(taskRes.data.id);
+    const urls = result.outputs || [];
+    if (urls.length === 0) throw new Error('No output from Wan 2.7 — try again');
+
+    const wanLabel = `Wan 2.7 Edit · ${tier === '4K' ? 'Max 2048px' : 'Standard 1024px'}`;
+    replaceLoadingWithImage(slot, urls[0], wanLabel, price);
+    addToLibrary({ type: 'image', urls, model: wanLabel, cost: price });
+    updateSession(price);
+    outputCount++;
+    document.getElementById('img-output-count').textContent = `${outputCount} images`;
+  } catch (e) {
+    replaceLoadingWithError(slot);
+    toast(e.message || 'Wan 2.7 generation failed', 'error');
+  }
+
   btn.disabled = false; btn.textContent = '▶ GENERATE'; btn.classList.remove('loading');
 }
 
@@ -3143,17 +3257,24 @@ async function generateImagesLZ(model, prompt) {
       return content;
     };
 
+    const LZ_LABELS = {
+      'nano-lz-2': 'Nano Banana 2 · laozhang',
+      'nano-lz':   'Nano Banana Pro · laozhang',
+      'seedream-lz': 'Seedream 4.5 · laozhang'
+    };
     const lzModelId = LZ_MODEL_IDS[model];
+    const lzLabel = LZ_LABELS[model] || model;
     toast(`⚡ ${n} image${n > 1 ? 's' : ''} generating via laozhang…`, 'success');
 
-    // Fire n parallel requests
-    const tasks = slots.map((slot, idx) => (async () => {
-      try {
+    // Fire n parallel requests — nano-lz-2 auto-falls back to nano-lz (Pro) on failure
+    const tasks = slots.map((slot) => (async () => {
+      const tryGenerate = async (useModel) => {
+        const modelId = LZ_MODEL_IDS[useModel];
         const res = await fetch(`${LZ_BASE}/chat/completions`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${LZ_KEY}` },
           body: JSON.stringify({
-            model: lzModelId,
+            model: modelId,
             messages: [{ role: 'user', content: buildContent() }],
             max_tokens: 8192
           })
@@ -3166,9 +3287,31 @@ async function generateImagesLZ(model, prompt) {
         console.log('LZ full response:', JSON.stringify(data).slice(0, 3000));
         const imgUrl = extractLZImageUrl(data);
         if (!imgUrl) throw new Error('No image URL in LZ response — check console');
-        replaceLoadingWithImage(slot, imgUrl, model === 'nano-lz' ? 'Nano Banana Pro · laozhang' : 'Seedream 4.5 · laozhang', price);
-        addToLibrary({ type: 'image', urls: [imgUrl], model: model === 'nano-lz' ? 'Nano Banana Pro · laozhang' : 'Seedream 4.5 · laozhang', cost: price });
-        updateSession(price);
+        return { imgUrl, usedModel: useModel };
+      };
+
+      try {
+        let result;
+        try {
+          result = await tryGenerate(model);
+        } catch (e) {
+          if (model === 'nano-lz-2') {
+            console.warn('Nano Banana 2 failed, falling back to Pro:', e.message);
+            toast('Nano Banana 2 unavailable — retrying with Pro…', '');
+            result = await tryGenerate('nano-lz');
+          } else {
+            throw e;
+          }
+        }
+        const { imgUrl, usedModel } = result;
+        const usedLabel = LZ_LABELS[usedModel] || usedModel;
+        const usedPrice = IMG_PRICES[usedModel] || price;
+        replaceLoadingWithImage(slot, imgUrl, usedLabel, usedPrice);
+        if (isNanoBananaModel(usedModel)) {
+          checkSynthID(imgUrl).then(r => { if (r.detected) showSynthIDModal(imgUrl); });
+        }
+        addToLibrary({ type: 'image', urls: [imgUrl], model: usedLabel, cost: usedPrice });
+        updateSession(usedPrice);
       } catch (e) {
         console.error('LZ generation error:', e);
         replaceLoadingWithError(slot);
@@ -3262,6 +3405,8 @@ async function generateImages() {
     if (!KIE_KEY) { openModal(); toast('Set your kie.ai API key first', 'error'); return; }
     const prompt = document.getElementById('img-prompt').value.trim();
     if (!prompt) { toast('Write a prompt first', 'error'); return; }
+    const kieCost = (IMG_PRICES[model] || 0) * imgState.n;
+    if (!await checkAndDeductCredits(kieCost, model)) return;
     await generateImagesKIE(model, prompt);
     return;
   }
@@ -3271,7 +3416,21 @@ async function generateImages() {
     if (!LZ_KEY) { openModal(); toast('Set your laozhang.ai API key first', 'error'); return; }
     const prompt = document.getElementById('img-prompt').value.trim();
     if (!prompt) { toast('Write a prompt first', 'error'); return; }
+    const lzCost = (IMG_PRICES[model] || 0) * imgState.n;
+    if (!await checkAndDeductCredits(lzCost, model)) return;
     await generateImagesLZ(model, prompt);
+    return;
+  }
+
+  // ── Wan 2.7 Edit Pro path ─────────────────
+  if (isWanEditModel(model)) {
+    if (!API_KEY) { toast('API unavailable — contact support', 'error'); return; }
+    const prompt = document.getElementById('img-prompt').value.trim();
+    if (!prompt) { toast('Write a prompt first', 'error'); return; }
+    if (!inputImgFile && selectedRefs.length === 0) { toast('Upload a source image first', 'error'); return; }
+    const wanCost = IMG_PRICES[model];
+    if (!await checkAndDeductCredits(wanCost, model)) return;
+    await generateImagesWan(model, prompt);
     return;
   }
 
@@ -3321,6 +3480,8 @@ async function generateImages() {
 
   let body = null;
   const slots = [];
+
+  if (!await checkAndDeductCredits(cost, model)) return;
 
   try {
     btn.disabled = true; btn.textContent = '⏳ GENERATING...'; btn.classList.add('loading');
@@ -3497,6 +3658,9 @@ async function generateImages() {
             replaceLoadingWithImage(targetSlots[i], url, taskModel, task.perCard != null ? task.perCard : price);
           }
         });
+        if (isNanoBananaModel(taskModel)) {
+          urls.forEach(url => checkSynthID(url).then(r => { if (r.detected) showSynthIDModal(url); }));
+        }
         addToLibrary({ type: 'image', urls, model: taskModel, cost: task.cost });
         updateSession(task.cost);
       } catch(e) {
@@ -3546,6 +3710,12 @@ async function generateVideo() {
   const price = vidPriceWithEvo(VID_PRICES[model]);
   const audioMult = (!isMotion && vidState.audio) ? 2 : 1;
   const cost = price * vidState.dur * audioMult;
+
+  if (!await checkAndDeductCredits(cost, model)) {
+    slot.remove();
+    btn.disabled = false; btn.textContent = '▶ GENERATE VIDEO'; btn.classList.remove('loading');
+    return;
+  }
 
   try {
     let body = {
@@ -4104,6 +4274,158 @@ function clearLibrary() {
 // ════════════════════════════════════════════
 // SESSION COST
 // ════════════════════════════════════════════
+// ════════════════════════════════════════════
+// SUPABASE CREDITS
+// ════════════════════════════════════════════
+function updateBalanceDisplay(balance) {
+  document.getElementById('balance-display').textContent = `$${parseFloat(balance).toFixed(2)}`;
+}
+
+async function checkAndDeductCredits(costUsd, modelName) {
+  if (!sb || !supabaseSession) return true;
+  const { data } = await sb.from('credits')
+    .select('balance_usd')
+    .eq('user_id', supabaseSession.user.id)
+    .single();
+  if (!data || data.balance_usd < costUsd) {
+    toast('Insufficient credits — top up your account', 'error');
+    window.location.href = '/account';
+    return false;
+  }
+  await sb.from('credits')
+    .update({ balance_usd: data.balance_usd - costUsd, updated_at: new Date().toISOString() })
+    .eq('user_id', supabaseSession.user.id);
+  await sb.from('transactions').insert({
+    user_id: supabaseSession.user.id,
+    type: 'generation',
+    amount_usd: -costUsd,
+    description: `Generation — ${modelName}`
+  });
+  updateBalanceDisplay(data.balance_usd - costUsd);
+  return true;
+}
+
+// ════════════════════════════════════════════
+// SYNTHID DETECTION + REMOVAL
+// ════════════════════════════════════════════
+function isNanoBananaModel(modelKey) {
+  if (!modelKey) return false;
+  return String(modelKey).toLowerCase().includes('nano');
+}
+
+let synthIDCurrentUrl = '';
+let synthIDCurrentFilename = '';
+
+function showSynthIDModal(imgUrl) {
+  synthIDCurrentUrl = imgUrl;
+  synthIDCurrentFilename = imgUrl.split('/').pop().split('?')[0] || 'image';
+  document.getElementById('synthid-overlay').classList.add('open');
+}
+
+function closeSynthIDModal() {
+  document.getElementById('synthid-overlay').classList.remove('open');
+  synthIDCurrentUrl = '';
+}
+
+function triggerSynthIDStrip() {
+  if (!synthIDCurrentUrl) return;
+  const url = synthIDCurrentUrl;
+  const fname = synthIDCurrentFilename;
+  closeSynthIDModal();
+  stripSynthID(url, fname);
+}
+
+async function checkSynthID(imgUrl) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+      let totalVariance = 0;
+      const sampleStep = 8;
+      const blockSize = 8;
+      let samples = 0;
+
+      for (let y = blockSize; y < canvas.height - blockSize; y += sampleStep * 4) {
+        for (let x = blockSize; x < canvas.width - blockSize; x += sampleStep * 4) {
+          let blockVals = [];
+          for (let by = 0; by < blockSize; by++) {
+            for (let bx = 0; bx < blockSize; bx++) {
+              const idx = ((y + by) * canvas.width + (x + bx)) * 4;
+              blockVals.push(0.299 * data[idx] + 0.587 * data[idx+1] + 0.114 * data[idx+2]);
+            }
+          }
+          const mean = blockVals.reduce((a,b) => a+b, 0) / blockVals.length;
+          const variance = blockVals.reduce((a,b) => a + Math.pow(b-mean, 2), 0) / blockVals.length;
+          totalVariance += variance;
+          samples++;
+        }
+      }
+
+      const avgVariance = totalVariance / samples;
+      const likelyWatermarked = avgVariance > 180 && avgVariance < 420;
+      resolve({ detected: likelyWatermarked, variance: avgVariance });
+    };
+    img.onerror = () => resolve({ detected: false });
+    img.src = imgUrl;
+  });
+}
+
+async function stripSynthID(imgUrl, originalFilename) {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    for (let y = 0; y < canvas.height; y += 8) {
+      for (let x = 0; x < canvas.width; x += 8) {
+        for (let by = 0; by < 8 && y+by < canvas.height; by++) {
+          for (let bx = 0; bx < 8 && x+bx < canvas.width; bx++) {
+            const idx = ((y+by) * canvas.width + (x+bx)) * 4;
+            const isMidFreq = (by + bx) > 2 && (by + bx) < 12;
+            if (isMidFreq) {
+              const noise = (Math.random() - 0.5) * 2.2;
+              data[idx]   = Math.max(0, Math.min(255, data[idx]   + noise));
+              data[idx+1] = Math.max(0, Math.min(255, data[idx+1] + noise));
+              data[idx+2] = Math.max(0, Math.min(255, data[idx+2] + noise));
+            }
+          }
+        }
+      }
+    }
+
+    for (let i = 0; i < data.length; i += 4) {
+      const g = (Math.random() - 0.5) * 2.0;
+      data[i]   = Math.max(0, Math.min(255, data[i]   + g));
+      data[i+1] = Math.max(0, Math.min(255, data[i+1] + g));
+      data[i+2] = Math.max(0, Math.min(255, data[i+2] + g));
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = (originalFilename || 'image').replace(/\.[^.]+$/, '') + '_clean.jpg';
+      a.click();
+      URL.revokeObjectURL(url);
+    }, 'image/jpeg', 0.92);
+  };
+  img.src = imgUrl;
+}
+
 function updateSession(add, reset) {
   if (reset) { sessionCost = 0; }
   else { sessionCost += add; }
@@ -4852,6 +5174,8 @@ function weekClear() {
   toast('Week cleared', '');
 }
 
+
+
 (async()=>{ const ok=await vaultLoadAll(); if(ok&&vaults.length){ vaultSwitch(activeVaultId||vaults[0].id); toast('✓ Vaults restored',''); } else { renderVaultTabs(); renderVaultGrid(); } })();
 updateImgCost();
 updateVidCost();
@@ -4862,4 +5186,14 @@ if (LZ_KEY || API_KEY || isEvoVideo()) {
 if (API_KEY) fetchBalance();
 updateVidEvolinkBadge();
 reelRefreshCostLabels();
+(async () => {
+  if (!window.KIRA_CONFIG?.supabase_url || !window.KIRA_CONFIG?.supabase_anon) return;
+  const { createClient } = window.supabase;
+  sb = createClient(window.KIRA_CONFIG.supabase_url, window.KIRA_CONFIG.supabase_anon);
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '/auth'; return; }
+  supabaseSession = session;
+  const { data } = await sb.from('credits').select('balance_usd').eq('user_id', session.user.id).single();
+  if (data) updateBalanceDisplay(data.balance_usd);
+})();
 </script></body></html>

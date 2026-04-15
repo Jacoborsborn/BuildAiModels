@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BuildAIModels — Course</title>
 <link rel="stylesheet" href="global.css">
+<script src="/Content%20Generation/Generator/config.js"></script>
+<script src="/Content%20Generation/Generator/ETHANconfig.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --accent-dim: rgba(184,240,84,0.35);
@@ -911,11 +914,11 @@ const sb = createClient(window.KIRA_CONFIG.supabase_url, window.KIRA_CONFIG.supa
 
 // ── AUTH + ACCESS GATE ───────────────────────────────────────────
 window.addEventListener('load', async () => {
+  // Founders bypass all auth and access checks
+  if (isFounder()) return;
+
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '/auth'; return; }
-
-  // Founders always get full access
-  if (isFounder()) return;
 
   const { data: access } = await sb
     .from('course_access')
@@ -984,7 +987,7 @@ document.getElementById('nav-logo-trigger').addEventListener('click', function(e
   }
 });
 
-function isFounder() { return localStorage.getItem(STORAGE_KEY) === '1'; }
+function isFounder() { const v = localStorage.getItem(STORAGE_KEY); return v === '1' || v === 'ethan'; }
 
 function founderModalOpen() {
   document.getElementById('founder-modal').classList.add('open');
@@ -997,8 +1000,13 @@ function founderModalClose() {
 }
 function founderConfirm() {
   const val = document.getElementById('founder-pw-input').value;
+  const ethanPw = window.ETHAN_CONFIG?.founder_password || '';
   if (val === FOUNDER_PW) {
     localStorage.setItem(STORAGE_KEY, '1');
+    founderModalClose();
+    founderActivate();
+  } else if (ethanPw && val === ethanPw) {
+    localStorage.setItem(STORAGE_KEY, 'ethan');
     founderModalClose();
     founderActivate();
   } else {
