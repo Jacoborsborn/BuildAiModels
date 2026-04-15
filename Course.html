@@ -498,6 +498,74 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
   transition: background .15s;
 }
 .tool-cta-btn:hover { background: #cbff5e; }
+
+/* ── DYNAMIC SIDEBAR ── */
+.sidebar-module { border-bottom: 1px solid var(--border); }
+.sidebar-module .module-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 20px; cursor: default;
+  transition: background .15s; user-select: none;
+}
+.sidebar-module .module-header:hover { background: rgba(255,255,255,0.02); }
+.mod-num {
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--muted2); min-width: 16px;
+}
+.mod-badge-free {
+  font-family: var(--font-mono); font-size: 9px;
+  background: var(--accent); color: #000;
+  padding: 2px 6px; border-radius: 4px; font-weight: 700;
+}
+.mod-badge-soon {
+  font-family: var(--font-mono); font-size: 9px;
+  background: transparent; color: var(--muted2);
+  border: 1px solid var(--border2);
+  padding: 2px 6px; border-radius: 4px; font-weight: 700;
+}
+.mod-title {
+  font-family: var(--font-display); font-size: 10px;
+  font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted); flex: 1;
+}
+.lesson-list { display: flex; flex-direction: column; }
+.lesson-list .lesson-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px 9px 46px; cursor: pointer;
+  transition: background .15s;
+  border-left: 2px solid transparent;
+}
+.lesson-list .lesson-item:hover { background: rgba(255,255,255,0.02); }
+.lesson-list .lesson-item.active {
+  background: var(--accent2);
+  border-left: 2px solid var(--accent);
+}
+.lesson-list .lesson-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1.5px solid var(--muted2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 9px;
+}
+.lesson-list .lesson-dot.done {
+  background: var(--green); border-color: var(--green); color: #000;
+}
+.lesson-list .lesson-dot.locked { border-color: transparent; }
+.lesson-list .lesson-title {
+  font-size: 11px; color: var(--muted); flex: 1;
+  line-height: 1.4; font-family: var(--font);
+}
+.lesson-list .lesson-item:hover .lesson-title,
+.lesson-list .lesson-item.active .lesson-title { color: var(--text); }
+
+/* ── FOUNDER DYNAMIC CONTROLS ── */
+.founder-mod-ctrl { display:flex;gap:4px;margin-left:auto; }
+.founder-mod-ctrl button { background:transparent;border:1px solid var(--border,#333);color:var(--muted,#888);padding:2px 6px;border-radius:4px;cursor:pointer;font-size:10px; }
+.founder-mod-ctrl button:hover { color:var(--text,#fff);border-color:var(--accent,#b8f054); }
+.founder-lesson-del { background:transparent;border:none;color:var(--muted,#888);cursor:pointer;font-size:10px;margin-left:auto;padding:0 4px; }
+.founder-lesson-del:hover { color:#f44; }
+.founder-block-del { display:block;background:transparent;border:1px solid #f44;color:#f44;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:10px;margin-top:8px; }
+.founder-block-del:hover { background:#f44;color:#fff; }
+.founder-btn { background:transparent;border:1px solid var(--border,#333);color:var(--muted,#888);padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px; }
+.founder-btn:hover { color:var(--text,#fff);border-color:var(--accent,#b8f054); }
 </style>
 </head>
 <body>
@@ -512,6 +580,16 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
       <button class="founder-modal-cancel" onclick="founderModalClose()">Cancel</button>
       <button class="founder-modal-confirm" onclick="founderConfirm()">Unlock</button>
     </div>
+  </div>
+</div>
+
+<!-- COMING SOON MODAL -->
+<div id="coming-soon-modal" class="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center">
+  <div class="modal-box" style="background:var(--panel,#1a1a1a);border:1px solid var(--border,#333);border-radius:12px;padding:32px;text-align:center;max-width:340px;width:90%">
+    <div style="font-size:28px;margin-bottom:10px">🚧</div>
+    <div style="font-size:15px;font-weight:700;margin-bottom:8px;color:var(--text,#fff)">Coming Soon</div>
+    <div style="font-size:12px;color:var(--muted,#888);margin-bottom:22px;line-height:1.5">This module is still in production. You'll be notified when it drops.</div>
+    <button onclick="document.getElementById('coming-soon-modal').style.display='none'" style="background:var(--accent,#b8f054);color:#000;border:none;padding:9px 24px;border-radius:6px;font-weight:700;cursor:pointer;font-size:12px">Got it</button>
   </div>
 </div>
 
@@ -532,6 +610,9 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
 <div class="founder-bar" id="founder-bar">
   <div class="founder-dot"></div>
   <span>FOUNDER MODE — click any text to edit · video zones unlocked · changes saved to localStorage</span>
+  <button onclick="founderAddModule()" class="founder-btn">＋ Module</button>
+  <button onclick="founderAddLesson()" class="founder-btn">＋ Lesson</button>
+  <button onclick="founderAddBlock()" class="founder-btn">＋ Block</button>
   <button class="founder-exit" onclick="founderExit()">Exit</button>
 </div>
 
@@ -550,177 +631,7 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
       </div>
     </div>
 
-    <!-- MODULE 01 -->
-    <div class="module-section">
-      <div class="module-header open" onclick="toggleModule(this)">
-        <span class="module-num">01</span>
-        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod01-title">Foundation</span></span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
-      </div>
-      <div class="module-lessons open">
-        <div class="lesson-item active" onclick="selectLesson(this,'mindset')">
-          <div class="lesson-dot active-dot"></div>
-          <span class="lesson-label">The Operator Mindset</span>
-          <span class="lesson-duration">4:22</span>
-        </div>
-        <div class="lesson-item" onclick="selectLesson(this,'overview')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">How This Works</span>
-          <span class="lesson-duration">3:10</span>
-        </div>
-        <div class="lesson-item" onclick="selectLesson(this,'tools-overview')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">Software & Links</span>
-          <span class="lesson-duration">5:44</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODULE 02 -->
-    <div class="module-section">
-      <div class="module-header" onclick="toggleModule(this)">
-        <span class="module-num">02</span>
-        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod02-title">Model Concept</span></span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
-      </div>
-      <div class="module-lessons">
-        <div class="lesson-item" onclick="selectLesson(this,'niche-research')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">What Makes Money in 2025</span>
-          <span class="lesson-duration">6:14</span>
-        </div>
-        <div class="lesson-item" onclick="selectLesson(this,'niche-examples')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">Niche Breakdowns & Examples</span>
-          <span class="lesson-duration">8:32</span>
-        </div>
-        <div class="lesson-item" onclick="selectLesson(this,'niche-decision')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">Locking In Your Model Concept</span>
-          <span class="lesson-duration">4:55</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODULE 03 -->
-    <div class="module-section">
-      <div class="module-header" onclick="toggleModule(this)">
-        <span class="module-num">03</span>
-        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod03-title">Building Your Model</span></span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
-      </div>
-      <div class="module-lessons">
-        <div class="lesson-item" onclick="selectLesson(this,'persona')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">Building the Persona</span>
-          <span class="lesson-duration">7:20</span>
-        </div>
-        <div class="lesson-item" onclick="selectLesson(this,'image-gen')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">Generating Your Model</span>
-          <span class="lesson-duration">12:08</span>
-        </div>
-        <div class="lesson-item" onclick="selectLesson(this,'consistency')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">DreamPrint Vault Setup</span>
-          <span class="lesson-duration">9:41</span>
-        </div>
-        <div class="lesson-item" onclick="selectLesson(this,'nsfw')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">NSFW Studio — Fanvue Content</span>
-          <span class="lesson-duration">10:15</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODULE 04 -->
-    <div class="module-section">
-      <div class="module-header" onclick="toggleModule(this)">
-        <span class="module-num">04</span>
-        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod04-title">Video & Reels</span></span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
-      </div>
-      <div class="module-lessons">
-        <div class="lesson-item" onclick="selectLesson(this,'motion')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">Motion Control Basics</span>
-          <span class="lesson-duration">8:30</span>
-        </div>
-        <div class="lesson-item" onclick="selectLesson(this,'reels')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">Reel Recreation for IG & TikTok</span>
-          <span class="lesson-duration">11:22</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODULE 05 -->
-    <div class="module-section">
-      <div class="module-header" onclick="toggleModule(this)">
-        <span class="module-num">05</span>
-        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod05-title">Fanvue Monetisation</span></span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
-      </div>
-      <div class="module-lessons">
-        <div class="lesson-item" onclick="selectLesson(this,'fanvue-setup')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">Profile & Verification</span>
-          <span class="lesson-duration">5:18</span>
-        </div>
-        <div class="lesson-item" onclick="selectLesson(this,'fanvue-pricing')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">Pricing Subscriptions & PPV</span>
-          <span class="lesson-duration">7:44</span>
-        </div>
-        <div class="lesson-item" onclick="selectLesson(this,'fanvue-content')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">Content Batching & Scheduling</span>
-          <span class="lesson-duration">9:02</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODULE 06 -->
-    <div class="module-section">
-      <div class="module-header" onclick="toggleModule(this)">
-        <span class="module-num">06</span>
-        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod06-title">Social Growth</span></span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
-      </div>
-      <div class="module-lessons">
-        <div class="lesson-item" onclick="selectLesson(this,'ig-bio')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">Profile Setup & Bio Psychology</span>
-          <span class="lesson-duration">6:00</span>
-        </div>
-        <div class="lesson-item" onclick="selectLesson(this,'ig-content')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">What to Post & When</span>
-          <span class="lesson-duration">8:15</span>
-        </div>
-        <div class="lesson-item" onclick="selectLesson(this,'ig-growth')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">Growing to First 1k Followers</span>
-          <span class="lesson-duration">10:33</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODULE 07 -->
-    <div class="module-section">
-      <div class="module-header" onclick="toggleModule(this)">
-        <span class="module-num">07</span>
-        <span class="module-title-text"><span class="f-edit" contenteditable="false" data-key="mod07-title">Advanced & Secrets</span></span>
-        <span class="module-chevron"><svg viewBox="0 0 10 10"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></span>
-      </div>
-      <div class="module-lessons">
-        <div class="lesson-item" onclick="selectLesson(this,'tips')">
-          <div class="lesson-dot"></div>
-          <span class="lesson-label">Operator Secrets & Shortcuts</span>
-          <span class="lesson-duration">15:00</span>
-        </div>
-      </div>
-    </div>
+    <div id="module-list"></div>
 
   </sidebar>
 
@@ -822,7 +733,7 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
           <div class="stat-label">Lessons done</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">7</div>
+          <div class="stat-value" id="stat-modules">7</div>
           <div class="stat-label">Modules</div>
         </div>
         <div class="stat-card">
@@ -830,7 +741,7 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
           <div class="stat-label">Complete</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">~3h</div>
+          <div class="stat-value" id="stat-remaining">—</div>
           <div class="stat-label">Remaining</div>
         </div>
       </div>
@@ -914,8 +825,13 @@ const sb = createClient(window.KIRA_CONFIG.supabase_url, window.KIRA_CONFIG.supa
 
 // ── AUTH + ACCESS GATE ───────────────────────────────────────────
 window.addEventListener('load', async () => {
-  // Founders bypass all auth and access checks
-  if (isFounder()) return;
+  // Founders bypass all auth and access checks — give full access
+  if (isFounder()) {
+    window._courseAccess = true;
+    renderSidebar();
+    updateStats();
+    return;
+  }
 
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '/auth'; return; }
@@ -926,35 +842,193 @@ window.addEventListener('load', async () => {
     .eq('user_id', session.user.id)
     .single();
 
-  if (!access) lockCourse();
+  if (access) {
+    window._courseAccess = true;
+  } else {
+    window._courseAccess = false;
+    lockCourse();
+  }
+  renderSidebar();
+  updateStats();
 });
 
 // ── LESSON DATA ─────────────────────────────────────────────────
+const MODULES = [
+  { id: 'free-preview', label: 'Free Preview', num: null, free: true },
+  { id: 'mod-00', label: 'Before You Touch Anything', num: '00', free: false },
+  { id: 'mod-01', label: 'Foundation', num: '01', free: false },
+  { id: 'mod-02', label: 'Niche & Model Concept', num: '02', free: false },
+  { id: 'mod-03', label: 'Build Your Model', num: '03', free: false },
+  { id: 'mod-04', label: 'Platform Setup', num: '04', free: false },
+  { id: 'advanced', label: 'Advanced', num: null, free: false, comingSoon: true }
+];
+
 const LESSONS = {
-  'mindset':       { mod:'01', num:'1 of 3', title:'The Operator Mindset',          sub:'Before you generate a single image, you need to think like a business owner. This lesson covers the psychology behind building AI models that generate revenue — and why most people fail before they start.',  dur:'4:22' },
-  'overview':      { mod:'01', num:'2 of 3', title:'How This Works',                sub:'A complete overview of the blueprint — how the course is structured, how the tool integrates, and the fastest path from zero to first revenue.', dur:'3:10' },
-  'tools-overview':{ mod:'01', num:'3 of 3', title:'Software & Links',              sub:'Every tool you need, every link, every API — all in one place. Bookmark this lesson.', dur:'5:44' },
-  'niche-research':{ mod:'02', num:'1 of 3', title:'What Makes Money in 2025',      sub:'Not all niches are equal. This lesson breaks down the models generating the most revenue right now and why.',  dur:'6:14' },
-  'niche-examples':{ mod:'02', num:'2 of 3', title:'Niche Breakdowns & Examples',   sub:"Real model examples across different niches — fitness, alt, cosplay, lifestyle. What works, what doesn't.", dur:'8:32' },
-  'niche-decision':{ mod:'02', num:'3 of 3', title:'Locking In Your Model Concept', sub:"By the end of this lesson you'll have a defined model concept ready to build. No more overthinking.", dur:'4:55' },
-  'persona':       { mod:'03', num:'1 of 4', title:'Building the Persona',          sub:'Name, backstory, personality, aesthetic. The deeper the persona, the stronger the parasocial bond — and the higher the LTV.', dur:'7:20' },
-  'image-gen':     { mod:'03', num:'2 of 4', title:'Generating Your Model',         sub:'Full studio walkthrough — prompts, settings, getting consistent results on the first batch.', dur:'12:08' },
-  'consistency':   { mod:'03', num:'3 of 4', title:'DreamPrint Vault Setup',        sub:'The DreamPrint system is what separates professionals from amateurs. Set it up right and your model looks identical across every generation.', dur:'9:41' },
-  'nsfw':          { mod:'03', num:'4 of 4', title:'NSFW Studio — Fanvue Content',  sub:'Purpose-built for Fanvue. How to use the NSFW studio tab, what converts, and how to stay compliant.', dur:'10:15' },
-  'motion':        { mod:'04', num:'1 of 2', title:'Motion Control Basics',         sub:'Kling 3.0 walkthrough — bring your static images to life with motion that looks cinematic.', dur:'8:30' },
-  'reels':         { mod:'04', num:'2 of 2', title:'Reel Recreation for IG & TikTok', sub:'Copy the format of viral reels using your AI model. The fastest way to get free traffic.', dur:'11:22' },
-  'fanvue-setup':  { mod:'05', num:'1 of 3', title:'Profile & Verification',        sub:'Get verified, set up correctly, and avoid the common mistakes that get accounts flagged.', dur:'5:18' },
-  'fanvue-pricing':{ mod:'05', num:'2 of 3', title:'Pricing Subscriptions & PPV',   sub:'The pricing psychology behind subscriptions, PPV, and tips. Where most operators leave money on the table.', dur:'7:44' },
-  'fanvue-content':{ mod:'05', num:'3 of 3', title:'Content Batching & Scheduling', sub:"One session per week. That's all it takes when you batch properly. Full workflow walkthrough.", dur:'9:02' },
-  'ig-bio':        { mod:'06', num:'1 of 3', title:'Profile Setup & Bio Psychology', sub:'Your bio is your funnel. Every word is deliberate. This lesson covers the exact formula.', dur:'6:00' },
-  'ig-content':    { mod:'06', num:'2 of 3', title:'What to Post & When',           sub:'Content that drives follows, warms the audience, and converts to Fanvue — the full content matrix.', dur:'8:15' },
-  'ig-growth':     { mod:'06', num:'3 of 3', title:'Growing to First 1k Followers', sub:'The fastest path to 1,000 followers without paid ads. Exact methods, no fluff.', dur:'10:33' },
-  'tips':          { mod:'07', num:'1 of 1', title:'Operator Secrets & Shortcuts',  sub:'The things you only learn after doing this for months — condensed into one lesson.', dur:'15:00' }
+  'preview-intro':   { mod: 'free-preview', title: 'Welcome to BAM',                    sub: 'A quick look at what you\'re about to build.' },
+  'watch-first':     { mod: 'mod-00',       title: 'Watch This First',                   sub: 'Start here before anything else.' },
+  'watch-socials':   { mod: 'mod-00',       title: 'Watch Before Setting Up Socials',    sub: 'Critical context before you touch any platform.' },
+  'mindset':         { mod: 'mod-01',       title: 'The Right Mindset',                  sub: 'How to think about this business.' },
+  'overview':        { mod: 'mod-01',       title: 'Full System Overview',               sub: 'The complete BAM framework from start to finish.' },
+  'tools-overview':  { mod: 'mod-01',       title: 'Tools Overview',                     sub: 'Every tool you need and why.' },
+  'niche-research':  { mod: 'mod-02',       title: 'Niche Research',                     sub: 'Finding the right angle for your model.' },
+  'niche-examples':  { mod: 'mod-02',       title: 'Niche Examples',                     sub: 'Real examples of winning niches.' },
+  'niche-decision':  { mod: 'mod-02',       title: 'Making Your Decision',               sub: 'Lock in your niche with confidence.' },
+  'persona':         { mod: 'mod-03',       title: 'Persona & Character',                sub: 'Building a character people connect with.' },
+  'image-gen':       { mod: 'mod-03',       title: 'Image Generation',                   sub: 'Creating your model with AI.' },
+  'consistency':     { mod: 'mod-03',       title: 'Consistency & Identity',             sub: 'Keeping your model looking the same every time.' },
+  'nsfw':            { mod: 'mod-03',       title: 'NSFW Strategy',                      sub: 'Where, when, and how.' },
+  'platform-fanvue': { mod: 'mod-04',       title: 'Fanvue',                             sub: 'Setting up and optimising your Fanvue.' },
+  'platform-ig':     { mod: 'mod-04',       title: 'Instagram',                          sub: 'Growing on Instagram the right way.' },
+  'platform-tiktok': { mod: 'mod-04',       title: 'TikTok',                             sub: 'TikTok content strategy for AI models.' },
+  'platform-x':      { mod: 'mod-04',       title: 'X',                                  sub: 'Building your X presence.' },
+  'motion':          { mod: 'advanced',     title: 'Motion & Video',                     sub: 'Animating your model.' },
+  'reels':           { mod: 'advanced',     title: 'Reels Strategy',                     sub: 'Viral reel formulas.' },
+  'fanvue-setup':    { mod: 'advanced',     title: 'Advanced Fanvue',                    sub: 'Pricing, tiers, and conversion.' },
+  'ig-growth':       { mod: 'advanced',     title: 'Advanced Instagram',                 sub: 'Scale your reach.' },
+  'tips':            { mod: 'advanced',     title: 'Advanced Tactics',                   sub: 'What separates top earners.' }
 };
 
-let completedCount = 2;
-const totalLessons = Object.keys(LESSONS).length;
+// Helper: get lessons for a module
+function getLessonsForMod(modId) {
+  return Object.entries(LESSONS).filter(([,v]) => v.mod === modId).map(([id,v]) => ({id,...v}));
+}
+
+function getLessonsDone() {
+  try { return new Set(JSON.parse(localStorage.getItem('bam_lesson_done') || '[]')); } catch { return new Set(); }
+}
+function markLessonDone(lessonId) {
+  const done = getLessonsDone();
+  done.add(lessonId);
+  localStorage.setItem('bam_lesson_done', JSON.stringify([...done]));
+}
+function getTotalLessons() {
+  // Exclude advanced (coming soon) lessons from total
+  return Object.values(LESSONS).filter(l => l.mod !== 'advanced').length;
+}
+
 let currentLessonId = 'mindset';
+
+// ── PROGRESS HELPERS ─────────────────────────────────────────────
+function updateStats() {
+  const done = getLessonsDone();
+  const total = getTotalLessons();
+  const count = [...done].filter(id => LESSONS[id] && LESSONS[id].mod !== 'advanced').length;
+  const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+
+  const elDone = document.getElementById('stat-done');
+  const elPct = document.getElementById('stat-pct');
+  const elModules = document.getElementById('stat-modules');
+  const elRemaining = document.getElementById('stat-remaining');
+  const progressBar = document.querySelector('.progress-bar-inner') || document.getElementById('progress-bar');
+  const progressPct = document.querySelector('.progress-pct') || document.getElementById('progress-pct');
+
+  if (elDone) elDone.textContent = count;
+  if (elPct) elPct.textContent = pct + '%';
+  if (elModules) elModules.textContent = MODULES.filter(m => !m.comingSoon).length;
+  if (elRemaining) elRemaining.textContent = Math.max(0, total - count);
+  if (progressBar) progressBar.style.width = pct + '%';
+  if (progressPct) progressPct.textContent = pct + '%';
+}
+
+// ── SIDEBAR RENDER ───────────────────────────────────────────────
+function renderSidebar() {
+  const container = document.getElementById('module-list');
+  if (!container) return;
+  const done = getLessonsDone();
+  const hasAccess = window._courseAccess === true;
+
+  container.innerHTML = '';
+
+  MODULES.forEach(mod => {
+    const lessons = getLessonsForMod(mod.id);
+
+    // Module header wrapper
+    const modEl = document.createElement('div');
+    modEl.className = 'sidebar-module';
+    modEl.dataset.modId = mod.id;
+
+    const headerEl = document.createElement('div');
+    headerEl.className = 'module-header';
+
+    let badgeHtml = '';
+    if (mod.num !== null) {
+      badgeHtml = `<span class="mod-num">${mod.num}</span>`;
+    } else if (mod.free) {
+      badgeHtml = `<span class="mod-badge-free">FREE</span>`;
+    } else if (mod.comingSoon) {
+      badgeHtml = `<span class="mod-badge-soon">SOON</span>`;
+    }
+
+    headerEl.innerHTML = `${badgeHtml}<span class="mod-title">${mod.label}</span>`;
+
+    // Founder mode controls on header
+    if (window._founderActive) {
+      const ctrl = document.createElement('div');
+      ctrl.className = 'founder-mod-ctrl';
+      ctrl.innerHTML = `<button onclick="founderAddLessonToMod('${mod.id}')" title="Add lesson">＋</button><button onclick="founderRemoveMod('${mod.id}')" title="Remove module">✕</button>`;
+      headerEl.appendChild(ctrl);
+    }
+
+    modEl.appendChild(headerEl);
+
+    // Lesson list
+    const lessonList = document.createElement('div');
+    lessonList.className = 'lesson-list';
+
+    lessons.forEach(lesson => {
+      const li = document.createElement('div');
+      li.className = 'lesson-item';
+      li.dataset.lessonId = lesson.id;
+      if (currentLessonId === lesson.id) li.classList.add('active');
+
+      const isDone = done.has(lesson.id);
+
+      // Lock logic: free-preview and mod-00 always accessible
+      const alwaysFree = mod.free || mod.id === 'mod-00';
+      const isLocked = mod.comingSoon ? true : (!alwaysFree && !hasAccess);
+
+      let dotHtml = '';
+      if (isDone) {
+        dotHtml = `<span class="lesson-dot done">✓</span>`;
+      } else if (isLocked) {
+        dotHtml = `<span class="lesson-dot locked">🔒</span>`;
+      } else {
+        dotHtml = `<span class="lesson-dot"></span>`;
+      }
+
+      li.innerHTML = `${dotHtml}<span class="lesson-title">${lesson.title}</span>`;
+
+      if (mod.comingSoon) {
+        li.onclick = () => {
+          const m = document.getElementById('coming-soon-modal');
+          if (m) { m.style.display = 'flex'; }
+        };
+      } else if (isLocked) {
+        li.onclick = () => showUpgradePrompt();
+      } else {
+        li.onclick = () => selectLesson(lesson.id);
+      }
+
+      // Founder delete button
+      if (window._founderActive) {
+        const del = document.createElement('button');
+        del.textContent = '✕';
+        del.className = 'founder-lesson-del';
+        del.onclick = (e) => { e.stopPropagation(); founderRemoveLesson(lesson.id); };
+        li.appendChild(del);
+      }
+
+      lessonList.appendChild(li);
+    });
+
+    modEl.appendChild(lessonList);
+    container.appendChild(modEl);
+  });
+}
+
+function showUpgradePrompt() {
+  window.location.href = '/account';
+}
 
 // ── CONTENT STORE ────────────────────────────────────────────────
 // Saves all founder edits to localStorage keyed by lesson id
@@ -1018,15 +1092,19 @@ function founderConfirm() {
 }
 function founderExit() {
   localStorage.removeItem(STORAGE_KEY);
+  window._founderActive = false;
   document.body.classList.remove('founder-active');
   document.getElementById('founder-bar').classList.remove('visible');
   setEditable(false);
+  renderSidebar();
 }
 function founderActivate() {
+  window._founderActive = true;
   document.body.classList.add('founder-active');
   document.getElementById('founder-bar').classList.add('visible');
   setEditable(true);
   loadSavedEdits();
+  renderSidebar();
 }
 function setEditable(on) {
   document.querySelectorAll('.f-edit').forEach(el => {
@@ -1089,7 +1167,7 @@ function resetVideoZone(l) {
   const zone = document.getElementById('video-zone');
   zone.style.cursor = 'pointer';
   zone.onclick = videoZoneClick;
-  zone.innerHTML = `<div class="play-btn" id="play-btn-el"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><span class="video-label" id="video-label-text">${l.title} — ${l.dur}</span>`;
+  zone.innerHTML = `<div class="play-btn" id="play-btn-el"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><span class="video-label" id="video-label-text">${l.title}</span>`;
 }
 function playVideo() {
   const l = LESSONS[currentLessonId];
@@ -1118,10 +1196,20 @@ function toggleModule(header) {
   lessons.classList.toggle('open', !isOpen);
 }
 
-function selectLesson(item, id) {
+function selectLesson(idOrEl, legacyId) {
+  // Support both selectLesson('id') and legacy selectLesson(domEl, 'id')
+  let id, item;
+  if (typeof idOrEl === 'string') {
+    id = idOrEl;
+    item = document.querySelector(`.lesson-item[data-lesson-id="${id}"]`);
+  } else {
+    id = legacyId;
+    item = idOrEl;
+  }
+
   currentLessonId = id;
   document.querySelectorAll('.lesson-item').forEach(l => l.classList.remove('active'));
-  item.classList.add('active');
+  if (item) item.classList.add('active');
   const l = LESSONS[id] || LESSONS['mindset'];
 
   // close video panel if open
@@ -1136,8 +1224,12 @@ function selectLesson(item, id) {
   }
 
   // update lesson header info
-  document.getElementById('lesson-tag-el').textContent = 'Module ' + l.mod;
-  document.getElementById('lesson-num-el').textContent = 'Lesson ' + l.num;
+  const modObj = MODULES.find(m => m.id === l.mod);
+  const modLabel = modObj ? (modObj.num ? 'Module ' + modObj.num : modObj.label) : l.mod;
+  const modLessons = getLessonsForMod(l.mod);
+  const lessonIdx = modLessons.findIndex(ls => ls.id === id);
+  document.getElementById('lesson-tag-el').textContent = modLabel;
+  document.getElementById('lesson-num-el').textContent = lessonIdx >= 0 ? `Lesson ${lessonIdx + 1} of ${modLessons.length}` : '';
 
   // update editable fields with saved or default content
   const data = getContent();
@@ -1149,21 +1241,19 @@ function selectLesson(item, id) {
 
 // ── PROGRESS ────────────────────────────────────────────────────
 function markComplete() {
-  const activeLesson = document.querySelector('.lesson-item.active');
-  if (activeLesson) {
-    const dot = activeLesson.querySelector('.lesson-dot');
-    if (!dot.classList.contains('done')) {
-      dot.className = 'lesson-dot done';
-      dot.innerHTML = '<svg viewBox="0 0 10 10" fill="none" stroke="#000" stroke-width="2"><path d="M2 5l2.5 2.5L8 3"/></svg>';
-      completedCount++;
-      const pct = Math.round((completedCount / totalLessons) * 100);
-      document.getElementById('progress-bar').style.width = pct + '%';
-      document.getElementById('progress-pct').textContent = pct + '%';
-      document.getElementById('stat-done').textContent = completedCount;
-      document.getElementById('stat-pct').textContent = pct + '%';
+  if (currentLessonId) {
+    markLessonDone(currentLessonId);
+    updateStats();
+    renderSidebar();
+    // Auto-advance to next lesson within same module
+    const modId = LESSONS[currentLessonId]?.mod;
+    if (modId) {
+      const modLessons = getLessonsForMod(modId);
+      const idx = modLessons.findIndex(l => l.id === currentLessonId);
+      if (idx >= 0 && idx < modLessons.length - 1) {
+        selectLesson(modLessons[idx + 1].id);
+      }
     }
-    const next = activeLesson.nextElementSibling;
-    if (next && next.classList.contains('lesson-item')) next.click();
   }
 }
 
@@ -1176,55 +1266,128 @@ function switchTab(el, tab) {
 function lockCourse() {
   // Upgrade banner at top of main content area
   const main = document.getElementById('main-content');
-  const banner = document.createElement('div');
-  banner.style.cssText = [
-    'background:var(--panel2)',
-    'border-bottom:1px solid var(--border2)',
-    'padding:14px 24px',
-    'display:flex',
-    'align-items:center',
-    'justify-content:space-between',
-    'gap:16px',
-    'font-size:13px',
-    'color:var(--muted)',
-    'position:relative',
-    'z-index:10',
-  ].join(';');
-  banner.innerHTML = `
-    <span>👀 You're previewing Module 1 — unlock the full course to access all lessons</span>
-    <a href="/account" style="background:var(--accent);color:#000;padding:7px 18px;border-radius:6px;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap;flex-shrink:0">
-      Unlock Full Course →
-    </a>`;
-  main.prepend(banner);
+  if (main && !main.querySelector('.upgrade-banner')) {
+    const banner = document.createElement('div');
+    banner.className = 'upgrade-banner';
+    banner.style.cssText = [
+      'background:var(--panel2)',
+      'border-bottom:1px solid var(--border2)',
+      'padding:14px 24px',
+      'display:flex',
+      'align-items:center',
+      'justify-content:space-between',
+      'gap:16px',
+      'font-size:13px',
+      'color:var(--muted)',
+      'position:relative',
+      'z-index:10',
+    ].join(';');
+    banner.innerHTML = `
+      <span>👀 You're previewing the free content — unlock the full course to access all lessons</span>
+      <a href="/account" style="background:var(--accent);color:#000;padding:7px 18px;border-radius:6px;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap;flex-shrink:0">
+        Unlock Full Course →
+      </a>`;
+    main.prepend(banner);
+  }
+  // Sidebar lock is handled by renderSidebar() based on window._courseAccess
+}
 
-  // Lock modules 02+ in the sidebar
-  const modules = document.querySelectorAll('.module-section');
-  modules.forEach((mod, i) => {
-    if (i === 0) return; // Module 01 stays fully open
+// ── FOUNDER STRUCTURE MANAGEMENT ────────────────────────────────
+function founderSaveStructure() {
+  localStorage.setItem('bam_course_structure', JSON.stringify({
+    modules: MODULES,
+    lessons: LESSONS
+  }));
+}
 
-    // Add lock icon to module title
-    const titleEl = mod.querySelector('.module-title-text');
-    if (titleEl && !titleEl.querySelector('.lock-icon')) {
-      const lock = document.createElement('span');
-      lock.className = 'lock-icon';
-      lock.textContent = ' 🔒';
-      lock.style.cssText = 'font-size:10px;opacity:0.5;font-style:normal';
-      titleEl.appendChild(lock);
+function founderSaveContent() {
+  const contentArea = document.getElementById('lesson-body');
+  if (!contentArea || !currentLessonId) return;
+  const saved = JSON.parse(localStorage.getItem('bam_course_content') || '{}');
+  saved[currentLessonId] = contentArea.innerHTML;
+  localStorage.setItem('bam_course_content', JSON.stringify(saved));
+}
+
+function founderLoadStructure() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('bam_course_structure') || 'null');
+    if (saved && saved.modules && saved.lessons) {
+      MODULES.length = 0;
+      saved.modules.forEach(m => MODULES.push(m));
+      Object.keys(LESSONS).forEach(k => delete LESSONS[k]);
+      Object.assign(LESSONS, saved.lessons);
     }
+  } catch(e) {}
+}
 
-    // Dim and intercept clicks on all lessons in this module
-    mod.querySelectorAll('.lesson-item').forEach(item => {
-      item.style.opacity = '0.4';
-      item.style.cursor = 'not-allowed';
-      item.onclick = (e) => {
-        e.stopImmediatePropagation();
-        window.location.href = '/account';
-      };
-    });
-  });
+function founderAddModule() {
+  const label = prompt('Module title:');
+  if (!label) return;
+  const num = prompt('Module number (e.g. 05, or leave blank):') || null;
+  const id = 'mod-custom-' + Date.now();
+  MODULES.splice(MODULES.length - 1, 0, { id, label, num, free: false }); // insert before Advanced
+  founderSaveStructure();
+  renderSidebar();
+}
+
+function founderRemoveMod(modId) {
+  if (!confirm('Remove this module and all its lessons?')) return;
+  const idx = MODULES.findIndex(m => m.id === modId);
+  if (idx === -1) return;
+  MODULES.splice(idx, 1);
+  // Remove lessons
+  Object.keys(LESSONS).forEach(id => { if (LESSONS[id].mod === modId) delete LESSONS[id]; });
+  founderSaveStructure();
+  renderSidebar();
+}
+
+function founderAddLessonToMod(modId) {
+  const title = prompt('Lesson title:');
+  if (!title) return;
+  const id = 'lesson-' + Date.now();
+  LESSONS[id] = { mod: modId, title, sub: '' };
+  founderSaveStructure();
+  renderSidebar();
+}
+
+function founderAddLesson() {
+  const modId = prompt('Module ID to add lesson to:');
+  if (!modId) return;
+  founderAddLessonToMod(modId);
+}
+
+function founderRemoveLesson(lessonId) {
+  if (!confirm('Remove this lesson?')) return;
+  delete LESSONS[lessonId];
+  founderSaveStructure();
+  renderSidebar();
+}
+
+function founderAddBlock() {
+  const type = prompt('Block type (text / video / tip):') || 'text';
+  const content = prompt('Content:') || '';
+  if (!currentLessonId) { alert('Open a lesson first'); return; }
+  const contentArea = document.getElementById('lesson-body');
+  if (!contentArea) return;
+  const block = document.createElement('div');
+  block.className = 'kp-card f-block';
+  block.setAttribute('contenteditable', window._founderActive ? 'true' : 'false');
+  block.textContent = content;
+  if (window._founderActive) {
+    const del = document.createElement('button');
+    del.textContent = '✕ Remove';
+    del.className = 'founder-block-del';
+    del.onclick = () => { block.remove(); founderSaveContent(); };
+    block.appendChild(del);
+  }
+  contentArea.appendChild(block);
+  founderSaveContent();
 }
 
 // ── INIT ─────────────────────────────────────────────────────────
+founderLoadStructure();
+renderSidebar();
+updateStats();
 if (isFounder()) founderActivate();
 
 function handleSignOut() {
