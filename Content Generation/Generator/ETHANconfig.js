@@ -1,20 +1,8 @@
+// Ethan's personal API keys — image generation
 window.ETHAN_CONFIG = {
-  // Image generation — Ethan's keys
-  kie_api_key:      '',
-  lz_api_key:       '',
-  ws_api_key:       '',
-  evolink_key:      '',
-
-  // Supabase — shared BAM project
-  supabase_url:     'https://wwwqltetjjwoodiwbabq.supabase.co',
-  supabase_anon:    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3d3FsdGV0amp3b29kaXdiYWJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDA0NzcsImV4cCI6MjA5MTc3NjQ3N30.Jy8BlFPnqo6a-EIah4xWbS2zWKYltSOCMSjcrKMoQ_8',
-
-  // Stripe price IDs — shared
-  stripe_price_10:      'price_1TME8uDbHWgvBRLbCLxxBZxv',
-  stripe_price_20:      'price_1TME9MDbHWgvBRLbVV4OhlLY',
-  stripe_price_50:      'price_1TME9mDbHWgvBRLbyNoIqYE8',
-  stripe_price_beginner: 'price_1TMED4DbHWgvBRLbBu3XYchs',
-  stripe_price_advanced: 'price_1TMEDQDbHWgvBRLbwcFK5wK0',
+  kie_api_key:  '',
+  lz_api_key:   'sk-v00anBBwDxTtWbGq87B3F2786fE8448bA6C544BaF529AbD5',
+  ws_api_key:   '16558297867faaa30364bf4022eb9cb4b0d75c926b0b6aa255feb851fa69aab5',
 
   // Ethan's founder access
   founder_password: 'Tylacros1!'
