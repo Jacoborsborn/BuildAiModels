@@ -794,23 +794,34 @@ function founderModalClose() {
   document.getElementById('founder-pw-input').value = '';
   document.getElementById('founder-pw-input').classList.remove('error');
 }
-function founderConfirm() {
-  const val = document.getElementById('founder-pw-input').value;
-  const ethanPw = window.ETHAN_CONFIG?.founder_password || '';
-  if (val === FOUNDER_PW) {
-    localStorage.setItem(STORAGE_KEY, '1');
-    founderModalClose();
-    window.location.href = '/course';
-  } else if (ethanPw && val === ethanPw) {
-    localStorage.setItem(STORAGE_KEY, 'ethan');
-    founderModalClose();
-    window.location.href = '/course';
-  } else {
-    const input = document.getElementById('founder-pw-input');
-    input.classList.add('error');
-    setTimeout(() => input.classList.remove('error'), 600);
-    input.value = '';
-    input.focus();
+async function founderConfirm() {
+  const inp = document.getElementById('founder-pw-input');
+  const val = inp.value;
+  if (!val) return;
+  inp.disabled = true;
+  try {
+    const res = await fetch('/api/founder-auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: val })
+    });
+    const data = await res.json();
+    if (res.ok && data.founder) {
+      localStorage.setItem(STORAGE_KEY, data.founder === 'ethan' ? 'ethan' : '1');
+      founderModalClose();
+      window.location.href = '/course';
+    } else {
+      inp.classList.add('error');
+      setTimeout(() => inp.classList.remove('error'), 600);
+      inp.value = '';
+      inp.focus();
+    }
+  } catch(e) {
+    inp.classList.add('error');
+    setTimeout(() => inp.classList.remove('error'), 600);
+    inp.value = '';
+  } finally {
+    inp.disabled = false;
   }
 }
 
