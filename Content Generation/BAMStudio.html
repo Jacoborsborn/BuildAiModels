@@ -665,8 +665,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
           <div class="field-label">Model</div>
           <select class="model-select" id="img-model" onchange="updateImgCost()">
             <optgroup label="── WaveSpeed · BEST QUALITY">
-              <option value="wan-edit-4k" selected>Wan 2.7 Edit · Max (2048px) — $0.03/img ✓ DEFAULT</option>
-              <option value="wan-edit-2k">Wan 2.7 Edit · Standard (1024px) — $0.03/img</option>
+              <option value="wan-edit-2k" selected>Wan 2.7 Edit — $0.03/img ✓ DEFAULT</option>
             </optgroup>
             <optgroup label="── laozhang.ai · CHEAPEST">
               <option value="nano-lz-2">Nano Banana 2 · laozhang.ai — $0.03/img</option>
@@ -2029,19 +2028,25 @@ function updateImgCost() {
     return;
   }
 
-  // Wan 2.7 Edit Pro models
+  // Wan 2.7 Edit — lock 4K pill, use fixed preset sizes only
   if (isWanEditModel(model)) {
     const price = IMG_PRICES[model];
-    const tier = model === 'wan-edit-4k' ? '4K' : '2K';
+    const size = computeWanSize(imgState.ar);
     document.getElementById('img-cost-amount').textContent = `$${price.toFixed(3)}`;
-    document.getElementById('img-cost-breakdown').textContent = `Wan 2.7 Edit · ${tier === '4K' ? 'Max 2048px' : 'Standard 1024px'} · $${price}/img`;
+    document.getElementById('img-cost-breakdown').textContent = `Wan 2.7 Edit · ${size} · $${price}/img`;
     document.getElementById('input-img-group').style.display = 'flex';
-    document.getElementById('input-img-label-line').innerHTML = `Source Image <span class="hint">— required for Wan 2.7 Edit Pro</span>`;
+    document.getElementById('input-img-label-line').innerHTML = `Source Image <span class="hint">— required for Wan 2.7 Edit</span>`;
     document.querySelectorAll('[data-n]').forEach(p => { p.style.opacity = '0.3'; p.classList.remove('pill-muted-nano'); });
     const arNote = document.getElementById('img-ar-multi-note');
     if (arNote) arNote.style.display = 'none';
+    // Lock 4K pill — Wan 2.7 uses preset sizes, not 4K scaling
+    const pill4k = document.getElementById('pill-4k');
+    if (pill4k) { pill4k.style.opacity = '0.35'; pill4k.style.pointerEvents = 'none'; pill4k.title = 'Not available for Wan 2.7'; }
     return;
   }
+  // Restore 4K pill for other models
+  const pill4k = document.getElementById('pill-4k');
+  if (pill4k) { pill4k.style.opacity = ''; pill4k.style.pointerEvents = ''; pill4k.title = ''; }
 
   // laozhang models
   if (isLzModel(model)) {
@@ -3299,22 +3304,20 @@ async function generateImagesKIE(model, prompt) {
 
 function isWanEditModel(model) { return model === 'wan-edit-2k' || model === 'wan-edit-4k'; }
 
-function computeWanSize(ar, tier) {
-  const parts = String(ar).split(':').map(Number);
-  const rw = parts[0] || 1;
-  const rh = parts[1] || 1;
-  const target = tier === '4K' ? 2048 : 1024;
-  let w, h;
-  if (rw >= rh) { w = target; h = Math.round(target * rh / rw); }
-  else { h = target; w = Math.round(target * rw / rh); }
-  w = Math.max(768, Math.min(2048, Math.round(w / 64) * 64));
-  h = Math.max(768, Math.min(2048, Math.round(h / 64) * 64));
-  return `${w}x${h}`;
+// Wan 2.7 Edit only accepts specific preset sizes
+const WAN_SIZES = {
+  '9:16':  '480x832',
+  '16:9':  '832x480',
+  '1:1':   '640x640',
+  '4:5':   '624x768',
+  '3:2':   '768x512',
+};
+function computeWanSize(ar) {
+  return WAN_SIZES[ar] || '480x832';
 }
 
 async function generateImagesWan(model, prompt) {
-  const tier = model === 'wan-edit-4k' ? '4K' : '2K';
-  const size = computeWanSize(imgState.ar, tier);
+  const size = computeWanSize(imgState.ar);
   const price = IMG_PRICES[model];
   const btn = document.getElementById('img-generate-btn');
   btn.disabled = true; btn.textContent = '⏳ GENERATING...'; btn.classList.add('loading');
@@ -3334,14 +3337,14 @@ async function generateImagesWan(model, prompt) {
 
     const body = { prompt, images: imageUrls, size, seed: -1, enable_sync_mode: false };
     console.log('Wan 2.7 Edit Pro body:', JSON.stringify(body));
-    toast(`⚡ Generating with Wan 2.7 Edit (${tier === '4K' ? 'Max' : 'Standard'} · ${size})…`, 'success');
+    toast(`⚡ Generating with Wan 2.7 Edit (${size})…`, 'success');
 
     const taskRes = await submitTask(MODEL_ENDPOINTS[model], body);
     const result = await pollResult(taskRes.data.id);
     const urls = result.outputs || [];
     if (urls.length === 0) throw new Error('No output from Wan 2.7 — try again');
 
-    const wanLabel = `Wan 2.7 Edit · ${tier === '4K' ? 'Max 2048px' : 'Standard 1024px'}`;
+    const wanLabel = `Wan 2.7 Edit · ${size}`;
     replaceLoadingWithImage(slot, urls[0], wanLabel, price);
     addToLibrary({ type: 'image', urls, model: wanLabel, cost: price });
     updateSession(price);
