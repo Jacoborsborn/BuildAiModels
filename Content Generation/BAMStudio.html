@@ -519,33 +519,6 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
 .tag.green { border-color: rgba(79,209,138,0.4); color: var(--success); background: rgba(79,209,138,0.08); }
 .tag.blue { border-color: rgba(91,168,245,0.4); color: var(--blue); background: rgba(91,168,245,0.08); }
 
-/* ── REEL SESSION SIDEBAR ── */
-#reel-session-sidebar {
-  width: 160px; min-width: 160px; border-right: 1px solid var(--border);
-  background: var(--panel); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0;
-}
-.reel-sess-title {
-  padding: 10px 12px 6px; font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
-  color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 700;
-}
-#reel-sess-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-.reel-sess-item {
-  display: flex; align-items: center; gap: 8px; padding: 10px 12px;
-  cursor: pointer; border-bottom: 1px solid var(--border); transition: background .15s;
-}
-.reel-sess-item:hover { background: var(--panel2); }
-.reel-sess-item.active { background: var(--panel2); border-left: 2px solid var(--accent); }
-.reel-sess-dot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--border2);
-}
-.reel-sess-dot.loaded { background: var(--blue); }
-.reel-sess-dot.step1  { background: var(--orange); }
-.reel-sess-dot.done   { background: var(--success); }
-.reel-sess-dot.empty  { background: var(--border2); }
-.reel-sess-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.reel-sess-label { font-size: 10px; color: var(--text); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.reel-sess-sub { font-size: 9px; color: var(--muted); }
-.reel-sess-legend { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; font-size: 9px; color: var(--muted); border-top: 1px solid var(--border); }
 
 /* ═══ VAULT SIDEBAR ═══ */
 #vault-tabs-row{display:flex;align-items:center;gap:5px;padding:6px 8px 5px;border-bottom:1px solid var(--border);flex-shrink:0;min-height:36px;flex-wrap:wrap}
@@ -573,7 +546,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
   <div id="vault-onboard-modal" style="background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:28px;width:420px;max-width:92vw;display:flex;flex-direction:column;gap:16px">
     <div style="font-size:13px;font-weight:700;color:var(--text)">Create Your First Vault</div>
     <div style="font-size:11px;color:var(--muted);line-height:1.5">A vault stores 2–4 reference images for your AI model — keeping her consistent across every generation.</div>
-    <input id="vault-onboard-name" type="text" placeholder="Vault name (e.g. Sofia)" style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--font);font-size:12px;outline:none;width:100%;box-sizing:border-box">
+    <form autocomplete="off" onsubmit="return false" style="display:contents"><input id="vault-onboard-name" type="text" placeholder="Vault name (e.g. Sofia)" autocomplete="off" name="vault-display-name" style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--font);font-size:12px;outline:none;width:100%;box-sizing:border-box"></form>
     <div id="vault-onboard-drop" style="border:1.5px dashed var(--border2);border-radius:8px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--muted);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:100px;justify-content:center;transition:border-color .15s,background .15s">
       <div style="font-size:22px">📎</div>
       <div>Drop 2–4 reference images here</div>
@@ -667,6 +640,11 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
         <button type="button" class="vault-ctrl-btn" onclick="document.getElementById('vault-file-input').click()">📎 Files</button>
         <input type="file" id="vault-file-input" multiple accept="image/*" style="display:none" onchange="vaultAddFiles(this.files);this.value=''">
         <input type="file" id="vault-folder-input" webkitdirectory directory multiple accept="image/*" style="display:none" onchange="vaultAddFiles(this.files);this.value=''">
+      </div>
+      <!-- Vault rename -->
+      <div id="vault-rename-row" style="display:flex;gap:6px;padding:6px 10px;border-bottom:1px solid var(--border)">
+        <input id="vault-rename-input" type="text" placeholder="Rename vault…" autocomplete="off" style="flex:1;background:var(--panel2);border:1px solid var(--border2);border-radius:5px;padding:5px 8px;color:var(--text);font-family:var(--font);font-size:11px;outline:none;min-width:0">
+        <button onclick="vaultRenameFromInput()" style="background:var(--accent2);border:1px solid rgba(184,240,84,0.2);color:var(--accent);padding:5px 10px;border-radius:5px;cursor:pointer;font-size:10px;white-space:nowrap;font-family:var(--font)">✓</button>
       </div>
       <div id="onoff-upload-row" style="display:none">
         <input type="file" id="onoff-file-input" multiple accept="image/*" style="display:none" onchange="onoffAddFiles(this.files);this.value=''">
@@ -978,24 +956,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
   ══════════════════════════════════════════ -->
   <div id="page-reel" class="page">
 
-    <!-- Session Sidebar -->
-    <div id="reel-session-sidebar">
-      <div class="reel-sess-title">SESSIONS</div>
-      <div id="reel-sess-list">
-        <div class="reel-sess-item active" id="reel-sess-0" onclick="switchReelSession(0)">
-          <span class="reel-sess-dot empty"></span>
-          <div class="reel-sess-info">
-            <div class="reel-sess-label">Session 1</div>
-            <div class="reel-sess-sub">Empty</div>
-          </div>
-        </div>
-      </div>
-      <div class="reel-sess-legend">
-        <div><span class="reel-sess-dot loaded" style="display:inline-block;margin-right:5px"></span>Video loaded</div>
-        <div><span class="reel-sess-dot step1" style="display:inline-block;margin-right:5px"></span>Frame ready</div>
-        <div><span class="reel-sess-dot done" style="display:inline-block;margin-right:5px"></span>Complete</div>
-      </div>
-    </div>
+
 
     <div id="reel-form">
       <div id="reel-scroll">
@@ -1106,12 +1067,14 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
   ══════════════════════════════════════════ -->
   <div id="page-nsfw" class="page">
 
-    <!-- Ref Sidebar (shared store, same refs) -->
-    <div id="ref-sidebar" style="min-width:220px;width:220px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--panel);overflow:hidden">
-      <div class="sidebar-title" style="padding:12px 14px 8px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-        REFS <span id="nsfw-ref-note" style="font-size:8px;color:var(--muted2)">uses main refs</span>
+    <!-- Ref Sidebar (vault selector) -->
+    <div id="nsfw-ref-sidebar" style="min-width:220px;width:220px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--panel);overflow:hidden">
+      <div style="padding:12px 14px 8px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        VAULT REFS
       </div>
-      <div style="padding:8px 10px;font-size:9px;color:var(--muted);line-height:1.5">Load refs on the Image tab. They're shared across all tabs.</div>
+      <div style="padding:8px 10px;font-size:9px;color:var(--muted);line-height:1.5;border-bottom:1px solid var(--border)">Select a vault to auto-load refs into the image slots below.</div>
+      <!-- Vault selector -->
+      <div id="nsfw-vault-selector" style="padding:8px 10px;display:flex;flex-direction:column;gap:6px;overflow-y:auto;flex:1"></div>
     </div>
 
     <!-- Form -->
@@ -1259,125 +1222,75 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
   <!-- ══════════════════════════════════════════
        BILLING PAGE
   ══════════════════════════════════════════ -->
-  <div id="page-billing" class="page" style="flex-direction:column;overflow-y:auto;padding:24px;gap:16px;background:var(--bg)">
+  <div id="page-billing" class="page" style="flex-direction:column;overflow-y:auto;padding:32px 40px;gap:0;background:var(--bg)">
 
-    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:1px">💳 BILLING DASHBOARD</div>
-    <div style="font-size:10px;color:var(--muted);margin-bottom:8px">Live balances + quick links to top up each provider</div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">
-
-      <!-- kie.ai -->
-      <div class="billing-card">
-        <div class="billing-card-header">
-          <div>
-            <div class="billing-name">kie.ai</div>
-            <div class="billing-desc">Default image provider · Card payment · Stripe</div>
-          </div>
-          <div class="billing-badge" style="background:var(--accent2);color:var(--accent);border-color:var(--accent)">DEFAULT</div>
-        </div>
-        <div class="billing-pricing">
-          <div class="billing-price-row"><span>Nano Banana Pro</span><span>$0.12/img</span></div>
-          <div class="billing-price-row"><span>Seedream 4.5</span><span>$0.04/img</span></div>
-        </div>
-        <div class="billing-balance-row">
-          <span class="billing-bal-label">Balance</span>
-          <span class="billing-bal-val" id="bal-kie">—</span>
-          <button class="billing-refresh-btn" onclick="fetchKieBalance()">↻</button>
-        </div>
-        <div class="billing-actions">
-          <a href="https://kie.ai/billing" target="_blank" class="billing-link-btn">💳 Top Up</a>
-          <a href="https://kie.ai/dashboard" target="_blank" class="billing-link-btn secondary">Dashboard</a>
-        </div>
-      </div>
-
-      <!-- laozhang.ai -->
-      <div class="billing-card">
-        <div class="billing-card-header">
-          <div>
-            <div class="billing-name">laozhang.ai</div>
-            <div class="billing-desc">Cheapest · USDT / Alipay · 65% cheaper</div>
-          </div>
-          <div class="billing-badge" style="background:var(--green2);color:var(--green);border-color:var(--green)">CHEAPEST</div>
-        </div>
-        <div class="billing-pricing">
-          <div class="billing-price-row"><span>Nano Banana Pro</span><span>$0.05/img</span></div>
-          <div class="billing-price-row"><span>Seedream 4.5</span><span>$0.04/img</span></div>
-        </div>
-        <div class="billing-balance-row">
-          <span class="billing-bal-label">Balance</span>
-          <span class="billing-bal-val" id="bal-lz">—</span>
-          <button class="billing-refresh-btn" onclick="fetchLzBalance()">↻</button>
-        </div>
-        <div class="billing-actions">
-          <a href="https://api.laozhang.ai/account/profile" target="_blank" class="billing-link-btn">💳 Top Up</a>
-          <a href="https://api.laozhang.ai/" target="_blank" class="billing-link-btn secondary">Dashboard</a>
-        </div>
-      </div>
-
-      <!-- WaveSpeed -->
-      <div class="billing-card">
-        <div class="billing-card-header">
-          <div>
-            <div class="billing-name">WaveSpeed</div>
-            <div class="billing-desc">Image fallback + file hosting for refs</div>
-          </div>
-          <div class="billing-badge" style="background:var(--blue2);color:var(--blue);border-color:var(--blue)">FALLBACK</div>
-        </div>
-        <div class="billing-pricing">
-          <div class="billing-price-row"><span>Nano Banana Pro 4K</span><span>$0.24/img</span></div>
-          <div class="billing-price-row"><span>File upload (refs)</span><span>Free</span></div>
-        </div>
-        <div class="billing-balance-row">
-          <span class="billing-bal-label">Balance</span>
-          <span class="billing-bal-val" id="bal-ws">—</span>
-          <button class="billing-refresh-btn" onclick="fetchWsBalance()">↻</button>
-        </div>
-        <div class="billing-actions">
-          <a href="https://wavespeed.ai/billing" target="_blank" class="billing-link-btn">💳 Top Up</a>
-          <a href="https://wavespeed.ai/dashboard" target="_blank" class="billing-link-btn secondary">Dashboard</a>
-        </div>
-      </div>
-
-      <!-- EvoLink -->
-      <div class="billing-card">
-        <div class="billing-card-header">
-          <div>
-            <div class="billing-name">EvoLink</div>
-            <div class="billing-desc">Kling video · Motion Control + I2V · 55% cheaper</div>
-          </div>
-          <div class="billing-badge" style="background:var(--purple2);color:var(--purple);border-color:var(--purple)">VIDEO</div>
-        </div>
-        <div class="billing-pricing">
-          <div class="billing-price-row"><span>Motion Control 5s</span><span>$0.84</span></div>
-          <div class="billing-price-row"><span>Image to Video 5s</span><span>$0.84</span></div>
-          <div class="billing-price-row"><span>≈55% cheaper than WaveSpeed</span><span></span></div>
-        </div>
-        <div class="billing-balance-row">
-          <span class="billing-bal-label">Balance</span>
-          <span class="billing-bal-val" id="bal-evo">—</span>
-          <button class="billing-refresh-btn" onclick="fetchEvoBalance()">↻</button>
-        </div>
-        <div class="billing-actions">
-          <a href="https://evolink.ai/billing" target="_blank" class="billing-link-btn">💳 Top Up</a>
-          <a href="https://evolink.ai/dashboard" target="_blank" class="billing-link-btn secondary">Dashboard</a>
-        </div>
-      </div>
-
+  <!-- Balance Hero -->
+  <div style="background:linear-gradient(135deg,var(--panel2) 0%,#0f1a08 100%);border:1px solid rgba(184,240,84,0.15);border-radius:14px;padding:28px 32px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px">
+    <div>
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-family:var(--font-mono);margin-bottom:8px">Current Balance</div>
+      <div style="font-family:var(--font-display,var(--font));font-size:48px;font-weight:800;color:var(--accent);letter-spacing:-2px;line-height:1">£<span id="billing-balance-display">0.00</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:6px">Credits deduct per generation · No expiry</div>
     </div>
+    <button onclick="studioOpenTopup()" style="background:var(--accent);color:#000;border:none;padding:14px 28px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font)">＋ Top Up</button>
+  </div>
 
-    <!-- Session summary -->
-    <div style="background:var(--panel);border:1px solid var(--border2);border-radius:8px;padding:14px;margin-top:4px">
-      <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">SESSION SUMMARY</div>
-      <div style="display:flex;gap:20px;flex-wrap:wrap">
-        <div><div style="font-size:9px;color:var(--muted)">Images</div><div style="font-size:18px;font-weight:700;color:var(--text)" id="bill-img-count">0</div></div>
-        <div><div style="font-size:9px;color:var(--muted)">Videos</div><div style="font-size:18px;font-weight:700;color:var(--text)" id="bill-vid-count">0</div></div>
-        <div><div style="font-size:9px;color:var(--muted)">Total Spent</div><div style="font-size:18px;font-weight:700;color:var(--orange)" id="bill-total">$0.00</div></div>
+  <!-- Pricing table -->
+  <div style="background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:24px;margin-bottom:16px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px">Generation Pricing <span style="font-size:9px;padding:2px 8px;border-radius:4px;background:var(--accent2);color:var(--accent);border:1px solid rgba(184,240,84,0.2);font-family:var(--font-mono);letter-spacing:1px;text-transform:uppercase">YOUR RATES</span></div>
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr>
+        <th style="text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);font-family:var(--font-mono);font-weight:500;padding:8px 12px;border-bottom:1px solid var(--border)">Type</th>
+        <th style="text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);font-family:var(--font-mono);font-weight:500;padding:8px 12px;border-bottom:1px solid var(--border)">Model</th>
+        <th style="text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);font-family:var(--font-mono);font-weight:500;padding:8px 12px;border-bottom:1px solid var(--border)">Cost</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)"><strong style="color:var(--text)">Image</strong></td><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)">Nano Banana Pro</td><td style="padding:10px 12px;font-size:12px;color:var(--accent);font-family:var(--font-mono);border-bottom:1px solid var(--border)">£0.09</td></tr>
+        <tr><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)"><strong style="color:var(--text)">Image</strong></td><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)">Seedream 5.0 Lite</td><td style="padding:10px 12px;font-size:12px;color:var(--accent);font-family:var(--font-mono);border-bottom:1px solid var(--border)">£0.07</td></tr>
+        <tr><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)"><strong style="color:var(--text)">Video 5s</strong></td><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)">Wan 2.2 Spicy I2V</td><td style="padding:10px 12px;font-size:12px;color:var(--accent);font-family:var(--font-mono);border-bottom:1px solid var(--border)">£0.28</td></tr>
+        <tr><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)"><strong style="color:var(--text)">Video 5s</strong></td><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)">Kling 3.0 Pro I2V</td><td style="padding:10px 12px;font-size:12px;color:var(--accent);font-family:var(--font-mono);border-bottom:1px solid var(--border)">£0.85</td></tr>
+        <tr><td style="padding:10px 12px;font-size:13px;color:var(--muted)"><strong style="color:var(--text)">Video 5s</strong></td><td style="padding:10px 12px;font-size:13px;color:var(--muted)">Kling 3.0 Motion Control</td><td style="padding:10px 12px;font-size:12px;color:var(--accent);font-family:var(--font-mono)">£1.20</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Transaction history -->
+  <div style="background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:24px;margin-bottom:16px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:16px">Transaction History</div>
+    <div id="studio-tx-list"><div style="text-align:center;padding:32px;color:var(--muted2);font-size:13px">Loading...</div></div>
+  </div>
+
+</div><!-- /page-billing -->
+
+<!-- STUDIO TOP-UP MODAL -->
+<div id="studio-topup-modal" style="display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div style="background:var(--panel);border:1px solid var(--border2);border-radius:16px;padding:32px;width:100%;max-width:400px;margin:24px">
+    <div style="font-family:var(--font-display,var(--font));font-size:20px;font-weight:800;margin-bottom:8px">Top Up Credits</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:24px">Choose an amount — credits never expire</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+      <div onclick="studioSelectTopup(10,this)" style="background:var(--panel2);border:1px solid var(--border2);border-radius:10px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden">
+        <div style="font-size:28px;font-weight:800;color:var(--accent);letter-spacing:-1px">£10</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Starter</div>
+        <div style="font-size:10px;margin-top:6px">&nbsp;</div>
+      </div>
+      <div onclick="studioSelectTopup(20,this)" style="background:var(--panel2);border:1px solid var(--accent);border-radius:10px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;right:0;background:var(--accent);color:#000;font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-bottom-left-radius:6px">POPULAR</div>
+        <div style="font-size:28px;font-weight:800;color:var(--accent);letter-spacing:-1px">£20</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Standard</div>
+        <div style="font-size:10px;color:#4fd98a;margin-top:6px">+8% bonus</div>
+      </div>
+      <div onclick="studioSelectTopup(50,this)" style="background:var(--panel2);border:1px solid var(--border2);border-radius:10px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s">
+        <div style="font-size:28px;font-weight:800;color:var(--accent);letter-spacing:-1px">£50</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Pro</div>
+        <div style="font-size:10px;color:#4fd98a;margin-top:6px">+14% bonus</div>
       </div>
     </div>
-
-    <button onclick="refreshAllBalances()" style="align-self:flex-start;padding:8px 18px;background:var(--accent2);border:1px solid var(--accent);color:var(--accent);border-radius:6px;cursor:pointer;font-family:var(--font);font-size:10px;letter-spacing:.5px">↻ Refresh All Balances</button>
-
-  </div><!-- /page-billing -->
+    <div id="studio-topup-alert" style="display:none;padding:11px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;background:rgba(255,79,106,0.08);border:1px solid rgba(255,79,106,0.3);color:#ff8fa0"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+      <button onclick="studioCloseTopup()" style="padding:10px 20px;border-radius:8px;background:none;border:1px solid var(--border2);color:var(--muted);cursor:pointer;font-family:var(--font)">Cancel</button>
+      <button id="studio-topup-pay-btn" onclick="studioHandleTopup()" disabled style="padding:10px 20px;border-radius:8px;background:var(--accent);color:#000;border:none;font-weight:700;cursor:pointer;font-family:var(--font)">Pay with Stripe</button>
+    </div>
+  </div>
+</div>
 
   <!-- ══════════════════════════════════════════
        WEEK QUEUE PAGE
@@ -1687,11 +1600,23 @@ async function vaultLoadAll(){
 
 function vaultGetActive(){ return vaults.find(v=>v.id===activeVaultId)||null; }
 
-function vaultCreate(name){
+async function vaultCreate(name){
   const n=name||prompt('Vault name:','New Vault'); if(!n) return;
   const id=vaultGenId();
   vaults.push({id,name:n.trim()||'Vault',order:[],images:{},locked:[]});
-  activeVaultId=id; vaultSaveMeta(); renderVaultTabs(); renderVaultGrid();
+  activeVaultId=id; await vaultSaveMeta();
+  if (typeof sb !== 'undefined' && sb && typeof supabaseSession !== 'undefined' && supabaseSession) {
+    try {
+      await sb.from('vaults').upsert({
+        user_id: supabaseSession.user.id,
+        vault_id: id,
+        vault_name: n.trim()||'Vault',
+        image_count: 0,
+        created_at: new Date().toISOString()
+      }, { onConflict: 'vault_id' });
+    } catch(e) { console.warn('Vault sync skipped:', e.message); }
+  }
+  renderVaultTabs(); renderVaultGrid();
   toast('✓ Vault "'+n+'" created','success');
 }
 
@@ -4574,7 +4499,8 @@ function switchPage(name) {
   document.querySelectorAll('.tab').forEach(t => {
     if (t.dataset.page === name) t.classList.add('active');
   });
-  if (name === 'billing') refreshAllBalances();
+  if (name === 'billing') { refreshAllBalances(); studioLoadBilling(); }
+  if (name === 'nsfw') renderNsfwVaultSelector();
 }
 
 // ════════════════════════════════════════════
@@ -5310,6 +5236,18 @@ async function vaultOnboardCreate() {
     } catch(e) {}
   }
   await vaultSaveMeta();
+  // Sync to Supabase
+  if (typeof sb !== 'undefined' && sb && typeof supabaseSession !== 'undefined' && supabaseSession) {
+    try {
+      await sb.from('vaults').upsert({
+        user_id: supabaseSession.user.id,
+        vault_id: id,
+        vault_name: name,
+        image_count: _onboardFiles.length,
+        created_at: new Date().toISOString()
+      }, { onConflict: 'vault_id' });
+    } catch(e) { console.warn('Vault sync skipped:', e.message); }
+  }
   renderVaultTabs(); renderVaultGrid();
   toast('✓ Vault "' + name + '" created', 'success');
   vaultOnboardHide();
@@ -5437,5 +5375,173 @@ reelRefreshCostLabels();
   supabaseSession = session;
   const { data } = await sb.from('credits').select('balance_usd').eq('user_id', session.user.id).single();
   if (data) updateBalanceDisplay(data.balance_usd);
+  renderNsfwVaultSelector();
 })();
+
+// ── STUDIO BILLING ──────────────────────────────────────────────
+let _studioTopupAmount = null, _studioTopupType = null;
+
+async function studioLoadBilling() {
+  if (!sb || !supabaseSession) return;
+  // Update balance display
+  const { data } = await sb.from('credits').select('balance_usd').eq('user_id', supabaseSession.user.id).single();
+  if (data) {
+    const gbp = (data.balance_usd * 0.79).toFixed(2);
+    const el = document.getElementById('billing-balance-display');
+    if (el) el.textContent = gbp;
+  }
+  // Load transactions
+  const { data: txs } = await sb.from('transactions').select('*').eq('user_id', supabaseSession.user.id).order('created_at', { ascending: false }).limit(20);
+  const list = document.getElementById('studio-tx-list');
+  if (!list) return;
+  if (!txs || txs.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted2);font-size:13px">No transactions yet — top up to get started</div>';
+    return;
+  }
+  list.innerHTML = txs.map(tx => {
+    const isCredit = tx.type === 'topup' || tx.type === 'refund';
+    const icon = isCredit ? '⬆' : '⚡';
+    const amountStr = (isCredit ? '+' : '-') + '£' + Math.abs((tx.amount_usd||0) * 0.79).toFixed(2);
+    const date = new Date(tx.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    return `<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:${isCredit?'var(--accent2)':'rgba(91,168,245,0.1)'}">${icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${String(tx.description||tx.type).replace(/&/g,'&amp;').replace(/</g,'&lt;')}</div>
+        <div style="font-size:11px;color:var(--muted2);font-family:var(--font-mono);margin-top:2px">${date}</div>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:13px;font-weight:600;white-space:nowrap;color:${isCredit?'#4fd98a':'var(--muted)'}">${amountStr}</div>
+    </div>`;
+  }).join('');
+}
+
+function studioOpenTopup() {
+  const m = document.getElementById('studio-topup-modal');
+  if (m) m.style.display = 'flex';
+}
+function studioCloseTopup() {
+  const m = document.getElementById('studio-topup-modal');
+  if (m) m.style.display = 'none';
+  _studioTopupAmount = null; _studioTopupType = null;
+  document.querySelectorAll('#studio-topup-modal [onclick^="studioSelectTopup"]').forEach(c => c.style.outline = '');
+  const btn = document.getElementById('studio-topup-pay-btn');
+  if (btn) btn.disabled = true;
+}
+function studioSelectTopup(amount, el) {
+  const typeMap = { 10:'topup_10', 20:'topup_20', 50:'topup_50' };
+  document.querySelectorAll('#studio-topup-modal [onclick^="studioSelectTopup"]').forEach(c => c.style.outline = '');
+  el.style.outline = '2px solid var(--accent)';
+  _studioTopupAmount = amount; _studioTopupType = typeMap[amount];
+  const btn = document.getElementById('studio-topup-pay-btn');
+  if (btn) btn.disabled = false;
+}
+async function studioHandleTopup() {
+  if (!_studioTopupType || !supabaseSession) return;
+  const btn = document.getElementById('studio-topup-pay-btn');
+  if (btn) { btn.textContent = 'Redirecting...'; btn.disabled = true; }
+  try {
+    const res = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: _studioTopupType, userId: supabaseSession.user.id, userEmail: supabaseSession.user.email })
+    });
+    const { url, error } = await res.json();
+    if (error) throw new Error(error);
+    window.location.href = url;
+  } catch(e) {
+    const alert = document.getElementById('studio-topup-alert');
+    if (alert) { alert.textContent = 'Payment setup failed. Please try again.'; alert.style.display = 'block'; }
+    if (btn) { btn.textContent = 'Pay with Stripe'; btn.disabled = false; }
+  }
+}
+
+// ── NSFW VAULT SELECTOR ────────────────────────────────────────
+function renderNsfwVaultSelector() {
+  const container = document.getElementById('nsfw-vault-selector');
+  if (!container) return;
+  if (!vaults.length) {
+    container.innerHTML = '<div style="font-size:10px;color:var(--muted2);padding:8px">No vaults yet — create one on the Image tab.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  vaults.forEach(vault => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.style.cssText = 'background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;text-align:left;cursor:pointer;font-family:var(--font);font-size:11px;color:var(--text);display:flex;align-items:center;gap:8px;transition:all .15s';
+    btn.onmouseover = () => { btn.style.borderColor = 'var(--accent)'; btn.style.color = 'var(--accent)'; };
+    btn.onmouseout = () => { btn.style.borderColor = 'var(--border2)'; btn.style.color = 'var(--text)'; };
+
+    // Thumbnail preview
+    const firstImg = vault.order[0] ? vault.images[vault.order[0]] : null;
+    if (firstImg) {
+      const thumb = document.createElement('img');
+      thumb.src = firstImg;
+      thumb.style.cssText = 'width:28px;height:28px;object-fit:cover;border-radius:4px;flex-shrink:0';
+      btn.appendChild(thumb);
+    } else {
+      const icon = document.createElement('span');
+      icon.textContent = '📁';
+      icon.style.cssText = 'width:28px;text-align:center;flex-shrink:0';
+      btn.appendChild(icon);
+    }
+
+    const info = document.createElement('div');
+    info.innerHTML = `<div style="font-weight:600">${vault.name}</div><div style="font-size:9px;color:var(--muted)">${vault.order.length} image${vault.order.length!==1?'s':''}</div>`;
+    btn.appendChild(info);
+
+    btn.onclick = () => loadVaultIntoNsfw(vault);
+    container.appendChild(btn);
+  });
+}
+
+function loadVaultIntoNsfw(vault) {
+  // Get all vault images in order
+  const images = vault.order.map(k => vault.images[k]).filter(Boolean);
+  if (!images.length) { toast('Vault is empty', 'error'); return; }
+
+  images.forEach((dataUrl, i) => {
+    // Ensure slot exists
+    let slot = document.getElementById('nsfw-ref-drop-' + i);
+    if (!slot) {
+      if (typeof addNsfwRefSlot === 'function') addNsfwRefSlot();
+      slot = document.getElementById('nsfw-ref-drop-' + i);
+    }
+    if (!slot) return;
+
+    // Set the drop zone to show the image
+    slot.innerHTML = `<img src="${dataUrl}" style="max-height:80px;max-width:100%;border-radius:4px;object-fit:contain" /><div class="file-name">${vault.name} — Image ${i+1}</div>`;
+    slot.classList.add('has-file');
+    slot.classList.remove('dragover');
+
+    // Also call the existing handler if it accepts data URLs
+    if (typeof nsfwRefSlots !== 'undefined') {
+      if (!nsfwRefSlots) window.nsfwRefSlots = [];
+      nsfwRefSlots[i] = dataUrl;
+    }
+    // Try to set via the existing label element
+    const label = document.getElementById('nsfw-ref-label-' + i);
+    if (label) label.textContent = vault.name + ' — Image ' + (i+1);
+  });
+
+  // Also update nsfwRefs array used by the generate function
+  if (typeof window.nsfwRefs !== 'undefined') {
+    window.nsfwRefs = images.slice(0, 8);
+  }
+
+  toast('✓ Loaded ' + images.length + ' refs from "' + vault.name + '"', 'success');
+}
+
+// ── VAULT RENAME FROM INPUT ────────────────────────────────────
+function vaultRenameFromInput() {
+  const input = document.getElementById('vault-rename-input');
+  if (!input) return;
+  const n = input.value.trim();
+  if (!n) return;
+  const v = vaultGetActive();
+  if (!v) { toast('No active vault', 'error'); return; }
+  v.name = n;
+  input.value = '';
+  vaultSaveMeta();
+  renderVaultTabs();
+  toast('✓ Vault renamed to "' + n + '"', 'success');
+}
 </script></body></html>
