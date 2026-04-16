@@ -1580,16 +1580,71 @@ const VAULT_META_KEY='__vaults_meta_v1__';
 let vaults=[], activeVaultId=null;
 
 function vaultGenId(){ return 'v'+Date.now()+Math.random().toString(36).slice(2,7); }
-async function vaultSaveMeta(){ try{ await idbSet(VAULT_META_KEY,{vaults:vaults.map(v=>({id:v.id,name:v.name,order:v.order,locked:v.locked||[]})),activeVaultId}); }catch(e){} }
+async function vaultSaveMeta(){
+  try{ await idbSet(VAULT_META_KEY,{vaults:vaults.map(v=>({id:v.id,name:v.name,order:v.order,locked:v.locked||[]})),activeVaultId}); }catch(e){}
+  // Fire-and-forget Supabase name sync
+  if(sb && supabaseSession){
+    (async()=>{ for(const v of vaults){ try{ await sb.from('vaults').update({name:v.name,updated_at:new Date().toISOString()}).eq('id',v.id).eq('user_id',supabaseSession.user.id); }catch(e){} } })();
+  }
+}
 
 async function vaultLoadAll(){
-  try{
+  // Try Supabase first
+  if(sb && supabaseSession){
+    try {
+      const { data: sbVaults, error } = await sb.from('vaults')
+        .select('id, name, created_at')
+        .eq('user_id', supabaseSession.user.id)
+        .order('created_at', { ascending: true });
+
+      if(!error && sbVaults && sbVaults.length){
+        vaults = [];
+        for(const sv of sbVaults){
+          // Load slots for this vault
+          const { data: slots } = await sb.from('vault_slots')
+            .select('slot_id, storage_path, public_url')
+            .eq('vault_id', sv.id)
+            .order('created_at', { ascending: true });
+
+          const order = [];
+          const images = {};
+          const publicUrls = {};
+
+          for(const slot of (slots||[])){
+            order.push(slot.slot_id);
+            if(slot.public_url) publicUrls[slot.slot_id] = slot.public_url;
+            // Try IndexedDB cache first
+            const cached = await idbGet('vi:'+sv.id+':'+slot.slot_id);
+            if(cached){
+              images[slot.slot_id] = cached;
+            } else if(slot.public_url){
+              // Download from Supabase and cache locally
+              try {
+                const r = await fetch(slot.public_url);
+                const blob = await r.blob();
+                const dataUrl = await new Promise((res,rej)=>{ const reader=new FileReader(); reader.onload=()=>res(reader.result); reader.onerror=rej; reader.readAsDataURL(blob); });
+                images[slot.slot_id] = dataUrl;
+                await idbSet('vi:'+sv.id+':'+slot.slot_id, dataUrl);
+              } catch(e){ console.warn('Image fetch failed:', e.message); }
+            }
+          }
+
+          vaults.push({ id: sv.id, name: sv.name || 'Vault', order, images, locked: [], publicUrls });
+        }
+        activeVaultId = (vaults[0]&&vaults[0].id) || null;
+        return true;
+      }
+    } catch(e){ console.warn('Supabase vault load failed, falling back to IndexedDB:', e.message); }
+  }
+
+  // Fall back to IndexedDB
+  try {
     const s=await idbGet(VAULT_META_KEY);
     if(s&&Array.isArray(s.vaults)&&s.vaults.length){
       vaults=await Promise.all(s.vaults.map(async v=>{
         const images={};
         await Promise.all((v.order||[]).map(async k=>{ const d=await idbGet('vi:'+v.id+':'+k); if(d) images[k]=d; }));
-        return {id:v.id,name:v.name||'Vault',order:(v.order||[]).filter(k=>images[k]),images,locked:v.locked||[]};
+        return {id:v.id,name:v.name||'Vault',order:(v.order||[]).filter(k=>images[k]),images,locked:v.locked||[], publicUrls:{}};
       }));
       activeVaultId=s.activeVaultId||(vaults[0]&&vaults[0].id)||null;
       return true;
@@ -1601,23 +1656,30 @@ async function vaultLoadAll(){
 function vaultGetActive(){ return vaults.find(v=>v.id===activeVaultId)||null; }
 
 async function vaultCreate(name){
-  const n=name||prompt('Vault name:','New Vault'); if(!n) return;
-  const id=vaultGenId();
-  vaults.push({id,name:n.trim()||'Vault',order:[],images:{},locked:[]});
-  activeVaultId=id; await vaultSaveMeta();
-  if (typeof sb !== 'undefined' && sb && typeof supabaseSession !== 'undefined' && supabaseSession) {
+  const n = (name || prompt('Vault name:','New Vault'));
+  if(!n) return;
+  const vaultName = n.trim() || 'Vault';
+
+  let supabaseVaultId = null;
+
+  // Insert into Supabase vaults table
+  if(sb && supabaseSession){
     try {
-      await sb.from('vaults').upsert({
+      const { data, error } = await sb.from('vaults').insert({
         user_id: supabaseSession.user.id,
-        vault_id: id,
-        vault_name: n.trim()||'Vault',
-        image_count: 0,
-        created_at: new Date().toISOString()
-      }, { onConflict: 'vault_id' });
-    } catch(e) { console.warn('Vault sync skipped:', e.message); }
+        name: vaultName
+      }).select('id').single();
+      if(!error && data) supabaseVaultId = data.id;
+    } catch(e){ console.warn('Vault DB sync failed:', e.message); }
   }
-  renderVaultTabs(); renderVaultGrid();
-  toast('✓ Vault "'+n+'" created','success');
+
+  const id = supabaseVaultId || vaultGenId();
+  vaults.push({ id, name: vaultName, order:[], images:{}, locked:[], publicUrls:{} });
+  activeVaultId = id;
+  await vaultSaveMeta();
+  renderVaultTabs();
+  renderVaultGrid();
+  toast('✓ Vault "'+vaultName+'" created','success');
 }
 
 function vaultSwitch(id){
@@ -1639,6 +1701,16 @@ async function vaultDelete(){
   const v=vaultGetActive(); if(!v) return;
   if(!confirm('Delete vault "'+v.name+'" and all its images?')) return;
   for(const k of v.order){ try{ await idbDelete('vi:'+v.id+':'+k); }catch(e){} }
+  // Delete from Supabase (vault_slots cascade deletes automatically)
+  if(sb && supabaseSession){
+    try {
+      // Delete all storage files for this vault
+      const storagePaths = v.order.map(k => supabaseSession.user.id + '/' + v.id + '/' + k);
+      if(storagePaths.length) await sb.storage.from('vault-refs').remove(storagePaths);
+      // Delete vault row (vault_slots cascade)
+      await sb.from('vaults').delete().eq('id', v.id).eq('user_id', supabaseSession.user.id);
+    } catch(e){ console.warn('Supabase vault delete failed:', e.message); }
+  }
   vaults=vaults.filter(x=>x.id!==v.id); activeVaultId=vaults[0]?vaults[0].id:null;
   vaultSaveMeta();
   if(activeVaultId){ vaultSwitch(activeVaultId); } else { refsByName={}; refOrder={}; selectedRefs=[]; pinnedRefs=[]; renderVaultTabs(); renderVaultGrid(); updateRefCount(); updateImgCost(); }
@@ -1646,20 +1718,56 @@ async function vaultDelete(){
 }
 
 async function vaultAddFiles(fileList){
-  const v=vaultGetActive(); if(!v){ toast('Create a vault first','error'); return; }
-  const files=Array.from(fileList||[]).filter(f=>(f.type&&f.type.startsWith('image/'))||/\.(png|jpe?g|webp|gif)$/i.test(f.name));
+  const v = vaultGetActive();
+  if(!v){ toast('Create a vault first','error'); return; }
+  const files = Array.from(fileList||[]).filter(f=>(f.type&&f.type.startsWith('image/'))||/\.(png|jpe?g|webp|gif)$/i.test(f.name));
   if(!files.length){ toast('No images found','error'); return; }
-  let added=0;
+  if(!v.publicUrls) v.publicUrls = {};
+  let added = 0;
   for(const f of files){
-    const key=f.name; if(v.images[key]) continue;
-    try{
-      const d=await readFileAsDataURL(f);
-      v.images[key]=d; if(!v.order.includes(key)) v.order.push(key);
-      refsByName[key]=d; if(!refOrder.includes(key)) refOrder.push(key);
-      await idbSet('vi:'+v.id+':'+key,d); added++;
-    }catch(e){}
+    const slotId = f.name.replace(/[^a-zA-Z0-9._-]/g,'_') + '_' + Date.now() + Math.random().toString(36).slice(2,5);
+    if(v.images[slotId]) continue;
+    try {
+      const dataUrl = await readFileAsDataURL(f);
+      let publicUrl = null;
+
+      // Upload to Supabase Storage
+      if(sb && supabaseSession){
+        try {
+          const storagePath = supabaseSession.user.id + '/' + v.id + '/' + slotId;
+          // Convert dataUrl to blob
+          const res = await fetch(dataUrl);
+          const blob = await res.blob();
+          const { error: upErr } = await sb.storage.from('vault-refs').upload(storagePath, blob, {
+            contentType: f.type || 'image/jpeg',
+            upsert: true
+          });
+          if(!upErr){
+            const { data: urlData } = sb.storage.from('vault-refs').getPublicUrl(storagePath);
+            publicUrl = urlData?.publicUrl || null;
+            // Record in vault_slots
+            await sb.from('vault_slots').insert({
+              vault_id: v.id,
+              slot_id: slotId,
+              storage_path: storagePath,
+              public_url: publicUrl
+            });
+          }
+        } catch(e){ console.warn('Storage upload failed:', e.message); }
+      }
+
+      // Store locally regardless
+      v.images[slotId] = dataUrl;
+      if(publicUrl) v.publicUrls[slotId] = publicUrl;
+      if(!v.order.includes(slotId)) v.order.push(slotId);
+      refsByName[slotId] = dataUrl;
+      if(!refOrder.includes(slotId)) refOrder.push(slotId);
+      await idbSet('vi:'+v.id+':'+slotId, dataUrl);
+      added++;
+    } catch(e){ console.warn('File add failed:', e); }
   }
-  await vaultSaveMeta(); renderVaultGrid();
+  await vaultSaveMeta();
+  renderVaultGrid();
   toast('✓ Added '+added+' image'+(added!==1?'s':'')+' to "'+v.name+'"','success');
 }
 
@@ -1706,9 +1814,18 @@ async function vaultRemoveImage(name){
   const v=vaultGetActive(); if(!v) return;
   if((v.locked||[]).includes(name)){ toast('Unlock first','error'); return; }
   delete v.images[name]; v.order=v.order.filter(k=>k!==name);
+  if(v.publicUrls) delete v.publicUrls[name];
   delete refsByName[name]; refOrder=refOrder.filter(k=>k!==name);
   selectedRefs=selectedRefs.filter(r=>r.name!==name); clearRefUploadCache();
   try{ await idbDelete('vi:'+v.id+':'+name); }catch(e){}
+  // Delete from Supabase Storage + vault_slots
+  if(sb && supabaseSession){
+    try {
+      const storagePath = supabaseSession.user.id + '/' + v.id + '/' + name;
+      await sb.storage.from('vault-refs').remove([storagePath]);
+      await sb.from('vault_slots').delete().eq('vault_id', v.id).eq('slot_id', name);
+    } catch(e){ console.warn('Supabase delete failed:', e.message); }
+  }
   await vaultSaveMeta(); renderVaultGrid(); updateRefBadges(); updateRefCount(); updateImgCost(); scheduleRefUploadPrefetch();
 }
 
@@ -5214,42 +5331,16 @@ function vaultOnboardRenderThumbs() {
 }
 async function vaultOnboardCreate() {
   const nameEl = document.getElementById('vault-onboard-name');
-  const name = (nameEl ? nameEl.value.trim() : '') || 'My Vault';
   const hint = document.getElementById('vault-onboard-hint');
-  if (_onboardFiles.length < 2) {
-    if (hint) { hint.textContent = 'Please add at least 2 images'; hint.style.color = '#f44'; }
+  const name = (nameEl ? nameEl.value.trim() : '') || 'My Vault';
+  if(_onboardFiles.length < 2){
+    if(hint){ hint.textContent='Please add at least 2 images'; hint.style.color='#f44'; }
     return;
   }
-  const id = vaultGenId();
-  const vault = { id, name, order: [], images: {}, locked: [] };
-  vaults.push(vault);
-  activeVaultId = id;
-  for (const f of _onboardFiles) {
-    const key = f.name.replace(/[^a-zA-Z0-9._-]/g,'_') + '_' + Date.now() + Math.random().toString(36).slice(2,5);
-    try {
-      const d = await readFileAsDataURL(f);
-      vault.images[key] = d;
-      vault.order.push(key);
-      refsByName[key] = d;
-      if (!refOrder.includes(key)) refOrder.push(key);
-      await idbSet('vi:' + id + ':' + key, d);
-    } catch(e) {}
-  }
-  await vaultSaveMeta();
-  // Sync to Supabase
-  if (typeof sb !== 'undefined' && sb && typeof supabaseSession !== 'undefined' && supabaseSession) {
-    try {
-      await sb.from('vaults').upsert({
-        user_id: supabaseSession.user.id,
-        vault_id: id,
-        vault_name: name,
-        image_count: _onboardFiles.length,
-        created_at: new Date().toISOString()
-      }, { onConflict: 'vault_id' });
-    } catch(e) { console.warn('Vault sync skipped:', e.message); }
-  }
-  renderVaultTabs(); renderVaultGrid();
-  toast('✓ Vault "' + name + '" created', 'success');
+  // Use main vaultCreate flow (inserts to Supabase, creates local vault)
+  await vaultCreate(name);
+  // Now add files using main vaultAddFiles (uploads to bucket)
+  if(_onboardFiles.length) await vaultAddFiles(_onboardFiles);
   vaultOnboardHide();
 }
 // Wire vault onboard events after DOM ready
@@ -5344,19 +5435,6 @@ document.addEventListener('DOMContentLoaded', function() {
   if (nextBtn) nextBtn.addEventListener('click', () => { if (_tourStep < TOUR_STEPS.length - 1) { _tourStep++; tourRender(); } else tourEnd(true); });
 });
 
-(async()=>{
-  incrementVisits();
-  const ok=await vaultLoadAll();
-  if(ok&&vaults.length){
-    vaultSwitch(activeVaultId||vaults[0].id);
-    toast('✓ Vaults restored','');
-    vaultOnboardTourCheck();
-  } else {
-    renderVaultTabs();
-    renderVaultGrid();
-    vaultOnboardShow();
-  }
-})();
 updateImgCost();
 updateVidCost();
 if (LZ_KEY || API_KEY || isEvoVideo()) {
@@ -5367,14 +5445,28 @@ if (API_KEY) fetchBalance();
 updateVidEvolinkBadge();
 reelRefreshCostLabels();
 (async () => {
-  if (!window.KIRA_CONFIG?.supabase_url || !window.KIRA_CONFIG?.supabase_anon) return;
-  const { createClient } = window.supabase;
-  sb = createClient(window.KIRA_CONFIG.supabase_url, window.KIRA_CONFIG.supabase_anon);
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) { window.location.href = '/auth'; return; }
-  supabaseSession = session;
-  const { data } = await sb.from('credits').select('balance_usd').eq('user_id', session.user.id).single();
-  if (data) updateBalanceDisplay(data.balance_usd);
+  incrementVisits();
+  // Initialize Supabase first so vaultLoadAll can pull from it
+  if (window.KIRA_CONFIG?.supabase_url && window.KIRA_CONFIG?.supabase_anon) {
+    const { createClient } = window.supabase;
+    sb = createClient(window.KIRA_CONFIG.supabase_url, window.KIRA_CONFIG.supabase_anon);
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = '/auth'; return; }
+    supabaseSession = session;
+    const { data } = await sb.from('credits').select('balance_usd').eq('user_id', session.user.id).single();
+    if (data) updateBalanceDisplay(data.balance_usd);
+  }
+  // Load vaults (uses Supabase if available, falls back to IndexedDB)
+  const ok=await vaultLoadAll();
+  if(ok&&vaults.length){
+    vaultSwitch(activeVaultId||vaults[0].id);
+    toast('✓ Vaults restored','');
+    vaultOnboardTourCheck();
+  } else {
+    renderVaultTabs();
+    renderVaultGrid();
+    vaultOnboardShow();
+  }
   renderNsfwVaultSelector();
 })();
 
