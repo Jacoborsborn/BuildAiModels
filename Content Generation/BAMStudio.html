@@ -1670,8 +1670,15 @@ async function vaultCreate(name){
         user_id: supabaseSession.user.id,
         name: vaultName
       }).select('id').single();
-      if(!error && data) supabaseVaultId = data.id;
-    } catch(e){ console.warn('Vault DB sync failed:', e.message); }
+      if(error){
+        console.error('Vault insert failed:', error.message, error.code, error.details, error.hint);
+        toast('DB error: ' + error.message, 'error');
+      } else if(data){
+        supabaseVaultId = data.id;
+      }
+    } catch(e){ console.error('Vault DB exception:', e); }
+  } else {
+    console.warn('vaultCreate: sb=', !!sb, 'session=', !!supabaseSession);
   }
 
   const id = supabaseVaultId || vaultGenId();
