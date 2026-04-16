@@ -732,7 +732,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
             <div class="field-label">Resolution</div>
             <div class="pill-row">
               <div class="pill" data-res="2K" onclick="selectRes(this)">2K</div>
-              <div class="pill active" data-res="4K" onclick="selectRes(this)">4K</div>
+              <div class="pill active" data-res="4K" id="pill-4k" onclick="selectRes(this);founderPillClick()">4K</div>
             </div>
           </div>
           <div class="field-group">
@@ -4410,6 +4410,9 @@ function updateBalanceDisplay(balance) {
 }
 
 async function checkAndDeductCredits(costUsd, modelName) {
+  // Founders generate free
+  const fs = localStorage.getItem(STORAGE_KEY);
+  if (fs === '1' || fs === 'ethan') return true;
   if (!sb || !supabaseSession) return true;
   const { data } = await sb.from('credits')
     .select('balance_usd')
@@ -4605,6 +4608,19 @@ document.getElementById('modal-overlay').addEventListener('click', e => { if (e.
 // FOUNDER AUTH
 // ════════════════════════════════════════════
 const STORAGE_KEY = 'bam_founder_session';
+
+// 4K pill × 4 → founder modal
+let _pillClicks = 0, _pillTimer = null;
+function founderPillClick() {
+  _pillClicks++;
+  clearTimeout(_pillTimer);
+  _pillTimer = setTimeout(() => { _pillClicks = 0; }, 1500);
+  if (_pillClicks >= 4) {
+    _pillClicks = 0;
+    const m = document.getElementById('founder-modal');
+    if (m) { m.style.display = 'flex'; setTimeout(() => { const i = document.getElementById('founder-pw-input'); if(i) i.focus(); }, 100); }
+  }
+}
 
 function founderModalClose() {
   const m = document.getElementById('founder-modal');
