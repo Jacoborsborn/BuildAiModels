@@ -3333,10 +3333,10 @@ function isWanEditModel(model) { return model === 'wan-edit-2k' || model === 'wa
 
 // Wan 2.7 valid sizes (4:5 not supported by API — locked in UI)
 const WAN_SIZES = {
-  '9:16':  '720*1280',
-  '16:9':  '1280*720',
-  '1:1':   '1024*1024',
-  '3:2':   '1152*768',
+  '9:16':  '1440*2560',
+  '16:9':  '2560*1440',
+  '1:1':   '2048*2048',
+  '3:2':   '2432*1664',
 };
 function computeWanSize(ar) {
   return WAN_SIZES[ar] || '720*1280';
