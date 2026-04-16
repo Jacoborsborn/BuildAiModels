@@ -2012,6 +2012,7 @@ function updateImgRefRouteIndicator() {
 function updateImgCost() {
   const model = document.getElementById('img-model').value;
   imgState.model = model;
+  syncWanArPills();
 
   // kie.ai models
   if (isKieModel(model)) {
@@ -2226,10 +2227,36 @@ function updateVidCost() {
 // PILL SELECTORS
 // ════════════════════════════════════════════
 function selectAR(el) {
+  const model = document.getElementById('img-model').value;
+  if (isWanEditModel(model) && el.dataset.ar === '4:5') {
+    toast('4:5 is not supported by Wan 2.7 — please choose another ratio', 'error');
+    return;
+  }
   document.querySelectorAll('[data-ar]').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
   imgState.ar = el.dataset.ar;
   updateImgCost();
+}
+
+function syncWanArPills() {
+  const model = document.getElementById('img-model').value;
+  const isWan = isWanEditModel(model);
+  document.querySelectorAll('[data-ar]').forEach(p => {
+    if (p.dataset.ar === '4:5') {
+      p.style.opacity = isWan ? '0.35' : '';
+      p.style.cursor  = isWan ? 'not-allowed' : '';
+      p.title         = isWan ? 'Not supported by Wan 2.7' : '';
+    }
+  });
+  // If 4:5 is currently selected and we're switching to Wan, move to 9:16
+  if (isWan && imgState.ar === '4:5') {
+    const fallback = document.querySelector('[data-ar="9:16"]');
+    if (fallback) {
+      document.querySelectorAll('[data-ar]').forEach(p => p.classList.remove('active'));
+      fallback.classList.add('active');
+      imgState.ar = '9:16';
+    }
+  }
 }
 function selectN(el) {
   document.querySelectorAll('[data-n]').forEach(p => p.classList.remove('active'));
@@ -3304,16 +3331,15 @@ async function generateImagesKIE(model, prompt) {
 
 function isWanEditModel(model) { return model === 'wan-edit-2k' || model === 'wan-edit-4k'; }
 
-// Wan 2.7 valid sizes: each dim 512-4096, total pixels 768*768–2048*2048
+// Wan 2.7 valid sizes (4:5 not supported by API — locked in UI)
 const WAN_SIZES = {
-  '9:16':  '720x1280',   // 921,600px ✓
-  '16:9':  '1280x720',   // 921,600px ✓
-  '1:1':   '1024x1024',  // 1,048,576px ✓
-  '4:5':   '768x960',    // 737,280px ✓
-  '3:2':   '1152x768',   // 884,736px ✓
+  '9:16':  '720*1280',
+  '16:9':  '1280*720',
+  '1:1':   '1024*1024',
+  '3:2':   '1152*768',
 };
 function computeWanSize(ar) {
-  return WAN_SIZES[ar] || '720x1280';
+  return WAN_SIZES[ar] || '720*1280';
 }
 
 async function generateImagesWan(model, prompt) {
