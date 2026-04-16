@@ -1452,13 +1452,36 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
 // ════════════════════════════════════════════
 let sb = null;
 let supabaseSession = null;
-const _activeCfg = localStorage.getItem('bam_founder_session') === 'ethan'
-  ? (window.ETHAN_CONFIG || window.KIRA_CONFIG)
-  : window.KIRA_CONFIG;
-let KIE_KEY = _activeCfg?.kie_api_key || '';
-let LZ_KEY = _activeCfg?.lz_api_key || '';
-let API_KEY = _activeCfg?.ws_api_key || '';
-let EVOLINK_KEY = _activeCfg?.evolink_key || '';
+// API keys — loaded from /api/keys after auth. Never stored in config.
+let KIE_KEY     = '';
+let LZ_KEY      = '';
+let API_KEY     = '';
+let EVOLINK_KEY = '';
+
+async function fetchApiKeys() {
+  if (!supabaseSession) return;
+  try {
+    const founderMode = localStorage.getItem('bam_founder_session'); // 'ethan', '1', or null
+    const url = founderMode === 'ethan' ? '/api/keys?founder=ethan' : '/api/keys';
+    const res = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + supabaseSession.access_token }
+    });
+    if (!res.ok) return;
+    const keys = await res.json();
+    if (keys.kie_api_key)  KIE_KEY     = keys.kie_api_key;
+    if (keys.lz_api_key)   LZ_KEY      = keys.lz_api_key;
+    if (keys.ws_api_key)   API_KEY     = keys.ws_api_key;
+    if (keys.evolink_key)  EVOLINK_KEY = keys.evolink_key;
+    // Update UI key indicator
+    const keyBtn = document.getElementById('api-key-btn');
+    if (keyBtn && (LZ_KEY || API_KEY || KIE_KEY)) {
+      keyBtn.textContent = '✓ KEY SET';
+      keyBtn.classList.add('set');
+    }
+    if (API_KEY) fetchBalance();
+    updateVidEvolinkBadge();
+  } catch(e) { console.warn('fetchApiKeys failed:', e.message); }
+}
 const LZ_BASE = 'https://api.laozhang.ai/v1';
 let sessionCost = 0;
 let outputCount = 0;
@@ -4562,10 +4585,6 @@ function saveApiKey() {
   LZ_KEY = lz;
   API_KEY = key;
   EVOLINK_KEY = evo;
-  if (kie) localStorage.setItem('kie_api_key', kie); else localStorage.removeItem('kie_api_key');
-  if (lz) localStorage.setItem('lz_api_key', lz); else localStorage.removeItem('lz_api_key');
-  if (key) localStorage.setItem('ws_api_key', key); else localStorage.removeItem('ws_api_key');
-  if (evo) localStorage.setItem('evolink_key', evo); else localStorage.removeItem('evolink_key');
   const btn = document.getElementById('api-key-btn');
   btn.textContent = (kie || lz || key || evo) ? '✓ KEY SET' : '⚙ API KEY';
   btn.classList.toggle('set', !!(kie || lz || key || evo));
@@ -4581,6 +4600,58 @@ document.getElementById('lz-key-input').addEventListener('keydown', e => { if (e
 document.getElementById('api-key-input').addEventListener('keydown', e => { if (e.key === 'Enter') saveApiKey(); });
 document.getElementById('evolink-key-input').addEventListener('keydown', e => { if (e.key === 'Enter') saveApiKey(); });
 document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === document.getElementById('modal-overlay')) closeModal(); });
+
+// ════════════════════════════════════════════
+// FOUNDER AUTH
+// ════════════════════════════════════════════
+const STORAGE_KEY = 'bam_founder_session';
+
+function founderModalClose() {
+  const m = document.getElementById('founder-modal');
+  if (m) m.style.display = 'none';
+  const inp = document.getElementById('founder-pw-input');
+  if (inp) { inp.value = ''; inp.disabled = false; }
+}
+
+function founderActivate() {
+  // Re-render any founder-mode UI elements as needed
+  updateVidEvolinkBadge();
+  toast('Founder mode activated', 'success');
+}
+
+async function founderConfirm() {
+  const val = document.getElementById('founder-pw-input').value;
+  if (!val) return;
+  const inp = document.getElementById('founder-pw-input');
+  inp.disabled = true;
+
+  try {
+    const res = await fetch('/api/founder-auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: val })
+    });
+    const data = await res.json();
+    if (res.ok && data.founder) {
+      const storageVal = data.founder === 'ethan' ? 'ethan' : '1';
+      localStorage.setItem(STORAGE_KEY, storageVal);
+      founderModalClose();
+      founderActivate();
+      // Re-fetch keys for the correct founder mode
+      await fetchApiKeys();
+    } else {
+      inp.classList.add('error');
+      inp.value = '';
+      setTimeout(() => inp.classList.remove('error'), 400);
+    }
+  } catch(e) {
+    inp.classList.add('error');
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('error'), 400);
+  } finally {
+    inp.disabled = false;
+  }
+}
 
 // ════════════════════════════════════════════
 // BALANCE CHECK
@@ -5445,11 +5516,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 updateImgCost();
 updateVidCost();
-if (LZ_KEY || API_KEY || isEvoVideo()) {
-  document.getElementById('api-key-btn').textContent = '✓ KEY SET';
-  document.getElementById('api-key-btn').classList.add('set');
-}
-if (API_KEY) fetchBalance();
 updateVidEvolinkBadge();
 reelRefreshCostLabels();
 (async () => {
@@ -5461,6 +5527,7 @@ reelRefreshCostLabels();
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { window.location.href = '/auth'; return; }
     supabaseSession = session;
+    await fetchApiKeys();
     const { data } = await sb.from('credits').select('balance_usd').eq('user_id', session.user.id).single();
     if (data) updateBalanceDisplay(data.balance_usd);
   }

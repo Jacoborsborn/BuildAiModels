@@ -11,6 +11,4 @@ window.KIRA_CONFIG = {
   stripe_price_beginner: 'price_1TMED4DbHWgvBRLbBu3XYchs',
   stripe_price_advanced: 'price_1TMEDQDbHWgvBRLbwcFK5wK0',
 
-  // Founder access
-  founder_password: 'WorthingHigh1!'
 };
