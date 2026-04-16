@@ -645,6 +645,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
       <div id="vault-rename-row" style="display:flex;gap:6px;padding:6px 10px;border-bottom:1px solid var(--border)">
         <input id="vault-rename-input" type="text" placeholder="Rename vault…" autocomplete="off" style="flex:1;background:var(--panel2);border:1px solid var(--border2);border-radius:5px;padding:5px 8px;color:var(--text);font-family:var(--font);font-size:11px;outline:none;min-width:0">
         <button onclick="vaultRenameFromInput()" style="background:var(--accent2);border:1px solid rgba(184,240,84,0.2);color:var(--accent);padding:5px 10px;border-radius:5px;cursor:pointer;font-size:10px;white-space:nowrap;font-family:var(--font)">✓</button>
+        <button onclick="vaultDelete()" title="Delete vault" style="background:rgba(255,79,106,0.08);border:1px solid rgba(255,79,106,0.3);color:#ff4f6a;padding:5px 9px;border-radius:5px;cursor:pointer;font-size:11px;white-space:nowrap;font-family:var(--font)">🗑</button>
       </div>
       <div id="onoff-upload-row" style="display:none">
         <input type="file" id="onoff-file-input" multiple accept="image/*" style="display:none" onchange="onoffAddFiles(this.files);this.value=''">
