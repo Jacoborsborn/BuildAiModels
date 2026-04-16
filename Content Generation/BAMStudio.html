@@ -546,7 +546,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
   <div id="vault-onboard-modal" style="background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:28px;width:420px;max-width:92vw;display:flex;flex-direction:column;gap:16px">
     <div style="font-size:13px;font-weight:700;color:var(--text)">Create Your First Vault</div>
     <div style="font-size:11px;color:var(--muted);line-height:1.5">A vault stores 2–4 reference images for your AI model — keeping her consistent across every generation.</div>
-    <form autocomplete="off" onsubmit="return false" style="display:contents"><input id="vault-onboard-name" type="text" placeholder="Vault name (e.g. Sofia)" autocomplete="off" name="vault-display-name" style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--font);font-size:12px;outline:none;width:100%;box-sizing:border-box"></form>
+    <input id="vault-onboard-name" type="text" placeholder="Vault name (e.g. Sofia)" readonly autocomplete="new-password" onfocus="this.removeAttribute('readonly')" style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--font);font-size:12px;outline:none;width:100%;box-sizing:border-box">
     <div id="vault-onboard-drop" style="border:1.5px dashed var(--border2);border-radius:8px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--muted);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:100px;justify-content:center;transition:border-color .15s,background .15s">
       <div style="font-size:22px">📎</div>
       <div>Drop 2–4 reference images here</div>
@@ -643,7 +643,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
       </div>
       <!-- Vault rename -->
       <div id="vault-rename-row" style="display:flex;gap:6px;padding:6px 10px;border-bottom:1px solid var(--border)">
-        <input id="vault-rename-input" type="text" placeholder="Rename vault…" autocomplete="off" style="flex:1;background:var(--panel2);border:1px solid var(--border2);border-radius:5px;padding:5px 8px;color:var(--text);font-family:var(--font);font-size:11px;outline:none;min-width:0">
+        <input id="vault-rename-input" type="text" placeholder="Rename vault…" readonly autocomplete="new-password" onfocus="this.removeAttribute('readonly')" style="flex:1;background:var(--panel2);border:1px solid var(--border2);border-radius:5px;padding:5px 8px;color:var(--text);font-family:var(--font);font-size:11px;outline:none;min-width:0">
         <button onclick="vaultRenameFromInput()" style="background:var(--accent2);border:1px solid rgba(184,240,84,0.2);color:var(--accent);padding:5px 10px;border-radius:5px;cursor:pointer;font-size:10px;white-space:nowrap;font-family:var(--font)">✓</button>
         <button onclick="vaultDelete()" title="Delete vault" style="background:rgba(255,79,106,0.08);border:1px solid rgba(255,79,106,0.3);color:#ff4f6a;padding:5px 9px;border-radius:5px;cursor:pointer;font-size:11px;white-space:nowrap;font-family:var(--font)">🗑</button>
       </div>
