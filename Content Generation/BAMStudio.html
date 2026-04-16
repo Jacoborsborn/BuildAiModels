@@ -3304,16 +3304,16 @@ async function generateImagesKIE(model, prompt) {
 
 function isWanEditModel(model) { return model === 'wan-edit-2k' || model === 'wan-edit-4k'; }
 
-// Wan 2.7 Edit only accepts specific preset sizes
+// Wan 2.7 valid sizes: each dim 512-4096, total pixels 768*768–2048*2048
 const WAN_SIZES = {
-  '9:16':  '480x832',
-  '16:9':  '832x480',
-  '1:1':   '640x640',
-  '4:5':   '624x768',
-  '3:2':   '768x512',
+  '9:16':  '720x1280',   // 921,600px ✓
+  '16:9':  '1280x720',   // 921,600px ✓
+  '1:1':   '1024x1024',  // 1,048,576px ✓
+  '4:5':   '768x960',    // 737,280px ✓
+  '3:2':   '1152x768',   // 884,736px ✓
 };
 function computeWanSize(ar) {
-  return WAN_SIZES[ar] || '480x832';
+  return WAN_SIZES[ar] || '720x1280';
 }
 
 async function generateImagesWan(model, prompt) {
@@ -3335,7 +3335,7 @@ async function generateImagesWan(model, prompt) {
     }
     if (imageUrls.length === 0) throw new Error('No source image — upload at least one image');
 
-    const body = { prompt, images: imageUrls, size, seed: -1, enable_sync_mode: false };
+    const body = { prompt, images: imageUrls, size, seed: -1 };
     console.log('Wan 2.7 Edit Pro body:', JSON.stringify(body));
     toast(`⚡ Generating with Wan 2.7 Edit (${size})…`, 'success');
 
