@@ -14,11 +14,12 @@ module.exports = async function handler(req, res) {
     const { password } = req.body || {};
     if (!password) return res.status(400).json({ error: 'No password provided' });
 
+    const writeKey = process.env.COURSE_WRITE_KEY || '';
     if (password === process.env.J_PASSWORD) {
-      return res.status(200).json({ founder: 'jacob' });
+      return res.status(200).json({ founder: 'jacob', writeKey });
     }
     if (password === process.env.E_PASSWORD) {
-      return res.status(200).json({ founder: 'ethan' });
+      return res.status(200).json({ founder: 'ethan', writeKey });
     }
 
     return res.status(401).json({ error: 'Invalid password' });

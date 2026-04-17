@@ -566,6 +566,161 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
 .founder-block-del:hover { background:#f44;color:#fff; }
 .founder-btn { background:transparent;border:1px solid var(--border,#333);color:var(--muted,#888);padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px; }
 .founder-btn:hover { color:var(--text,#fff);border-color:var(--accent,#b8f054); }
+
+/* ── LESSON BRIEF ── */
+.lesson-brief {
+  font-size: 14px; color: var(--muted); line-height: 1.7;
+  margin: 0 0 28px; max-width: 680px;
+}
+
+/* ── BLOCKS SYSTEM ── */
+#blocks-container { display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px; }
+
+/* Block wrapper */
+.bam-block {
+  position: relative; border-radius: 8px;
+  background: var(--panel2); border: 1px solid var(--border2);
+}
+/* Drag highlight */
+.bam-block.drag-over { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+
+/* Block: text */
+.bam-block-text { padding: 20px 22px; }
+.bam-block-text .block-heading {
+  font-family: var(--font-display); font-size: 13px; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--text);
+  margin-bottom: 10px;
+}
+.bam-block-text .block-body {
+  font-size: 13px; color: var(--muted); line-height: 1.75;
+}
+
+/* Block: video */
+.bam-block-video { overflow: hidden; border-radius: 8px; }
+.bam-block-video .block-video-inner {
+  position: relative; width: 100%; padding-top: 56.25%;
+  background: #000;
+}
+.bam-block-video .block-video-inner iframe,
+.bam-block-video .block-video-inner video {
+  position: absolute; inset: 0; width: 100%; height: 100%; border: none;
+}
+
+/* Block: image */
+.bam-block-image { overflow: hidden; border-radius: 8px; }
+.bam-block-image img { width: 100%; display: block; border-radius: 8px; }
+.bam-block-image .block-caption {
+  padding: 10px 14px; font-size: 11px; color: var(--muted2);
+  font-family: var(--font-mono); text-align: center;
+}
+
+/* Block: file */
+.bam-block-file { padding: 0; }
+.bam-block-file .block-file-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; text-decoration: none;
+  transition: background .15s; border-radius: 8px;
+}
+.bam-block-file .block-file-row:hover { background: rgba(255,255,255,0.04); }
+.bam-block-file .block-file-icon { font-size: 18px; flex-shrink: 0; }
+.bam-block-file .block-file-name { font-size: 13px; color: var(--text); flex: 1; }
+.bam-block-file .block-file-tag {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--muted2);
+  border: 1px solid var(--border2); border-radius: 4px; padding: 2px 7px;
+}
+
+/* Block: steps */
+.bam-block-steps { padding: 20px 22px; }
+.bam-block-steps .block-steps-list { display: flex; flex-direction: column; gap: 14px; }
+.bam-block-steps .block-step {
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.bam-block-steps .step-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--accent); color: #000;
+  font-family: var(--font-display); font-size: 12px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  margin-top: 1px;
+}
+.bam-block-steps .step-content { flex: 1; }
+.bam-block-steps .step-title {
+  font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px;
+}
+.bam-block-steps .step-body { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* Founder block controls (visible only in founder mode) */
+.block-founder-ctrl {
+  display: none; position: absolute; top: 8px; right: 8px;
+  gap: 4px; z-index: 10;
+}
+body.founder-active .block-founder-ctrl { display: flex; }
+.block-drag-handle {
+  display: none; position: absolute; top: 50%; left: -20px;
+  transform: translateY(-50%); cursor: grab; color: var(--muted2);
+  font-size: 14px; user-select: none;
+}
+body.founder-active .block-drag-handle { display: block; }
+.block-ctrl-btn {
+  background: var(--panel); border: 1px solid var(--border2);
+  color: var(--muted); padding: 3px 8px; border-radius: 4px;
+  cursor: pointer; font-size: 10px; font-family: var(--font-mono);
+  transition: all .15s;
+}
+.block-ctrl-btn:hover { color: var(--text); border-color: var(--muted); }
+.block-ctrl-btn.del:hover { color: #f44; border-color: #f44; }
+.block-ctrl-btn.up:hover,.block-ctrl-btn.dn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* contenteditable in founder mode */
+body.founder-active .block-editable {
+  outline: none; border-radius: 3px; transition: background .15s, box-shadow .15s;
+  cursor: text;
+}
+body.founder-active .block-editable:hover {
+  background: rgba(184,240,84,0.06);
+  box-shadow: 0 0 0 1px rgba(184,240,84,0.2);
+}
+body.founder-active .block-editable:focus {
+  background: rgba(184,240,84,0.1);
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+
+/* ── FOUNDER SIDE PANEL ── */
+.founder-side-panel {
+  display: none;
+  position: fixed; right: 0; top: 50%; transform: translateY(-50%);
+  z-index: 200; flex-direction: column; gap: 0;
+  background: var(--panel); border: 1px solid rgba(184,240,84,0.25);
+  border-right: none; border-radius: 10px 0 0 10px;
+  overflow: hidden; box-shadow: -4px 0 24px rgba(0,0,0,0.4);
+  min-width: 130px;
+}
+body.founder-active .founder-side-panel { display: flex; }
+.fsp-header {
+  padding: 10px 14px; background: rgba(184,240,84,0.08);
+  border-bottom: 1px solid rgba(184,240,84,0.15);
+  font-family: var(--font-mono); font-size: 8px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--accent); text-align: center;
+}
+.fsp-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 11px 14px; cursor: pointer; transition: background .15s;
+  border: none; background: transparent;
+  font-size: 12px; color: var(--muted); font-family: var(--font);
+  text-align: left; border-bottom: 1px solid var(--border);
+  width: 100%;
+}
+.fsp-btn:last-child { border-bottom: none; }
+.fsp-btn:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.fsp-btn .fsp-icon { font-size: 14px; flex-shrink: 0; }
+
+/* auto-save indicator */
+.fsp-save-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); margin-left: auto; flex-shrink: 0;
+  opacity: 0; transition: opacity .3s;
+}
+.fsp-save-dot.active { opacity: 1; animation: pulse 1s ease-out forwards; }
 </style>
 </head>
 <body>
@@ -609,11 +764,20 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
 <!-- FOUNDER BAR -->
 <div class="founder-bar" id="founder-bar">
   <div class="founder-dot"></div>
-  <span>FOUNDER MODE — click any text to edit · video zones unlocked · changes saved to localStorage</span>
+  <span>FOUNDER MODE — click any text to edit · changes sync live to all users</span>
   <button onclick="founderAddModule()" class="founder-btn">＋ Module</button>
   <button onclick="founderAddLesson()" class="founder-btn">＋ Lesson</button>
-  <button onclick="founderAddBlock()" class="founder-btn">＋ Block</button>
   <button class="founder-exit" onclick="founderExit()">Exit</button>
+</div>
+
+<!-- FOUNDER SIDE PANEL -->
+<div class="founder-side-panel" id="founder-side-panel">
+  <div class="fsp-header">Add Block <span class="fsp-save-dot" id="fsp-dot"></span></div>
+  <button class="fsp-btn" onclick="addBlock('video')"><span class="fsp-icon">📹</span> Video</button>
+  <button class="fsp-btn" onclick="addBlock('image')"><span class="fsp-icon">🖼️</span> Image</button>
+  <button class="fsp-btn" onclick="addBlock('text')"><span class="fsp-icon">📝</span> Text</button>
+  <button class="fsp-btn" onclick="addBlock('file')"><span class="fsp-icon">📎</span> File</button>
+  <button class="fsp-btn" onclick="addBlock('steps')"><span class="fsp-icon">🔢</span> Steps</button>
 </div>
 
 <div class="layout">
@@ -665,58 +829,11 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
         <span class="lesson-tag" id="lesson-tag-el">Module 01</span>
         <span class="lesson-num-label" id="lesson-num-el">Lesson 1 of 3</span>
       </div>
-      <h1 class="lesson-main-title" id="lesson-title-el"><span class="f-edit" contenteditable="false" data-key="title">The Operator Mindset</span></h1>
-      <p class="lesson-subtitle" id="lesson-sub-el"><span class="f-edit" contenteditable="false" data-key="sub">Before you generate a single image, you need to think like a business owner. This lesson covers the psychology behind building AI models that generate revenue — and why most people fail before they start.</span></p>
+      <h1 class="lesson-main-title" id="lesson-title-el"><span class="f-edit" contenteditable="false" data-key="title">Watch This First</span></h1>
+      <p class="lesson-subtitle" id="lesson-sub-el"><span class="f-edit" contenteditable="false" data-key="sub">Start here before anything else.</span></p>
+      <p class="lesson-brief" id="lesson-brief-el"></p>
 
-      <div class="key-points" id="key-points-container">
-        <div class="key-point">
-          <div class="kp-icon"><span class="f-edit" contenteditable="false" data-key="kp0-icon">🎯</span></div>
-          <div class="kp-text">
-            <strong><span class="f-edit" contenteditable="false" data-key="kp0-title">Treat it like a brand</span></strong>
-            <span><span class="f-edit" contenteditable="false" data-key="kp0-body">Your model is a business. Every post, message, and image is a brand touchpoint.</span></span>
-          </div>
-        </div>
-        <div class="key-point">
-          <div class="kp-icon"><span class="f-edit" contenteditable="false" data-key="kp1-icon">🔁</span></div>
-          <div class="kp-text">
-            <strong><span class="f-edit" contenteditable="false" data-key="kp1-title">Systems over grind</span></strong>
-            <span><span class="f-edit" contenteditable="false" data-key="kp1-body">Operators batch, schedule, and automate. They don't hustle daily — they build machines.</span></span>
-          </div>
-        </div>
-        <div class="key-point">
-          <div class="kp-icon"><span class="f-edit" contenteditable="false" data-key="kp2-icon">📊</span></div>
-          <div class="kp-text">
-            <strong><span class="f-edit" contenteditable="false" data-key="kp2-title">Revenue is the scoreboard</span></strong>
-            <span><span class="f-edit" contenteditable="false" data-key="kp2-body">Followers are vanity. Subscribers are revenue. Track the right number.</span></span>
-          </div>
-        </div>
-        <div class="key-point">
-          <div class="kp-icon"><span class="f-edit" contenteditable="false" data-key="kp3-icon">⚡</span></div>
-          <div class="kp-text">
-            <strong><span class="f-edit" contenteditable="false" data-key="kp3-title">Speed of execution</span></strong>
-            <span><span class="f-edit" contenteditable="false" data-key="kp3-body">The window is open now. The ones who move fastest capture the most territory.</span></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-label">Resources</div>
-      <div class="resource-list">
-        <a href="#" class="resource-item">
-          <span class="resource-icon">📄</span>
-          <span class="resource-name">Operator Mindset PDF — Workbook</span>
-          <span class="resource-tag">PDF</span>
-        </a>
-        <a href="#" class="resource-item">
-          <span class="resource-icon">🔗</span>
-          <span class="resource-name">BuildAIModels Studio — Access Link</span>
-          <span class="resource-tag">Tool</span>
-        </a>
-        <a href="#" class="resource-item">
-          <span class="resource-icon">💬</span>
-          <span class="resource-name">Community Discord — Operators Only</span>
-          <span class="resource-tag">Community</span>
-        </a>
-      </div>
+      <div id="blocks-container"></div>
 
       <button class="complete-btn" onclick="markComplete()">Mark complete →</button>
     </div>
@@ -812,10 +929,7 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
 </div>
 
 <script>
-// ── CONFIG ──────────────────────────────────────────────────────
-// Loads founder password from config.js (window.KIRA_CONFIG.founder_password)
-// Falls back to 'founder' if config not present (local testing)
-const FOUNDER_PW = window.KIRA_CONFIG?.founder_password || 'founder';
+// ── CONFIG ───────────────────────────────────────────────────────
 const STORAGE_KEY = 'bam_founder_session';
 const CONTENT_KEY = 'bam_course_content';
 
@@ -823,13 +937,79 @@ const CONTENT_KEY = 'bam_course_content';
 const { createClient } = supabase;
 const sb = createClient(window.KIRA_CONFIG.supabase_url, window.KIRA_CONFIG.supabase_anon);
 
+// ── REMOTE CONTENT SYNC ──────────────────────────────────────────
+// Cached remote blocks: { lessonId: { blocks: [...] }, ... }
+let _remoteBlocks = null;
+
+function getWriteKey() {
+  return sessionStorage.getItem('bam_write_key') || '';
+}
+
+async function loadRemoteContent() {
+  try {
+    const res = await fetch('/api/course-content');
+    if (!res.ok) return;
+    const { structure, blocks } = await res.json();
+
+    // Apply remote structure overrides if present
+    if (structure && structure.modules && structure.lessons) {
+      MODULES.length = 0;
+      structure.modules.forEach(m => MODULES.push(m));
+      Object.keys(LESSONS).forEach(k => delete LESSONS[k]);
+      Object.assign(LESSONS, structure.lessons);
+      renderSidebar();
+    }
+
+    // Cache remote blocks
+    if (blocks && typeof blocks === 'object') {
+      _remoteBlocks = blocks;
+      // Sync to localStorage as fallback cache
+      localStorage.setItem(CONTENT_KEY, JSON.stringify(blocks));
+      // Re-render current lesson if already selected
+      if (currentLessonId) renderBlocks(currentLessonId);
+    }
+  } catch (e) { /* silent fallback to localStorage */ }
+}
+
+let _saveRemoteTimer = null;
+function scheduleRemoteSave(key, data) {
+  clearTimeout(_saveRemoteTimer);
+  _saveRemoteTimer = setTimeout(() => pushRemote(key, data), 800);
+}
+
+async function pushRemote(key, data) {
+  const writeKey = getWriteKey();
+  if (!writeKey) return;
+  try {
+    await fetch('/api/course-content', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ writeKey, key, data }),
+    });
+    flashSaveDot();
+  } catch (e) { /* silent */ }
+}
+
+function flashSaveDot() {
+  const dot = document.getElementById('fsp-dot');
+  if (!dot) return;
+  dot.classList.remove('active');
+  void dot.offsetWidth;
+  dot.classList.add('active');
+}
+
 // ── AUTH + ACCESS GATE ───────────────────────────────────────────
 window.addEventListener('load', async () => {
-  // Founders bypass all auth and access checks — give full access
+  // Load remote content for everyone (structure + blocks)
+  await loadRemoteContent();
+
+  // Founders bypass auth — give full access
   if (isFounder()) {
     window._courseAccess = true;
     renderSidebar();
     updateStats();
+    selectLesson(currentLessonId);
+    if (!document.body.classList.contains('founder-active')) founderActivate();
     return;
   }
 
@@ -850,42 +1030,73 @@ window.addEventListener('load', async () => {
   }
   renderSidebar();
   updateStats();
+  selectLesson(currentLessonId);
 });
 
 // ── LESSON DATA ─────────────────────────────────────────────────
 const MODULES = [
-  { id: 'free-preview', label: 'Free Preview', num: null, free: true },
-  { id: 'mod-00', label: 'Before You Touch Anything', num: '00', free: false },
-  { id: 'mod-01', label: 'Foundation', num: '01', free: false },
-  { id: 'mod-02', label: 'Niche & Model Concept', num: '02', free: false },
-  { id: 'mod-03', label: 'Build Your Model', num: '03', free: false },
-  { id: 'mod-04', label: 'Platform Setup', num: '04', free: false },
-  { id: 'advanced', label: 'Advanced', num: null, free: false, comingSoon: true }
+  { id: 'free-preview', label: 'Free Preview',              num: null, free: true },
+  { id: 'mod-00',       label: 'Before You Touch Anything', num: '00', free: false },
+  { id: 'mod-01',       label: 'Foundation',                num: '01', free: false },
+  { id: 'mod-02',       label: 'Niche & Model Concept',     num: '02', free: false },
+  { id: 'mod-03',       label: 'Build Your Model',          num: '03', free: false },
+  { id: 'mod-04',       label: 'Fanvue',                    num: '04', free: false },
+  { id: 'mod-05',       label: 'Socials Setup',             num: '05', free: false },
+  { id: 'mod-06',       label: 'Community Links',           num: '06', free: false },
+  { id: 'advanced',     label: 'Advanced',                  num: null, free: false, comingSoon: true },
 ];
 
 const LESSONS = {
-  'preview-intro':   { mod: 'free-preview', title: 'Welcome to BAM',                    sub: 'A quick look at what you\'re about to build.' },
-  'watch-first':     { mod: 'mod-00',       title: 'Watch This First',                   sub: 'Start here before anything else.' },
-  'watch-socials':   { mod: 'mod-00',       title: 'Watch Before Setting Up Socials',    sub: 'Critical context before you touch any platform.' },
-  'mindset':         { mod: 'mod-01',       title: 'The Right Mindset',                  sub: 'How to think about this business.' },
-  'overview':        { mod: 'mod-01',       title: 'Full System Overview',               sub: 'The complete BAM framework from start to finish.' },
-  'tools-overview':  { mod: 'mod-01',       title: 'Tools Overview',                     sub: 'Every tool you need and why.' },
-  'niche-research':  { mod: 'mod-02',       title: 'Niche Research',                     sub: 'Finding the right angle for your model.' },
-  'niche-examples':  { mod: 'mod-02',       title: 'Niche Examples',                     sub: 'Real examples of winning niches.' },
-  'niche-decision':  { mod: 'mod-02',       title: 'Making Your Decision',               sub: 'Lock in your niche with confidence.' },
-  'persona':         { mod: 'mod-03',       title: 'Persona & Character',                sub: 'Building a character people connect with.' },
-  'image-gen':       { mod: 'mod-03',       title: 'Image Generation',                   sub: 'Creating your model with AI.' },
-  'consistency':     { mod: 'mod-03',       title: 'Consistency & Identity',             sub: 'Keeping your model looking the same every time.' },
-  'nsfw':            { mod: 'mod-03',       title: 'NSFW Strategy',                      sub: 'Where, when, and how.' },
-  'platform-fanvue': { mod: 'mod-04',       title: 'Fanvue',                             sub: 'Setting up and optimising your Fanvue.' },
-  'platform-ig':     { mod: 'mod-04',       title: 'Instagram',                          sub: 'Growing on Instagram the right way.' },
-  'platform-tiktok': { mod: 'mod-04',       title: 'TikTok',                             sub: 'TikTok content strategy for AI models.' },
-  'platform-x':      { mod: 'mod-04',       title: 'X',                                  sub: 'Building your X presence.' },
-  'motion':          { mod: 'advanced',     title: 'Motion & Video',                     sub: 'Animating your model.' },
-  'reels':           { mod: 'advanced',     title: 'Reels Strategy',                     sub: 'Viral reel formulas.' },
-  'fanvue-setup':    { mod: 'advanced',     title: 'Advanced Fanvue',                    sub: 'Pricing, tiers, and conversion.' },
-  'ig-growth':       { mod: 'advanced',     title: 'Advanced Instagram',                 sub: 'Scale your reach.' },
-  'tips':            { mod: 'advanced',     title: 'Advanced Tactics',                   sub: 'What separates top earners.' }
+  // FREE PREVIEW
+  'preview-intro':   { mod: 'free-preview', title: "What's Included?",          sub: "A quick look at what's inside the full course.",                            brief: "Get a full overview of everything inside BAM — every module, every lesson, and exactly what you'll be able to build by the end. Watch this first so you know what you're walking into." },
+
+  // MOD 00
+  'watch-first':     { mod: 'mod-00', title: 'Watch This First',          sub: 'Start here before anything else.',                                           brief: 'Watch this before you touch anything else in the course. This short video sets the context, the order to follow, and the mindset shift you need from day one.' },
+  'software-links':  { mod: 'mod-00', title: 'Software Links',            sub: 'Every tool and platform used in the course, in one place.',                   brief: 'Every tool, platform, and software used across the entire course — all in one place. Bookmark this lesson and come back to it as you work through each module.' },
+
+  // MOD 01
+  'tool-stack':      { mod: 'mod-01', title: 'Tool Stack',                sub: 'Wan 2.7, Seedream 5.0 Lite, and Kling — the AI tools that power your model.', brief: 'A breakdown of the three core AI tools in the BAM system — Wan 2.7, Seedream 5.0 Lite, and Kling. We cover what each one does, when to use it, and how they fit together in your production workflow.' },
+  'bam-studio':      { mod: 'mod-01', title: 'BAM Studio',                sub: 'A full walkthrough of the BAM Studio and how to use it.',                    brief: 'A full walkthrough of the BAM Studio — how to navigate it, what each feature does, and how to get the most out of it from day one. This is your main hub for generating content.' },
+  'prompt-farm':     { mod: 'mod-01', title: 'Prompt Farm Setup',         sub: 'Building a prompt library that generates consistent, on-brand results.',      brief: 'How to build a personal prompt library that consistently generates on-brand, high-quality images every time. A solid prompt farm means faster output, less repetition, and better results at scale.' },
+
+  // MOD 02
+  'pick-niche':      { mod: 'mod-02', title: 'Pick Your Niche',           sub: 'Finding a profitable angle before you create anything.',                     brief: 'How to identify a profitable niche before you create a single image — covering demand signals, competition gaps, and what actually converts on Fanvue. This is the most important decision you will make in this business.' },
+  'whats-working':   { mod: 'mod-02', title: "What's Working",            sub: 'Real examples of winning niches and why they work.',                         brief: 'Real-world examples of niches and model concepts that are earning right now, so you can build from proven templates rather than guessing. See the patterns and reverse-engineer what works.' },
+  'personality':     { mod: 'mod-02', title: 'Personality & Consistency', sub: 'Giving your model a character that fans actually connect with.',              brief: 'How to give your model a personality that fans connect with and keep that character consistent across every post and platform. Consistency is what turns followers into loyal, paying subscribers.' },
+
+  // MOD 03
+  'build-face':      { mod: 'mod-03', title: 'Build Your Face',           sub: 'Generating and locking in a consistent face for your model.',                brief: 'How to generate and lock in a consistent face for your AI model — prompt structure, reference techniques, and the exact settings to get reliable results every time. This is where your model identity starts.' },
+  'build-body':      { mod: 'mod-03', title: 'Build Your Body',           sub: 'Full-body content — style, outfits, and consistency at scale.',              brief: 'Extending your model beyond the face — body type, outfit consistency, and the workflow for producing full-body content that stays on-brand across every shoot. Style choices here define your aesthetic.' },
+  'image-posts':     { mod: 'mod-03', title: 'Image Posts/Carousels',     sub: 'Packaging your images into posts that drive engagement.',                    brief: 'How to produce and package your images into posts and carousels optimised for engagement on every platform. Format and presentation matter as much as the image itself.' },
+  'reel-rec':        { mod: 'mod-03', title: 'Reel Recreation',           sub: 'Recreating proven reel formats that get views and profile visits.',           brief: 'How to recreate the reel formats that are already proven to work — the templates, pacing, and style choices that get views and drive profile visits. Do not reinvent the wheel; copy what converts.' },
+  'own-videos':      { mod: 'mod-03', title: 'Create Your Own Videos',    sub: 'Producing original video content with your AI model.',                       brief: 'Going beyond recreation — how to produce original video content with your AI model, from short clips to looping content ready for TikTok and Instagram Reels. This is where you start building a real content engine.' },
+  'nsfw-photos':     { mod: 'mod-03', title: 'NSFW - Photos',             sub: 'Producing and batching NSFW photo content efficiently.',                     brief: 'How to produce NSFW photo content efficiently — what tools to use, how to batch produce, and the quality benchmarks that keep subscribers paying month after month. Production volume beats perfection here.' },
+  'nsfw-videos':     { mod: 'mod-03', title: 'NSFW - Videos',             sub: 'The full NSFW video workflow for Fanvue PPV revenue.',                       brief: 'The full NSFW video production workflow — generation tools, editing, and how to structure your vault to maximise PPV revenue on Fanvue. Video content commands the highest price points, and this lesson shows you why.' },
+
+  // MOD 04
+  'fanvue-account':  { mod: 'mod-04', title: 'Create Your Account',       sub: 'Step-by-step Fanvue setup — profile, pricing, and first impressions.',       brief: 'Step-by-step Fanvue account setup — profile, bio, pricing structure, and the key settings that affect discoverability and subscriber trust from day one. First impressions determine whether someone subscribes or bounces.' },
+  'starter-pack':    { mod: 'mod-04', title: 'Content Starter Pack',      sub: 'The content you need ready before you go live.',                             brief: 'The exact content you need ready before you go live — what to produce, how much of it, and how to structure your vault so new subscribers stay subscribed. Never launch to an empty page.' },
+  'script-guide':    { mod: 'mod-04', title: 'Script Guide',              sub: 'DM scripts and captions that convert fans into paying subscribers.',          brief: 'DM scripts, caption templates, and message sequences that convert fans into paying subscribers. The words you use make or break conversions — this lesson covers the exact language that works in this niche.' },
+  'chatting':        { mod: 'mod-04', title: 'Chatting Masterclass',      sub: 'How to chat with subscribers in a way that drives revenue.',                 brief: 'How to chat with subscribers in a way that drives PPV opens, tips, and renewals without burning out. Every conversation is a revenue opportunity — this lesson shows you how to work it.' },
+
+  // MOD 05
+  'ig':              { mod: 'mod-05', title: 'Instagram',                  sub: 'Content, cadence, and funnelling followers to Fanvue.',                     brief: 'How to build and grow an Instagram presence for your AI model — content format, posting cadence, and how to funnel followers into paying Fanvue subscribers. Instagram is your top-of-funnel, not your income source.' },
+  'tiktok':          { mod: 'mod-05', title: 'TikTok',                     sub: 'High-reach top-of-funnel strategy for AI model creators.',                  brief: 'TikTok-specific strategy for AI model creators — what content works, what gets flagged, how the algorithm treats this niche, and how to use it as a high-reach growth engine. Fast reach, free traffic.' },
+  'x-twitter':       { mod: 'mod-05', title: 'X/Twitter',                  sub: 'Posting style and DM strategy that monetises fast.',                        brief: 'Building your X presence as an AI model operator — the posting style that works, how to use DMs effectively, and why X is one of the fastest platforms to monetise in this space.' },
+  'telegram-social': { mod: 'mod-05', title: 'Telegram',                   sub: 'Building a broadcast list you own outside the main platforms.',              brief: 'How to use Telegram as a community and broadcast channel — building a subscriber list you own and using it to drive traffic and sales outside the main platforms where you can get banned or shadowbanned.' },
+
+  // MOD 06
+  'discord':         { mod: 'mod-06', title: 'Discord',                    sub: 'Connect with the BAM operator community.',                                  brief: 'Access the BAM operator Discord — connect with other creators, get feedback on your model, and stay up to date with new strategies as the platforms and tools evolve.' },
+  'telegram-comm':   { mod: 'mod-06', title: 'Telegram',                   sub: 'BAM announcements and tips straight to your phone.',                        brief: 'Join the BAM Telegram channel for announcements, tips, and community updates straight to your phone. This is where urgent updates and new resources get posted first.' },
+
+  // ADVANCED (coming soon)
+  'scale-models':    { mod: 'advanced', title: 'How to Scale 2+ Models',   sub: 'Running multiple models as a portfolio.' },
+  'outsource':       { mod: 'advanced', title: 'How to Outsource Jobs',    sub: 'Building a team around your operation.' },
+  'meta-ads':        { mod: 'advanced', title: 'Meta Ads',                  sub: 'Paid acquisition for your Fanvue.' },
+  'agency':          { mod: 'advanced', title: 'Agency Creation',           sub: 'Turning your operation into an agency.' },
+  'ten-k':           { mod: 'advanced', title: 'Watch After £10k MRR',     sub: 'What changes when you hit serious revenue.' },
+  'automate':        { mod: 'advanced', title: 'How to Automate Jobs',      sub: 'Systems that run without you.' },
+  'more':            { mod: 'advanced', title: 'And more....',              sub: '' },
 };
 
 // Helper: get lessons for a module
@@ -906,7 +1117,7 @@ function getTotalLessons() {
   return Object.values(LESSONS).filter(l => l.mod !== 'advanced').length;
 }
 
-let currentLessonId = 'mindset';
+let currentLessonId = 'watch-first';
 
 // ── PROGRESS HELPERS ─────────────────────────────────────────────
 function updateStats() {
@@ -1031,19 +1242,356 @@ function showUpgradePrompt() {
 }
 
 // ── CONTENT STORE ────────────────────────────────────────────────
-// Saves all founder edits to localStorage keyed by lesson id
+// All content (blocks + title/sub overrides) stored per lesson id.
+// Remote (Supabase) is authoritative; localStorage is a fast cache.
 function getContent() {
+  if (_remoteBlocks) return _remoteBlocks;
   try { return JSON.parse(localStorage.getItem(CONTENT_KEY) || '{}'); } catch { return {}; }
 }
 function saveContent(lessonId, key, value) {
   const data = getContent();
   if (!data[lessonId]) data[lessonId] = {};
   data[lessonId][key] = value;
+  _remoteBlocks = data;
   localStorage.setItem(CONTENT_KEY, JSON.stringify(data));
+  scheduleRemoteSave('blocks', data);
 }
 function getField(lessonId, key, fallback) {
   const data = getContent();
   return data[lessonId]?.[key] ?? fallback;
+}
+
+// ── BLOCKS STORE ─────────────────────────────────────────────────
+function getBlocks(lessonId) {
+  const data = getContent();
+  return (data[lessonId] && data[lessonId].blocks) ? data[lessonId].blocks : null;
+}
+function saveBlocks(lessonId) {
+  const data = getContent();
+  if (!data[lessonId]) data[lessonId] = {};
+  const container = document.getElementById('blocks-container');
+  const blocks = [];
+  container.querySelectorAll('.bam-block[data-block-id]').forEach(el => {
+    const id = el.dataset.blockId;
+    const type = el.dataset.blockType;
+    const b = { id, type };
+    if (type === 'text') {
+      b.heading = el.querySelector('.block-heading')?.textContent || '';
+      b.content = el.querySelector('.block-body')?.textContent || '';
+    } else if (type === 'video') {
+      b.url = el.dataset.url || '';
+    } else if (type === 'image') {
+      b.url = el.querySelector('img')?.src || '';
+      b.caption = el.querySelector('.block-caption')?.textContent || '';
+    } else if (type === 'file') {
+      b.name = el.querySelector('.block-file-name')?.textContent || '';
+      b.url  = el.querySelector('.block-file-row')?.href || '#';
+      b.tag  = el.querySelector('.block-file-tag')?.textContent || '';
+    } else if (type === 'steps') {
+      b.steps = [];
+      el.querySelectorAll('.block-step').forEach(s => {
+        b.steps.push({
+          icon:  s.querySelector('.step-num')?.textContent || '',
+          title: s.querySelector('.step-title')?.textContent || '',
+          body:  s.querySelector('.step-body')?.textContent || '',
+        });
+      });
+    }
+    blocks.push(b);
+  });
+  data[lessonId].blocks = blocks;
+  _remoteBlocks = data;
+  localStorage.setItem(CONTENT_KEY, JSON.stringify(data));
+  scheduleRemoteSave('blocks', data);
+}
+
+// ── BLOCKS RENDER ────────────────────────────────────────────────
+function renderBlocks(lessonId) {
+  const container = document.getElementById('blocks-container');
+  if (!container) return;
+  const blocks = getBlocks(lessonId);
+  container.innerHTML = '';
+  if (!blocks || blocks.length === 0) return;
+  blocks.forEach(b => container.appendChild(buildBlockEl(b)));
+}
+
+function buildBlockEl(b) {
+  const wrap = document.createElement('div');
+  wrap.className = 'bam-block';
+  wrap.dataset.blockId = b.id;
+  wrap.dataset.blockType = b.type;
+  wrap.draggable = true;
+  wrap.addEventListener('dragstart', onBlockDragStart);
+  wrap.addEventListener('dragover',  onBlockDragOver);
+  wrap.addEventListener('drop',      onBlockDrop);
+  wrap.addEventListener('dragend',   onBlockDragEnd);
+
+  // Founder controls
+  const ctrl = document.createElement('div');
+  ctrl.className = 'block-founder-ctrl';
+  ctrl.innerHTML = `
+    <button class="block-ctrl-btn up" onclick="moveBlock('${b.id}',-1)" title="Move up">▲</button>
+    <button class="block-ctrl-btn dn" onclick="moveBlock('${b.id}',1)" title="Move down">▼</button>
+    <button class="block-ctrl-btn del" onclick="removeBlock('${b.id}')" title="Delete">✕</button>`;
+  wrap.appendChild(ctrl);
+
+  const drag = document.createElement('div');
+  drag.className = 'block-drag-handle';
+  drag.textContent = '⠿';
+  wrap.appendChild(drag);
+
+  if (b.type === 'text') {
+    wrap.classList.add('bam-block-text');
+    const heading = document.createElement('div');
+    heading.className = 'block-heading block-editable';
+    heading.textContent = b.heading || 'Heading';
+    heading.contentEditable = window._founderActive ? 'true' : 'false';
+    heading.addEventListener('blur', () => saveBlocks(currentLessonId));
+
+    const body = document.createElement('div');
+    body.className = 'block-body block-editable';
+    body.textContent = b.content || 'Add your content here...';
+    body.contentEditable = window._founderActive ? 'true' : 'false';
+    body.addEventListener('blur', () => saveBlocks(currentLessonId));
+
+    wrap.appendChild(heading);
+    wrap.appendChild(body);
+
+  } else if (b.type === 'video') {
+    wrap.classList.add('bam-block-video');
+    wrap.dataset.url = b.url || '';
+    const inner = document.createElement('div');
+    inner.className = 'block-video-inner';
+    if (b.url) {
+      inner.innerHTML = buildVideoEmbed(b.url);
+    } else {
+      inner.style.cssText = 'display:flex;align-items:center;justify-content:center;height:180px;color:var(--muted);font-size:12px;font-family:var(--font-mono)';
+      inner.textContent = '[ No video URL set ]';
+    }
+    if (window._founderActive) {
+      const editBtn = document.createElement('button');
+      editBtn.className = 'block-ctrl-btn';
+      editBtn.style.cssText = 'position:absolute;bottom:8px;left:8px;z-index:11';
+      editBtn.textContent = '✎ Edit URL';
+      editBtn.onclick = () => {
+        const url = prompt('Video URL (YouTube, Vimeo, or MP4):', b.url || '');
+        if (url !== null) {
+          b.url = url;
+          wrap.dataset.url = url;
+          inner.innerHTML = url ? buildVideoEmbed(url) : '[ No video URL set ]';
+          saveBlocks(currentLessonId);
+        }
+      };
+      wrap.appendChild(editBtn);
+    }
+    wrap.appendChild(inner);
+
+  } else if (b.type === 'image') {
+    wrap.classList.add('bam-block-image');
+    if (b.url) {
+      const img = document.createElement('img');
+      img.src = b.url;
+      img.alt = b.caption || '';
+      wrap.appendChild(img);
+    } else if (window._founderActive) {
+      const placeholder = document.createElement('div');
+      placeholder.style.cssText = 'padding:32px;text-align:center;color:var(--muted);font-size:12px;font-family:var(--font-mono);cursor:pointer';
+      placeholder.textContent = '[ Click to set image URL ]';
+      placeholder.onclick = () => promptImageUrl(b, wrap);
+      wrap.appendChild(placeholder);
+    }
+    if (b.caption || window._founderActive) {
+      const cap = document.createElement('div');
+      cap.className = 'block-caption block-editable';
+      cap.textContent = b.caption || 'Caption...';
+      cap.contentEditable = window._founderActive ? 'true' : 'false';
+      cap.addEventListener('blur', () => saveBlocks(currentLessonId));
+      wrap.appendChild(cap);
+    }
+    if (window._founderActive) {
+      const editBtn = document.createElement('button');
+      editBtn.className = 'block-ctrl-btn';
+      editBtn.style.cssText = 'position:absolute;bottom:36px;left:8px;z-index:11';
+      editBtn.textContent = '✎ Image URL';
+      editBtn.onclick = () => promptImageUrl(b, wrap);
+      wrap.appendChild(editBtn);
+    }
+
+  } else if (b.type === 'file') {
+    wrap.classList.add('bam-block-file');
+    const row = document.createElement('a');
+    row.className = 'block-file-row';
+    row.href = b.url || '#';
+    row.target = '_blank';
+    row.rel = 'noopener';
+    const icon = document.createElement('span');
+    icon.className = 'block-file-icon';
+    icon.textContent = '📄';
+    const name = document.createElement('span');
+    name.className = 'block-file-name block-editable';
+    name.textContent = b.name || 'File name';
+    name.contentEditable = window._founderActive ? 'true' : 'false';
+    name.addEventListener('blur', () => saveBlocks(currentLessonId));
+    const tag = document.createElement('span');
+    tag.className = 'block-file-tag block-editable';
+    tag.textContent = b.tag || 'PDF';
+    tag.contentEditable = window._founderActive ? 'true' : 'false';
+    tag.addEventListener('blur', () => saveBlocks(currentLessonId));
+    row.appendChild(icon);
+    row.appendChild(name);
+    row.appendChild(tag);
+    wrap.appendChild(row);
+    if (window._founderActive) {
+      const editBtn = document.createElement('button');
+      editBtn.className = 'block-ctrl-btn';
+      editBtn.style.cssText = 'position:absolute;bottom:8px;right:48px;z-index:11';
+      editBtn.textContent = '✎ URL';
+      editBtn.onclick = () => {
+        const url = prompt('File URL:', b.url || '');
+        if (url !== null) { b.url = url; row.href = url; saveBlocks(currentLessonId); }
+      };
+      wrap.appendChild(editBtn);
+    }
+
+  } else if (b.type === 'steps') {
+    wrap.classList.add('bam-block-steps');
+    const list = document.createElement('div');
+    list.className = 'block-steps-list';
+    (b.steps || [{ icon: '1', title: 'Step one', body: 'Describe this step...' }]).forEach((s, i) => {
+      const step = document.createElement('div');
+      step.className = 'block-step';
+      const num = document.createElement('div');
+      num.className = 'step-num';
+      num.textContent = s.icon || (i + 1);
+      const content = document.createElement('div');
+      content.className = 'step-content';
+      const title = document.createElement('div');
+      title.className = 'step-title block-editable';
+      title.textContent = s.title || 'Step title';
+      title.contentEditable = window._founderActive ? 'true' : 'false';
+      title.addEventListener('blur', () => saveBlocks(currentLessonId));
+      const body = document.createElement('div');
+      body.className = 'step-body block-editable';
+      body.textContent = s.body || 'Step description...';
+      body.contentEditable = window._founderActive ? 'true' : 'false';
+      body.addEventListener('blur', () => saveBlocks(currentLessonId));
+      content.appendChild(title);
+      content.appendChild(body);
+      step.appendChild(num);
+      step.appendChild(content);
+      list.appendChild(step);
+    });
+    wrap.appendChild(list);
+    if (window._founderActive) {
+      const addStep = document.createElement('button');
+      addStep.className = 'block-ctrl-btn';
+      addStep.style.cssText = 'margin:12px 0 4px;display:block';
+      addStep.textContent = '＋ Add step';
+      addStep.onclick = () => {
+        if (!b.steps) b.steps = [];
+        b.steps.push({ icon: String(b.steps.length + 1), title: 'New step', body: '' });
+        const container = document.getElementById('blocks-container');
+        const el = container.querySelector(`[data-block-id="${b.id}"]`);
+        if (el) { const newEl = buildBlockEl(b); el.replaceWith(newEl); }
+        saveBlocks(currentLessonId);
+      };
+      wrap.appendChild(addStep);
+    }
+  }
+
+  return wrap;
+}
+
+function buildVideoEmbed(url) {
+  const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+  if (ytMatch) return `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:none" allowfullscreen></iframe>`;
+  const viMatch = url.match(/vimeo\.com\/(\d+)/);
+  if (viMatch) return `<iframe src="https://player.vimeo.com/video/${viMatch[1]}" style="position:absolute;inset:0;width:100%;height:100%;border:none" allowfullscreen></iframe>`;
+  return `<video src="${url}" controls style="position:absolute;inset:0;width:100%;height:100%;background:#000"></video>`;
+}
+
+function promptImageUrl(b, wrap) {
+  const url = prompt('Image URL:', b.url || '');
+  if (url !== null) {
+    b.url = url;
+    const container = document.getElementById('blocks-container');
+    const el = container.querySelector(`[data-block-id="${b.id}"]`);
+    if (el) { const newEl = buildBlockEl(b); el.replaceWith(newEl); }
+    saveBlocks(currentLessonId);
+  }
+}
+
+// ── ADD / REMOVE / MOVE BLOCKS ───────────────────────────────────
+function addBlock(type) {
+  if (!currentLessonId) return;
+  const data = getContent();
+  if (!data[currentLessonId]) data[currentLessonId] = {};
+  if (!data[currentLessonId].blocks) data[currentLessonId].blocks = [];
+  const id = 'b_' + Date.now();
+  const defaults = {
+    text:  { id, type, heading: 'New section', content: 'Add your content here...' },
+    video: { id, type, url: '' },
+    image: { id, type, url: '', caption: '' },
+    file:  { id, type, name: 'Download', url: '#', tag: 'PDF' },
+    steps: { id, type, steps: [{ icon: '1', title: 'Step one', body: 'Describe this step...' }] },
+  };
+  const block = defaults[type] || defaults.text;
+  data[currentLessonId].blocks.push(block);
+  _remoteBlocks = data;
+  localStorage.setItem(CONTENT_KEY, JSON.stringify(data));
+  const container = document.getElementById('blocks-container');
+  container.appendChild(buildBlockEl(block));
+  scheduleRemoteSave('blocks', data);
+}
+
+function removeBlock(blockId) {
+  const el = document.querySelector(`[data-block-id="${blockId}"]`);
+  if (el) el.remove();
+  saveBlocks(currentLessonId);
+}
+
+function moveBlock(blockId, dir) {
+  const container = document.getElementById('blocks-container');
+  const el = container.querySelector(`[data-block-id="${blockId}"]`);
+  if (!el) return;
+  if (dir === -1 && el.previousElementSibling) {
+    container.insertBefore(el, el.previousElementSibling);
+  } else if (dir === 1 && el.nextElementSibling) {
+    container.insertBefore(el.nextElementSibling, el);
+  }
+  saveBlocks(currentLessonId);
+}
+
+// ── DRAG-TO-REORDER ──────────────────────────────────────────────
+let _dragSrc = null;
+function onBlockDragStart(e) {
+  if (!window._founderActive) { e.preventDefault(); return; }
+  _dragSrc = this;
+  e.dataTransfer.effectAllowed = 'move';
+}
+function onBlockDragOver(e) {
+  if (!window._founderActive || !_dragSrc || _dragSrc === this) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  this.classList.add('drag-over');
+}
+function onBlockDrop(e) {
+  if (!window._founderActive || !_dragSrc || _dragSrc === this) return;
+  e.preventDefault();
+  const container = document.getElementById('blocks-container');
+  const els = [...container.children];
+  const srcIdx = els.indexOf(_dragSrc);
+  const tgtIdx = els.indexOf(this);
+  if (srcIdx < tgtIdx) {
+    container.insertBefore(_dragSrc, this.nextSibling);
+  } else {
+    container.insertBefore(_dragSrc, this);
+  }
+  saveBlocks(currentLessonId);
+}
+function onBlockDragEnd() {
+  document.querySelectorAll('.bam-block').forEach(el => el.classList.remove('drag-over'));
+  _dragSrc = null;
 }
 
 // ── FOUNDER AUTH ─────────────────────────────────────────────────
@@ -1051,7 +1599,7 @@ let logoClickCount = 0, logoClickTimer = null;
 
 document.getElementById('nav-logo-trigger').addEventListener('click', function(e) {
   e.preventDefault();
-  if (isFounder()) return; // already in founder mode
+  if (isFounder()) return;
   logoClickCount++;
   clearTimeout(logoClickTimer);
   logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 600);
@@ -1086,6 +1634,7 @@ async function founderConfirm() {
     const data = await res.json();
     if (res.ok && data.founder) {
       localStorage.setItem(STORAGE_KEY, data.founder === 'ethan' ? 'ethan' : '1');
+      if (data.writeKey) sessionStorage.setItem('bam_write_key', data.writeKey);
       founderModalClose();
       founderActivate();
     } else {
@@ -1103,19 +1652,21 @@ async function founderConfirm() {
 }
 function founderExit() {
   localStorage.removeItem(STORAGE_KEY);
+  sessionStorage.removeItem('bam_write_key');
   window._founderActive = false;
   document.body.classList.remove('founder-active');
   document.getElementById('founder-bar').classList.remove('visible');
   setEditable(false);
   renderSidebar();
+  renderBlocks(currentLessonId);
 }
 function founderActivate() {
   window._founderActive = true;
   document.body.classList.add('founder-active');
   document.getElementById('founder-bar').classList.add('visible');
   setEditable(true);
-  loadSavedEdits();
   renderSidebar();
+  renderBlocks(currentLessonId);
 }
 function setEditable(on) {
   document.querySelectorAll('.f-edit').forEach(el => {
@@ -1157,18 +1708,13 @@ function clearVideo() {
 }
 function embedVideo(url) {
   const zone = document.getElementById('video-zone');
-  let embedUrl = url;
-  // YouTube
   const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-  if (ytMatch) embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0`;
-  // Vimeo
   const viMatch = url.match(/vimeo\.com\/(\d+)/);
-  if (viMatch) embedUrl = `https://player.vimeo.com/video/${viMatch[1]}?autoplay=1`;
-
-  if (ytMatch || viMatch) {
-    zone.innerHTML = `<iframe src="${embedUrl}" style="width:100%;height:100%;border:none" allowfullscreen allow="autoplay"></iframe>`;
+  if (ytMatch) {
+    zone.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0" style="width:100%;height:100%;border:none" allowfullscreen allow="autoplay"></iframe>`;
+  } else if (viMatch) {
+    zone.innerHTML = `<iframe src="https://player.vimeo.com/video/${viMatch[1]}?autoplay=1" style="width:100%;height:100%;border:none" allowfullscreen allow="autoplay"></iframe>`;
   } else {
-    // direct MP4
     zone.innerHTML = `<video src="${url}" controls autoplay style="width:100%;height:100%;background:#000"></video>`;
   }
   zone.style.cursor = 'default';
@@ -1178,10 +1724,9 @@ function resetVideoZone(l) {
   const zone = document.getElementById('video-zone');
   zone.style.cursor = 'pointer';
   zone.onclick = videoZoneClick;
-  zone.innerHTML = `<div class="play-btn" id="play-btn-el"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><span class="video-label" id="video-label-text">${l.title}</span>`;
+  zone.innerHTML = `<div class="play-btn" id="play-btn-el"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><span class="video-label" id="video-label-text">${l ? l.title : ''}</span>`;
 }
 function playVideo() {
-  const l = LESSONS[currentLessonId];
   const savedUrl = getField(currentLessonId, 'video_url', '');
   if (savedUrl) { embedVideo(savedUrl); return; }
   const zone = document.getElementById('video-zone');
@@ -1189,52 +1734,25 @@ function playVideo() {
   zone.innerHTML = '<span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase">[ No video added yet ]</span>';
 }
 
-// ── SAVED EDITS LOADER ───────────────────────────────────────────
-function loadSavedEdits() {
-  const data = getContent();
-  const lessonData = data[currentLessonId] || {};
-  document.querySelectorAll('.f-edit[data-key]').forEach(el => {
-    const key = el.dataset.key;
-    if (lessonData[key] !== undefined) el.textContent = lessonData[key];
-  });
-}
-
 // ── LESSON NAVIGATION ────────────────────────────────────────────
-function toggleModule(header) {
-  const lessons = header.nextElementSibling;
-  const isOpen = header.classList.contains('open');
-  header.classList.toggle('open', !isOpen);
-  lessons.classList.toggle('open', !isOpen);
-}
-
-function selectLesson(idOrEl, legacyId) {
-  // Support both selectLesson('id') and legacy selectLesson(domEl, 'id')
-  let id, item;
-  if (typeof idOrEl === 'string') {
-    id = idOrEl;
-    item = document.querySelector(`.lesson-item[data-lesson-id="${id}"]`);
-  } else {
-    id = legacyId;
-    item = idOrEl;
-  }
-
+function selectLesson(id) {
+  if (!id || !LESSONS[id]) return;
   currentLessonId = id;
-  document.querySelectorAll('.lesson-item').forEach(l => l.classList.remove('active'));
-  if (item) item.classList.add('active');
-  const l = LESSONS[id] || LESSONS['mindset'];
 
-  // close video panel if open
+  document.querySelectorAll('.lesson-item').forEach(l => l.classList.remove('active'));
+  const item = document.querySelector(`.lesson-item[data-lesson-id="${id}"]`);
+  if (item) item.classList.add('active');
+
+  const l = LESSONS[id];
+
+  // Close video panel
   document.getElementById('video-edit-panel').classList.remove('open');
 
-  // restore or reset video zone
+  // Video zone
   const savedUrl = getField(id, 'video_url', '');
-  if (savedUrl) {
-    embedVideo(savedUrl);
-  } else {
-    resetVideoZone(l);
-  }
+  if (savedUrl) embedVideo(savedUrl); else resetVideoZone(l);
 
-  // update lesson header info
+  // Lesson header
   const modObj = MODULES.find(m => m.id === l.mod);
   const modLabel = modObj ? (modObj.num ? 'Module ' + modObj.num : modObj.label) : l.mod;
   const modLessons = getLessonsForMod(l.mod);
@@ -1242,101 +1760,59 @@ function selectLesson(idOrEl, legacyId) {
   document.getElementById('lesson-tag-el').textContent = modLabel;
   document.getElementById('lesson-num-el').textContent = lessonIdx >= 0 ? `Lesson ${lessonIdx + 1} of ${modLessons.length}` : '';
 
-  // update editable fields with saved or default content
-  const data = getContent();
-  const saved = data[id] || {};
-
+  // Title / sub (editable in founder mode)
+  const saved = getContent()[id] || {};
   document.querySelector('[data-key="title"]').textContent = saved.title ?? l.title;
-  document.querySelector('[data-key="sub"]').textContent = saved.sub ?? l.sub;
+  document.querySelector('[data-key="sub"]').textContent   = saved.sub   ?? l.sub;
+
+  // Brief paragraph
+  const briefEl = document.getElementById('lesson-brief-el');
+  if (briefEl) briefEl.textContent = l.brief || '';
+
+  // Render blocks
+  renderBlocks(id);
 }
 
 // ── PROGRESS ────────────────────────────────────────────────────
 function markComplete() {
-  if (currentLessonId) {
-    markLessonDone(currentLessonId);
-    updateStats();
-    renderSidebar();
-    // Auto-advance to next lesson within same module
-    const modId = LESSONS[currentLessonId]?.mod;
-    if (modId) {
-      const modLessons = getLessonsForMod(modId);
-      const idx = modLessons.findIndex(l => l.id === currentLessonId);
-      if (idx >= 0 && idx < modLessons.length - 1) {
-        selectLesson(modLessons[idx + 1].id);
-      }
-    }
+  if (!currentLessonId) return;
+  markLessonDone(currentLessonId);
+  updateStats();
+  renderSidebar();
+  // Auto-advance to next lesson within same module
+  const modId = LESSONS[currentLessonId]?.mod;
+  if (modId) {
+    const modLessons = getLessonsForMod(modId);
+    const idx = modLessons.findIndex(l => l.id === currentLessonId);
+    if (idx >= 0 && idx < modLessons.length - 1) selectLesson(modLessons[idx + 1].id);
   }
-}
-
-function switchTab(el, tab) {
-  document.querySelectorAll('.nav-tabs li a').forEach(a => a.classList.remove('active'));
-  el.classList.add('active');
 }
 
 // ── LOCK COURSE ──────────────────────────────────────────────────
 function lockCourse() {
-  // Upgrade banner at top of main content area
   const main = document.getElementById('main-content');
   if (main && !main.querySelector('.upgrade-banner')) {
     const banner = document.createElement('div');
     banner.className = 'upgrade-banner';
-    banner.style.cssText = [
-      'background:var(--panel2)',
-      'border-bottom:1px solid var(--border2)',
-      'padding:14px 24px',
-      'display:flex',
-      'align-items:center',
-      'justify-content:space-between',
-      'gap:16px',
-      'font-size:13px',
-      'color:var(--muted)',
-      'position:relative',
-      'z-index:10',
-    ].join(';');
-    banner.innerHTML = `
-      <span>👀 You're previewing the free content — unlock the full course to access all lessons</span>
-      <a href="/account" style="background:var(--accent);color:#000;padding:7px 18px;border-radius:6px;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap;flex-shrink:0">
-        Unlock Full Course →
-      </a>`;
+    banner.style.cssText = 'background:var(--panel2);border-bottom:1px solid var(--border2);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:13px;color:var(--muted);position:relative;z-index:10';
+    banner.innerHTML = `<span>👀 You're previewing the free content — unlock the full course to access all lessons</span><a href="/account" style="background:var(--accent);color:#000;padding:7px 18px;border-radius:6px;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap;flex-shrink:0">Unlock Full Course →</a>`;
     main.prepend(banner);
   }
-  // Sidebar lock is handled by renderSidebar() based on window._courseAccess
 }
 
 // ── FOUNDER STRUCTURE MANAGEMENT ────────────────────────────────
 function founderSaveStructure() {
-  localStorage.setItem('bam_course_structure', JSON.stringify({
-    modules: MODULES,
-    lessons: LESSONS
-  }));
-}
-
-function founderSaveContent() {
-  const contentArea = document.getElementById('lesson-body');
-  if (!contentArea || !currentLessonId) return;
-  const saved = JSON.parse(localStorage.getItem('bam_course_content') || '{}');
-  saved[currentLessonId] = contentArea.innerHTML;
-  localStorage.setItem('bam_course_content', JSON.stringify(saved));
-}
-
-function founderLoadStructure() {
-  try {
-    const saved = JSON.parse(localStorage.getItem('bam_course_structure') || 'null');
-    if (saved && saved.modules && saved.lessons) {
-      MODULES.length = 0;
-      saved.modules.forEach(m => MODULES.push(m));
-      Object.keys(LESSONS).forEach(k => delete LESSONS[k]);
-      Object.assign(LESSONS, saved.lessons);
-    }
-  } catch(e) {}
+  const payload = { modules: MODULES, lessons: LESSONS };
+  localStorage.setItem('bam_course_structure', JSON.stringify(payload));
+  scheduleRemoteSave('structure', payload);
 }
 
 function founderAddModule() {
   const label = prompt('Module title:');
   if (!label) return;
-  const num = prompt('Module number (e.g. 05, or leave blank):') || null;
-  const id = 'mod-custom-' + Date.now();
-  MODULES.splice(MODULES.length - 1, 0, { id, label, num, free: false }); // insert before Advanced
+  const num = prompt('Module number (e.g. 07, or leave blank):') || null;
+  const id = 'mod-' + Date.now();
+  MODULES.splice(MODULES.length - 1, 0, { id, label, num, free: false });
   founderSaveStructure();
   renderSidebar();
 }
@@ -1346,7 +1822,6 @@ function founderRemoveMod(modId) {
   const idx = MODULES.findIndex(m => m.id === modId);
   if (idx === -1) return;
   MODULES.splice(idx, 1);
-  // Remove lessons
   Object.keys(LESSONS).forEach(id => { if (LESSONS[id].mod === modId) delete LESSONS[id]; });
   founderSaveStructure();
   renderSidebar();
@@ -1356,7 +1831,7 @@ function founderAddLessonToMod(modId) {
   const title = prompt('Lesson title:');
   if (!title) return;
   const id = 'lesson-' + Date.now();
-  LESSONS[id] = { mod: modId, title, sub: '' };
+  LESSONS[id] = { mod: modId, title, sub: '', brief: '' };
   founderSaveStructure();
   renderSidebar();
 }
@@ -1374,32 +1849,10 @@ function founderRemoveLesson(lessonId) {
   renderSidebar();
 }
 
-function founderAddBlock() {
-  const type = prompt('Block type (text / video / tip):') || 'text';
-  const content = prompt('Content:') || '';
-  if (!currentLessonId) { alert('Open a lesson first'); return; }
-  const contentArea = document.getElementById('lesson-body');
-  if (!contentArea) return;
-  const block = document.createElement('div');
-  block.className = 'kp-card f-block';
-  block.setAttribute('contenteditable', window._founderActive ? 'true' : 'false');
-  block.textContent = content;
-  if (window._founderActive) {
-    const del = document.createElement('button');
-    del.textContent = '✕ Remove';
-    del.className = 'founder-block-del';
-    del.onclick = () => { block.remove(); founderSaveContent(); };
-    block.appendChild(del);
-  }
-  contentArea.appendChild(block);
-  founderSaveContent();
-}
-
 // ── INIT ─────────────────────────────────────────────────────────
-founderLoadStructure();
 renderSidebar();
 updateStats();
-if (isFounder()) founderActivate();
+selectLesson(currentLessonId);
 
 function handleSignOut() {
   localStorage.clear();
