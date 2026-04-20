@@ -6,6 +6,7 @@
 <title>BuildAIModels — Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -451,6 +452,18 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
 .modal-btn.confirm { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
 .modal-btn:hover { opacity: 0.85; }
 
+/* ── SYNTHID MODAL ── */
+#synthid-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 250; align-items: center; justify-content: center; }
+#synthid-overlay.open { display: flex; }
+#synthid-modal { background: var(--panel); border: 1px solid var(--border2); border-radius: 10px; padding: 24px; width: 420px; max-width: 90vw; }
+#synthid-modal .synthid-icon { color: var(--red); font-size: 20px; margin-bottom: 10px; }
+#synthid-modal h3 { font-size: 14px; color: var(--text); margin-bottom: 10px; }
+#synthid-modal p { color: var(--muted); font-size: 11px; line-height: 1.6; margin-bottom: 18px; }
+.synthid-btns { display: flex; gap: 8px; justify-content: flex-end; }
+.synthid-btn { padding: 8px 18px; border-radius: 5px; cursor: pointer; font-family: var(--font); font-size: 12px; border: 1px solid var(--border2); background: var(--panel2); color: var(--text); transition: all 0.15s; }
+.synthid-btn.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+.synthid-btn:hover { opacity: 0.85; }
+
 /* ── TOAST ── */
 /* Fullscreen image viewer */
 #fullscreen-viewer {
@@ -506,33 +519,6 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
 .tag.green { border-color: rgba(79,209,138,0.4); color: var(--success); background: rgba(79,209,138,0.08); }
 .tag.blue { border-color: rgba(91,168,245,0.4); color: var(--blue); background: rgba(91,168,245,0.08); }
 
-/* ── REEL SESSION SIDEBAR ── */
-#reel-session-sidebar {
-  width: 160px; min-width: 160px; border-right: 1px solid var(--border);
-  background: var(--panel); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0;
-}
-.reel-sess-title {
-  padding: 10px 12px 6px; font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
-  color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 700;
-}
-#reel-sess-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-.reel-sess-item {
-  display: flex; align-items: center; gap: 8px; padding: 10px 12px;
-  cursor: pointer; border-bottom: 1px solid var(--border); transition: background .15s;
-}
-.reel-sess-item:hover { background: var(--panel2); }
-.reel-sess-item.active { background: var(--panel2); border-left: 2px solid var(--accent); }
-.reel-sess-dot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--border2);
-}
-.reel-sess-dot.loaded { background: var(--blue); }
-.reel-sess-dot.step1  { background: var(--orange); }
-.reel-sess-dot.done   { background: var(--success); }
-.reel-sess-dot.empty  { background: var(--border2); }
-.reel-sess-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.reel-sess-label { font-size: 10px; color: var(--text); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.reel-sess-sub { font-size: 9px; color: var(--muted); }
-.reel-sess-legend { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; font-size: 9px; color: var(--muted); border-top: 1px solid var(--border); }
 
 /* ═══ VAULT SIDEBAR ═══ */
 #vault-tabs-row{display:flex;align-items:center;gap:5px;padding:6px 8px 5px;border-bottom:1px solid var(--border);flex-shrink:0;min-height:36px;flex-wrap:wrap}
@@ -555,6 +541,61 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
 </style>
 <body>
 
+<!-- VAULT ONBOARDING MODAL -->
+<div id="vault-onboard-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;align-items:center;justify-content:center">
+  <div id="vault-onboard-modal" style="background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:28px;width:420px;max-width:92vw;display:flex;flex-direction:column;gap:16px">
+    <div style="font-size:13px;font-weight:700;color:var(--text)">Create Your First Vault</div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.5">A vault stores 2–4 reference images for your AI model — keeping her consistent across every generation.</div>
+    <input id="vault-onboard-name" type="text" placeholder="Vault name (e.g. Sofia)" readonly autocomplete="new-password" onfocus="this.removeAttribute('readonly')" style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--font);font-size:12px;outline:none;width:100%;box-sizing:border-box">
+    <div id="vault-onboard-drop" style="border:1.5px dashed var(--border2);border-radius:8px;padding:24px 16px;text-align:center;cursor:pointer;color:var(--muted);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:100px;justify-content:center;transition:border-color .15s,background .15s">
+      <div style="font-size:22px">📎</div>
+      <div>Drop 2–4 reference images here</div>
+      <div style="font-size:10px;color:var(--muted2)">or click to browse</div>
+      <input id="vault-onboard-file" type="file" multiple accept="image/*" style="display:none">
+    </div>
+    <div id="vault-onboard-thumbs" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    <div id="vault-onboard-hint" style="font-size:10px;color:var(--muted2)">Add 2–4 images (face and body shots work best)</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+      <button id="vault-onboard-skip" style="background:transparent;border:1px solid var(--border2);color:var(--muted);padding:7px 16px;border-radius:6px;cursor:pointer;font-family:var(--font);font-size:11px">Skip for now</button>
+      <button id="vault-onboard-create" style="background:var(--accent);color:#000;border:none;padding:7px 18px;border-radius:6px;cursor:pointer;font-family:var(--font);font-size:12px;font-weight:700">Create Vault</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOUR OFFER TOAST -->
+<div id="tour-toast" style="display:none;position:fixed;bottom:28px;right:28px;z-index:8000;background:var(--panel);border:1px solid var(--accent);border-radius:10px;padding:14px 18px;align-items:center;gap:14px;box-shadow:0 4px 24px rgba(0,0,0,0.4);min-width:260px">
+  <div style="flex:1">
+    <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px">Want a quick tour?</div>
+    <div style="font-size:10px;color:var(--muted)">Takes about 30 seconds</div>
+  </div>
+  <button id="tour-yes-btn" style="background:var(--accent);color:#000;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-family:var(--font);font-size:11px;font-weight:700">Yes</button>
+  <button id="tour-skip-btn" style="background:transparent;border:1px solid var(--border2);color:var(--muted);padding:6px 12px;border-radius:6px;cursor:pointer;font-family:var(--font);font-size:11px">Skip</button>
+</div>
+
+<!-- SPOTLIGHT TOUR -->
+<div id="tour-overlay" style="display:none;position:fixed;inset:0;z-index:7500">
+  <svg id="tour-svg" style="position:absolute;inset:0;width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <mask id="tour-mask">
+        <rect width="100%" height="100%" fill="white"/>
+        <rect id="tour-cutout" x="0" y="0" width="0" height="0" rx="8" fill="black"/>
+      </mask>
+    </defs>
+    <rect width="100%" height="100%" fill="rgba(0,0,0,0.72)" mask="url(#tour-mask)" style="pointer-events:all"/>
+  </svg>
+  <div id="tour-tooltip" style="position:absolute;background:var(--panel);border:1.5px solid var(--accent);border-radius:10px;padding:16px 18px;max-width:280px;box-shadow:0 4px 24px rgba(0,0,0,0.5);pointer-events:all">
+    <div id="tour-step-label" style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:6px"></div>
+    <div id="tour-tip-text" style="font-size:12px;color:var(--text);line-height:1.55;margin-bottom:14px"></div>
+    <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+      <button id="tour-skip-all" style="background:transparent;border:none;color:var(--muted2);font-size:10px;cursor:pointer;font-family:var(--font);padding:0">Skip tour</button>
+      <div style="display:flex;gap:6px">
+        <button id="tour-prev-btn" style="background:transparent;border:1px solid var(--border2);color:var(--text);padding:5px 12px;border-radius:5px;cursor:pointer;font-family:var(--font);font-size:10px">← Prev</button>
+        <button id="tour-next-btn" style="background:var(--accent);color:#000;border:none;padding:5px 14px;border-radius:5px;cursor:pointer;font-family:var(--font);font-size:11px;font-weight:700">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TOPBAR -->
 <div id="topbar">
   <div class="logo">BUILD<em style="color:var(--accent);font-style:normal">AI</em>MODELS<span>STUDIO v1.0</span></div>
@@ -572,7 +613,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
     <span>Balance:</span>
     <span class="balance-val" id="balance-display">—</span>
   </div>
-  <button id="api-key-btn" onclick="openModal()">⚙ API KEY</button>
+  <button id="api-key-btn" onclick="openModal()" style="display:none">⚙ API KEY</button>
 </div>
 
 <!-- PAGES -->
@@ -586,9 +627,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
     <!-- Reference Sidebar -->
     <div id="ref-sidebar">
       <div class="sidebar-title">VAULTS<span id="ref-count">0/8 selected</span></div>
-      <div style="padding:5px 8px;border-bottom:1px solid var(--border);flex-shrink:0">
-        <button type="button" id="lori-load-btn" onclick="loriLoadFromDreamPrint()" style="width:100%;font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 0;border-radius:4px;border:1px solid rgba(184,240,84,0.3);background:rgba(184,240,84,0.06);color:var(--accent);cursor:pointer;transition:all .15s" title="Load refs from DreamPrint vault">⚡ Lori — Load DreamPrint</button>
-      </div>
+
       <div id="ref-upload-status" class="ref-upload-status" aria-live="polite"></div>
       <!-- Vault tabs + create button -->
       <div id="vault-tabs-row">
@@ -599,25 +638,21 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
       <div id="vault-controls">
         <span class="vault-row-label">Vault:</span>
         <button type="button" class="vault-ctrl-btn" onclick="document.getElementById('vault-file-input').click()">📎 Files</button>
-        <button type="button" class="vault-ctrl-btn" onclick="document.getElementById('vault-folder-input').click()">📂 Folder</button>
         <input type="file" id="vault-file-input" multiple accept="image/*" style="display:none" onchange="vaultAddFiles(this.files);this.value=''">
         <input type="file" id="vault-folder-input" webkitdirectory directory multiple accept="image/*" style="display:none" onchange="vaultAddFiles(this.files);this.value=''">
       </div>
-      <!-- One-off upload — session only, no vault needed -->
-      <div id="onoff-upload-row">
-        <span class="vault-row-label">One-off:</span>
-        <button type="button" class="vault-ctrl-btn" onclick="document.getElementById('onoff-file-input').click()">📎 Upload</button>
+      <!-- Vault rename -->
+      <div id="vault-rename-row" style="display:flex;gap:6px;padding:6px 10px;border-bottom:1px solid var(--border)">
+        <input id="vault-rename-input" type="text" placeholder="Rename vault…" readonly autocomplete="new-password" onfocus="this.removeAttribute('readonly')" style="flex:1;background:var(--panel2);border:1px solid var(--border2);border-radius:5px;padding:5px 8px;color:var(--text);font-family:var(--font);font-size:11px;outline:none;min-width:0">
+        <button onclick="vaultRenameFromInput()" style="background:var(--accent2);border:1px solid rgba(184,240,84,0.2);color:var(--accent);padding:5px 10px;border-radius:5px;cursor:pointer;font-size:10px;white-space:nowrap;font-family:var(--font)">✓</button>
+        <button onclick="vaultDelete()" title="Delete vault" style="background:rgba(255,79,106,0.08);border:1px solid rgba(255,79,106,0.3);color:#ff4f6a;padding:5px 9px;border-radius:5px;cursor:pointer;font-size:11px;white-space:nowrap;font-family:var(--font)">🗑</button>
+      </div>
+      <div id="onoff-upload-row" style="display:none">
         <input type="file" id="onoff-file-input" multiple accept="image/*" style="display:none" onchange="onoffAddFiles(this.files);this.value=''">
-        <button type="button" class="vault-ctrl-btn" onclick="clearOnoff()" style="margin-left:auto;color:var(--muted)">✕ Clear</button>
       </div>
       <div id="ref-sidebar-body">
         <div id="ref-empty-state"><div class="ref-empty-text">Click ＋ New Vault to get started, or use One-off to upload refs for this session only.</div></div>
         <div id="ref-grid"></div>
-      </div>
-      <div style="display:flex;gap:4px;padding:5px 8px;flex-wrap:wrap;border-top:1px solid var(--border);flex-shrink:0">
-        <button id="ref-clear" onclick="clearRefs()" style="flex:1;font-size:9px">Clear sel.</button>
-        <button class="ref-secondary-btn" onclick="vaultRename()" style="flex:1;font-size:9px">Rename</button>
-        <button class="ref-secondary-btn" onclick="vaultDelete()" style="flex:1;font-size:9px;color:var(--red)">Delete</button>
       </div>
     </div>
 
@@ -629,8 +664,12 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
         <div class="field-group">
           <div class="field-label">Model</div>
           <select class="model-select" id="img-model" onchange="updateImgCost()">
+            <optgroup label="── WaveSpeed · BEST QUALITY">
+              <option value="wan-edit-2k" selected>Wan 2.7 Edit — $0.03/img ✓ DEFAULT</option>
+            </optgroup>
             <optgroup label="── laozhang.ai · CHEAPEST">
-              <option value="nano-lz" selected>Nano Banana Pro · laozhang.ai — $0.05/img ✓ DEFAULT</option>
+              <option value="nano-lz-2">Nano Banana 2 · laozhang.ai — $0.03/img</option>
+              <option value="nano-lz">Nano Banana Pro · laozhang.ai — $0.05/img</option>
               <option value="seedream-lz">Seedream 4.5 · laozhang.ai — $0.04/img</option>
             </optgroup>
           </select>
@@ -692,7 +731,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
             <div class="field-label">Resolution</div>
             <div class="pill-row">
               <div class="pill" data-res="2K" onclick="selectRes(this)">2K</div>
-              <div class="pill active" data-res="4K" onclick="selectRes(this)">4K</div>
+              <div class="pill active" data-res="4K" id="pill-4k" onclick="selectRes(this);founderPillClick()">4K</div>
             </div>
           </div>
           <div class="field-group">
@@ -917,24 +956,7 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
   ══════════════════════════════════════════ -->
   <div id="page-reel" class="page">
 
-    <!-- Session Sidebar -->
-    <div id="reel-session-sidebar">
-      <div class="reel-sess-title">SESSIONS</div>
-      <div id="reel-sess-list">
-        <div class="reel-sess-item active" id="reel-sess-0" onclick="switchReelSession(0)">
-          <span class="reel-sess-dot empty"></span>
-          <div class="reel-sess-info">
-            <div class="reel-sess-label">Session 1</div>
-            <div class="reel-sess-sub">Empty</div>
-          </div>
-        </div>
-      </div>
-      <div class="reel-sess-legend">
-        <div><span class="reel-sess-dot loaded" style="display:inline-block;margin-right:5px"></span>Video loaded</div>
-        <div><span class="reel-sess-dot step1" style="display:inline-block;margin-right:5px"></span>Frame ready</div>
-        <div><span class="reel-sess-dot done" style="display:inline-block;margin-right:5px"></span>Complete</div>
-      </div>
-    </div>
+
 
     <div id="reel-form">
       <div id="reel-scroll">
@@ -1045,12 +1067,14 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
   ══════════════════════════════════════════ -->
   <div id="page-nsfw" class="page">
 
-    <!-- Ref Sidebar (shared store, same refs) -->
-    <div id="ref-sidebar" style="min-width:220px;width:220px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--panel);overflow:hidden">
-      <div class="sidebar-title" style="padding:12px 14px 8px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-        REFS <span id="nsfw-ref-note" style="font-size:8px;color:var(--muted2)">uses main refs</span>
+    <!-- Ref Sidebar (vault selector) -->
+    <div id="nsfw-ref-sidebar" style="min-width:220px;width:220px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--panel);overflow:hidden">
+      <div style="padding:12px 14px 8px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        VAULT REFS
       </div>
-      <div style="padding:8px 10px;font-size:9px;color:var(--muted);line-height:1.5">Load refs on the Image tab. They're shared across all tabs.</div>
+      <div style="padding:8px 10px;font-size:9px;color:var(--muted);line-height:1.5;border-bottom:1px solid var(--border)">Select a vault to auto-load refs into the image slots below.</div>
+      <!-- Vault selector -->
+      <div id="nsfw-vault-selector" style="padding:8px 10px;display:flex;flex-direction:column;gap:6px;overflow-y:auto;flex:1"></div>
     </div>
 
     <!-- Form -->
@@ -1198,125 +1222,75 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
   <!-- ══════════════════════════════════════════
        BILLING PAGE
   ══════════════════════════════════════════ -->
-  <div id="page-billing" class="page" style="flex-direction:column;overflow-y:auto;padding:24px;gap:16px;background:var(--bg)">
+  <div id="page-billing" class="page" style="flex-direction:column;overflow-y:auto;padding:32px 40px;gap:0;background:var(--bg)">
 
-    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:1px">💳 BILLING DASHBOARD</div>
-    <div style="font-size:10px;color:var(--muted);margin-bottom:8px">Live balances + quick links to top up each provider</div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">
-
-      <!-- kie.ai -->
-      <div class="billing-card">
-        <div class="billing-card-header">
-          <div>
-            <div class="billing-name">kie.ai</div>
-            <div class="billing-desc">Default image provider · Card payment · Stripe</div>
-          </div>
-          <div class="billing-badge" style="background:var(--accent2);color:var(--accent);border-color:var(--accent)">DEFAULT</div>
-        </div>
-        <div class="billing-pricing">
-          <div class="billing-price-row"><span>Nano Banana Pro</span><span>$0.12/img</span></div>
-          <div class="billing-price-row"><span>Seedream 4.5</span><span>$0.04/img</span></div>
-        </div>
-        <div class="billing-balance-row">
-          <span class="billing-bal-label">Balance</span>
-          <span class="billing-bal-val" id="bal-kie">—</span>
-          <button class="billing-refresh-btn" onclick="fetchKieBalance()">↻</button>
-        </div>
-        <div class="billing-actions">
-          <a href="https://kie.ai/billing" target="_blank" class="billing-link-btn">💳 Top Up</a>
-          <a href="https://kie.ai/dashboard" target="_blank" class="billing-link-btn secondary">Dashboard</a>
-        </div>
-      </div>
-
-      <!-- laozhang.ai -->
-      <div class="billing-card">
-        <div class="billing-card-header">
-          <div>
-            <div class="billing-name">laozhang.ai</div>
-            <div class="billing-desc">Cheapest · USDT / Alipay · 65% cheaper</div>
-          </div>
-          <div class="billing-badge" style="background:var(--green2);color:var(--green);border-color:var(--green)">CHEAPEST</div>
-        </div>
-        <div class="billing-pricing">
-          <div class="billing-price-row"><span>Nano Banana Pro</span><span>$0.05/img</span></div>
-          <div class="billing-price-row"><span>Seedream 4.5</span><span>$0.04/img</span></div>
-        </div>
-        <div class="billing-balance-row">
-          <span class="billing-bal-label">Balance</span>
-          <span class="billing-bal-val" id="bal-lz">—</span>
-          <button class="billing-refresh-btn" onclick="fetchLzBalance()">↻</button>
-        </div>
-        <div class="billing-actions">
-          <a href="https://api.laozhang.ai/account/profile" target="_blank" class="billing-link-btn">💳 Top Up</a>
-          <a href="https://api.laozhang.ai/" target="_blank" class="billing-link-btn secondary">Dashboard</a>
-        </div>
-      </div>
-
-      <!-- WaveSpeed -->
-      <div class="billing-card">
-        <div class="billing-card-header">
-          <div>
-            <div class="billing-name">WaveSpeed</div>
-            <div class="billing-desc">Image fallback + file hosting for refs</div>
-          </div>
-          <div class="billing-badge" style="background:var(--blue2);color:var(--blue);border-color:var(--blue)">FALLBACK</div>
-        </div>
-        <div class="billing-pricing">
-          <div class="billing-price-row"><span>Nano Banana Pro 4K</span><span>$0.24/img</span></div>
-          <div class="billing-price-row"><span>File upload (refs)</span><span>Free</span></div>
-        </div>
-        <div class="billing-balance-row">
-          <span class="billing-bal-label">Balance</span>
-          <span class="billing-bal-val" id="bal-ws">—</span>
-          <button class="billing-refresh-btn" onclick="fetchWsBalance()">↻</button>
-        </div>
-        <div class="billing-actions">
-          <a href="https://wavespeed.ai/billing" target="_blank" class="billing-link-btn">💳 Top Up</a>
-          <a href="https://wavespeed.ai/dashboard" target="_blank" class="billing-link-btn secondary">Dashboard</a>
-        </div>
-      </div>
-
-      <!-- EvoLink -->
-      <div class="billing-card">
-        <div class="billing-card-header">
-          <div>
-            <div class="billing-name">EvoLink</div>
-            <div class="billing-desc">Kling video · Motion Control + I2V · 55% cheaper</div>
-          </div>
-          <div class="billing-badge" style="background:var(--purple2);color:var(--purple);border-color:var(--purple)">VIDEO</div>
-        </div>
-        <div class="billing-pricing">
-          <div class="billing-price-row"><span>Motion Control 5s</span><span>$0.84</span></div>
-          <div class="billing-price-row"><span>Image to Video 5s</span><span>$0.84</span></div>
-          <div class="billing-price-row"><span>≈55% cheaper than WaveSpeed</span><span></span></div>
-        </div>
-        <div class="billing-balance-row">
-          <span class="billing-bal-label">Balance</span>
-          <span class="billing-bal-val" id="bal-evo">—</span>
-          <button class="billing-refresh-btn" onclick="fetchEvoBalance()">↻</button>
-        </div>
-        <div class="billing-actions">
-          <a href="https://evolink.ai/billing" target="_blank" class="billing-link-btn">💳 Top Up</a>
-          <a href="https://evolink.ai/dashboard" target="_blank" class="billing-link-btn secondary">Dashboard</a>
-        </div>
-      </div>
-
+  <!-- Balance Hero -->
+  <div style="background:linear-gradient(135deg,var(--panel2) 0%,#0f1a08 100%);border:1px solid rgba(184,240,84,0.15);border-radius:14px;padding:28px 32px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px">
+    <div>
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-family:var(--font-mono);margin-bottom:8px">Current Balance</div>
+      <div style="font-family:var(--font-display,var(--font));font-size:48px;font-weight:800;color:var(--accent);letter-spacing:-2px;line-height:1">£<span id="billing-balance-display">0.00</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:6px">Credits deduct per generation · No expiry</div>
     </div>
+    <button onclick="studioOpenTopup()" style="background:var(--accent);color:#000;border:none;padding:14px 28px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font)">＋ Top Up</button>
+  </div>
 
-    <!-- Session summary -->
-    <div style="background:var(--panel);border:1px solid var(--border2);border-radius:8px;padding:14px;margin-top:4px">
-      <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">SESSION SUMMARY</div>
-      <div style="display:flex;gap:20px;flex-wrap:wrap">
-        <div><div style="font-size:9px;color:var(--muted)">Images</div><div style="font-size:18px;font-weight:700;color:var(--text)" id="bill-img-count">0</div></div>
-        <div><div style="font-size:9px;color:var(--muted)">Videos</div><div style="font-size:18px;font-weight:700;color:var(--text)" id="bill-vid-count">0</div></div>
-        <div><div style="font-size:9px;color:var(--muted)">Total Spent</div><div style="font-size:18px;font-weight:700;color:var(--orange)" id="bill-total">$0.00</div></div>
+  <!-- Pricing table -->
+  <div style="background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:24px;margin-bottom:16px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px">Generation Pricing <span style="font-size:9px;padding:2px 8px;border-radius:4px;background:var(--accent2);color:var(--accent);border:1px solid rgba(184,240,84,0.2);font-family:var(--font-mono);letter-spacing:1px;text-transform:uppercase">YOUR RATES</span></div>
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr>
+        <th style="text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);font-family:var(--font-mono);font-weight:500;padding:8px 12px;border-bottom:1px solid var(--border)">Type</th>
+        <th style="text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);font-family:var(--font-mono);font-weight:500;padding:8px 12px;border-bottom:1px solid var(--border)">Model</th>
+        <th style="text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);font-family:var(--font-mono);font-weight:500;padding:8px 12px;border-bottom:1px solid var(--border)">Cost</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)"><strong style="color:var(--text)">Image</strong></td><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)">Nano Banana Pro</td><td style="padding:10px 12px;font-size:12px;color:var(--accent);font-family:var(--font-mono);border-bottom:1px solid var(--border)">£0.09</td></tr>
+        <tr><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)"><strong style="color:var(--text)">Image</strong></td><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)">Seedream 5.0 Lite</td><td style="padding:10px 12px;font-size:12px;color:var(--accent);font-family:var(--font-mono);border-bottom:1px solid var(--border)">£0.07</td></tr>
+        <tr><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)"><strong style="color:var(--text)">Video 5s</strong></td><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)">Wan 2.2 Spicy I2V</td><td style="padding:10px 12px;font-size:12px;color:var(--accent);font-family:var(--font-mono);border-bottom:1px solid var(--border)">£0.28</td></tr>
+        <tr><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)"><strong style="color:var(--text)">Video 5s</strong></td><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border)">Kling 3.0 Pro I2V</td><td style="padding:10px 12px;font-size:12px;color:var(--accent);font-family:var(--font-mono);border-bottom:1px solid var(--border)">£0.85</td></tr>
+        <tr><td style="padding:10px 12px;font-size:13px;color:var(--muted)"><strong style="color:var(--text)">Video 5s</strong></td><td style="padding:10px 12px;font-size:13px;color:var(--muted)">Kling 3.0 Motion Control</td><td style="padding:10px 12px;font-size:12px;color:var(--accent);font-family:var(--font-mono)">£1.20</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Transaction history -->
+  <div style="background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:24px;margin-bottom:16px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:16px">Transaction History</div>
+    <div id="studio-tx-list"><div style="text-align:center;padding:32px;color:var(--muted2);font-size:13px">Loading...</div></div>
+  </div>
+
+</div><!-- /page-billing -->
+
+<!-- STUDIO TOP-UP MODAL -->
+<div id="studio-topup-modal" style="display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div style="background:var(--panel);border:1px solid var(--border2);border-radius:16px;padding:32px;width:100%;max-width:400px;margin:24px">
+    <div style="font-family:var(--font-display,var(--font));font-size:20px;font-weight:800;margin-bottom:8px">Top Up Credits</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:24px">Choose an amount — credits never expire</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+      <div onclick="studioSelectTopup(10,this)" style="background:var(--panel2);border:1px solid var(--border2);border-radius:10px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden">
+        <div style="font-size:28px;font-weight:800;color:var(--accent);letter-spacing:-1px">£10</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Starter</div>
+        <div style="font-size:10px;margin-top:6px">&nbsp;</div>
+      </div>
+      <div onclick="studioSelectTopup(20,this)" style="background:var(--panel2);border:1px solid var(--accent);border-radius:10px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;right:0;background:var(--accent);color:#000;font-size:8px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-bottom-left-radius:6px">POPULAR</div>
+        <div style="font-size:28px;font-weight:800;color:var(--accent);letter-spacing:-1px">£20</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Standard</div>
+        <div style="font-size:10px;color:#4fd98a;margin-top:6px">+8% bonus</div>
+      </div>
+      <div onclick="studioSelectTopup(50,this)" style="background:var(--panel2);border:1px solid var(--border2);border-radius:10px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s">
+        <div style="font-size:28px;font-weight:800;color:var(--accent);letter-spacing:-1px">£50</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Pro</div>
+        <div style="font-size:10px;color:#4fd98a;margin-top:6px">+14% bonus</div>
       </div>
     </div>
-
-    <button onclick="refreshAllBalances()" style="align-self:flex-start;padding:8px 18px;background:var(--accent2);border:1px solid var(--accent);color:var(--accent);border-radius:6px;cursor:pointer;font-family:var(--font);font-size:10px;letter-spacing:.5px">↻ Refresh All Balances</button>
-
-  </div><!-- /page-billing -->
+    <div id="studio-topup-alert" style="display:none;padding:11px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;background:rgba(255,79,106,0.08);border:1px solid rgba(255,79,106,0.3);color:#ff8fa0"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+      <button onclick="studioCloseTopup()" style="padding:10px 20px;border-radius:8px;background:none;border:1px solid var(--border2);color:var(--muted);cursor:pointer;font-family:var(--font)">Cancel</button>
+      <button id="studio-topup-pay-btn" onclick="studioHandleTopup()" disabled style="padding:10px 20px;border-radius:8px;background:var(--accent);color:#000;border:none;font-weight:700;cursor:pointer;font-family:var(--font)">Pay with Stripe</button>
+    </div>
+  </div>
+</div>
 
   <!-- ══════════════════════════════════════════
        WEEK QUEUE PAGE
@@ -1433,6 +1407,19 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
   </div>
 </div>
 
+<!-- SYNTHID MODAL -->
+<div id="synthid-overlay">
+  <div id="synthid-modal">
+    <div class="synthid-icon">⚠</div>
+    <h3>Invisible Watermark Detected</h3>
+    <p>We noticed this image contains a SynthID invisible watermark embedded by Google. This watermark can be detected by platforms and AI content scanners — on some platforms this could get your content flagged or restricted.<br><br>We can remove it for free in seconds. The image will look identical but the watermark signal will be disrupted.</p>
+    <div class="synthid-btns">
+      <button class="synthid-btn" onclick="closeSynthIDModal()">Dismiss</button>
+      <button class="synthid-btn primary" onclick="triggerSynthIDStrip()">Remove for Free</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -1455,36 +1442,43 @@ textarea.prompt-box.avoid-box:focus { border-color: var(--orange); }
   </div>
 </div>
 
-<!-- Loads window.KIRA_CONFIG when present (same folder layout as this repo: Local.html + Generator/config.js). -->
-<script src="Generator/config.js"></script>
+<!-- Loads window.KIRA_CONFIG / window.ETHAN_CONFIG from root-relative paths -->
+<script src="/ETHANconfig.js"></script>
+<script src="/Content%20Generation/Generator/ETHANconfig.js"></script>
 <script>
 // ════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════
-let KIE_KEY = localStorage.getItem('kie_api_key') || window.KIRA_CONFIG?.kie_api_key || '';
-let LZ_KEY = localStorage.getItem('lz_api_key') || window.KIRA_CONFIG?.lz_api_key || '';
-let API_KEY = localStorage.getItem('ws_api_key') || window.KIRA_CONFIG?.ws_api_key || '';
-let EVOLINK_KEY = localStorage.getItem('evolink_key') || window.KIRA_CONFIG?.evolink_key || '';
+let sb = null;
+let supabaseSession = null;
+// API keys — loaded from /api/keys after auth. Never stored in config.
+let KIE_KEY     = '';
+let LZ_KEY      = '';
+let API_KEY     = '';
+let EVOLINK_KEY = '';
 
-// ── BYPASS (defined early — before any code that might throw) ────────────────
-// Activate by: typing  bypassStudio()  in the console, adding ?bypass to URL,
-// or clicking the bottom-left corner of the screen 4 times.
-window.bypassStudio = function applyBypass() {
+// ── BYPASS (defined first — before anything that could throw) ────────────────
+// Activate: type  bypassStudio()  in console  |  add ?bypass to URL  |  click bottom-left corner ×4
+window.bypassStudio = function () {
   if (sessionStorage.getItem('studio_bypass')) {
     console.log('%c⚡ Bypass already active', 'color:#b8f054;font-weight:bold');
     return;
   }
   sessionStorage.setItem('studio_bypass', '1');
-
-  // Pull keys from KIRA_CONFIG into runtime vars + localStorage
+  // Load keys from KIRA_CONFIG immediately
   const cfg = window.KIRA_CONFIG || {};
-  if (!KIE_KEY     && cfg.kie_api_key)  { KIE_KEY     = cfg.kie_api_key;  localStorage.setItem('kie_api_key',  KIE_KEY); }
-  if (!LZ_KEY      && cfg.lz_api_key)   { LZ_KEY      = cfg.lz_api_key;   localStorage.setItem('lz_api_key',   LZ_KEY); }
-  if (!API_KEY     && cfg.ws_api_key)   { API_KEY     = cfg.ws_api_key;    localStorage.setItem('ws_api_key',   API_KEY); }
-  if (!EVOLINK_KEY && cfg.evolink_key)  { EVOLINK_KEY = cfg.evolink_key;   localStorage.setItem('evolink_key',  EVOLINK_KEY); }
+  if (cfg.kie_api_key)  KIE_KEY     = cfg.kie_api_key;
+  if (cfg.lz_api_key)   LZ_KEY      = cfg.lz_api_key;
+  if (cfg.ws_api_key)   API_KEY     = cfg.ws_api_key;
+  if (cfg.evolink_key)  EVOLINK_KEY = cfg.evolink_key;
+  _bypassShowBadge();
+  if (typeof fetchBalance === 'function' && API_KEY) fetchBalance();
+  if (typeof updateVidEvolinkBadge === 'function') updateVidEvolinkBadge();
+  console.log('%c⚡ Studio bypass active', 'color:#b8f054;font-weight:bold;font-size:16px');
+};
 
-  // Show badge — DOM may not be ready yet, so wait for DOMContentLoaded if needed
-  function _showBadge() {
+function _bypassShowBadge() {
+  function _inject() {
     if (document.getElementById('bypass-badge')) return;
     const badge = document.createElement('div');
     badge.id = 'bypass-badge';
@@ -1496,39 +1490,63 @@ window.bypassStudio = function applyBypass() {
     if (apiBtn) { apiBtn.textContent = '✓ KEYS OK'; apiBtn.classList.add('set'); }
     if (typeof toast === 'function') toast('⚡ Unrestricted mode active — all key guards off', 'success');
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _showBadge);
-  else _showBadge();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _inject);
+  else _inject();
+}
 
-  console.log('%c⚡ Studio bypass active', 'color:#b8f054;font-weight:bold;font-size:16px');
-};
+// Restore on same-tab reload
+if (sessionStorage.getItem('studio_bypass')) {
+  const _cfg = window.KIRA_CONFIG || {};
+  if (_cfg.kie_api_key)  KIE_KEY     = _cfg.kie_api_key;
+  if (_cfg.lz_api_key)   LZ_KEY      = _cfg.lz_api_key;
+  if (_cfg.ws_api_key)   API_KEY     = _cfg.ws_api_key;
+  if (_cfg.evolink_key)  EVOLINK_KEY = _cfg.evolink_key;
+  _bypassShowBadge();
+}
 
-// Silently restore badge if bypass was already set in this session
-(function _restoreBypass() {
-  if (!sessionStorage.getItem('studio_bypass')) return;
-  const cfg = window.KIRA_CONFIG || {};
-  if (!KIE_KEY     && cfg.kie_api_key)  KIE_KEY     = cfg.kie_api_key;
-  if (!LZ_KEY      && cfg.lz_api_key)   LZ_KEY      = cfg.lz_api_key;
-  if (!API_KEY     && cfg.ws_api_key)   API_KEY     = cfg.ws_api_key;
-  if (!EVOLINK_KEY && cfg.evolink_key)  EVOLINK_KEY = cfg.evolink_key;
-  function _showRestoredBadge() {
-    if (document.getElementById('bypass-badge')) return;
-    const badge = document.createElement('div');
-    badge.id = 'bypass-badge';
-    badge.textContent = '⚡ UNRESTRICTED';
-    badge.style.cssText = 'background:var(--accent);color:#000;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:4px;pointer-events:none;flex-shrink:0';
-    const topbar = document.getElementById('topbar');
-    const apiBtn = document.getElementById('api-key-btn');
-    if (topbar && apiBtn) topbar.insertBefore(badge, apiBtn);
-    if (apiBtn) { apiBtn.textContent = '✓ KEYS OK'; apiBtn.classList.add('set'); }
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _showRestoredBadge);
-  else _showRestoredBadge();
-})();
-
-// URL param auto-activate: add ?bypass to the URL
+// URL param auto-activate
 if (location.search.includes('bypass')) window.bypassStudio();
 // ── END BYPASS ───────────────────────────────────────────────────────────────
 
+async function fetchApiKeys() {
+  // Bypass mode — load keys directly from KIRA_CONFIG, no auth needed
+  if (sessionStorage.getItem('studio_bypass')) {
+    const cfg = window.KIRA_CONFIG || {};
+    if (cfg.kie_api_key)  KIE_KEY     = cfg.kie_api_key;
+    if (cfg.lz_api_key)   LZ_KEY      = cfg.lz_api_key;
+    if (cfg.ws_api_key)   API_KEY     = cfg.ws_api_key;
+    if (cfg.evolink_key)  EVOLINK_KEY = cfg.evolink_key;
+    const keyBtn = document.getElementById('api-key-btn');
+    if (keyBtn && !document.getElementById('bypass-badge')) {
+      keyBtn.textContent = '✓ KEYS OK'; keyBtn.classList.add('set');
+    }
+    if (API_KEY) fetchBalance();
+    updateVidEvolinkBadge();
+    return;
+  }
+  if (!supabaseSession) return;
+  try {
+    const founderMode = localStorage.getItem('bam_founder_session'); // 'ethan', '1', or null
+    const url = founderMode === 'ethan' ? '/api/keys?founder=ethan' : '/api/keys';
+    const res = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + supabaseSession.access_token }
+    });
+    if (!res.ok) return;
+    const keys = await res.json();
+    if (keys.kie_api_key)  KIE_KEY     = keys.kie_api_key;
+    if (keys.lz_api_key)   LZ_KEY      = keys.lz_api_key;
+    if (keys.ws_api_key)   API_KEY     = keys.ws_api_key;
+    if (keys.evolink_key)  EVOLINK_KEY = keys.evolink_key;
+    // Update UI key indicator
+    const keyBtn = document.getElementById('api-key-btn');
+    if (keyBtn && (LZ_KEY || API_KEY || KIE_KEY)) {
+      keyBtn.textContent = '✓ KEY SET';
+      keyBtn.classList.add('set');
+    }
+    if (API_KEY) fetchBalance();
+    updateVidEvolinkBadge();
+  } catch(e) { console.warn('fetchApiKeys failed:', e.message); }
+}
 const LZ_BASE = 'https://api.laozhang.ai/v1';
 let sessionCost = 0;
 let outputCount = 0;
@@ -1651,16 +1669,71 @@ const VAULT_META_KEY='__vaults_meta_v1__';
 let vaults=[], activeVaultId=null;
 
 function vaultGenId(){ return 'v'+Date.now()+Math.random().toString(36).slice(2,7); }
-async function vaultSaveMeta(){ try{ await idbSet(VAULT_META_KEY,{vaults:vaults.map(v=>({id:v.id,name:v.name,order:v.order,locked:v.locked||[]})),activeVaultId}); }catch(e){} }
+async function vaultSaveMeta(){
+  try{ await idbSet(VAULT_META_KEY,{vaults:vaults.map(v=>({id:v.id,name:v.name,order:v.order,locked:v.locked||[]})),activeVaultId}); }catch(e){}
+  // Fire-and-forget Supabase name sync
+  if(sb && supabaseSession){
+    (async()=>{ for(const v of vaults){ try{ await sb.from('vaults').update({name:v.name,updated_at:new Date().toISOString()}).eq('id',v.id).eq('user_id',supabaseSession.user.id); }catch(e){} } })();
+  }
+}
 
 async function vaultLoadAll(){
-  try{
+  // Try Supabase first
+  if(sb && supabaseSession){
+    try {
+      const { data: sbVaults, error } = await sb.from('vaults')
+        .select('id, name, created_at')
+        .eq('user_id', supabaseSession.user.id)
+        .order('created_at', { ascending: true });
+
+      if(!error && sbVaults && sbVaults.length){
+        vaults = [];
+        for(const sv of sbVaults){
+          // Load slots for this vault
+          const { data: slots } = await sb.from('vault_slots')
+            .select('slot_id, storage_path, public_url')
+            .eq('vault_id', sv.id)
+            .order('created_at', { ascending: true });
+
+          const order = [];
+          const images = {};
+          const publicUrls = {};
+
+          for(const slot of (slots||[])){
+            order.push(slot.slot_id);
+            if(slot.public_url) publicUrls[slot.slot_id] = slot.public_url;
+            // Try IndexedDB cache first
+            const cached = await idbGet('vi:'+sv.id+':'+slot.slot_id);
+            if(cached){
+              images[slot.slot_id] = cached;
+            } else if(slot.public_url){
+              // Download from Supabase and cache locally
+              try {
+                const r = await fetch(slot.public_url);
+                const blob = await r.blob();
+                const dataUrl = await new Promise((res,rej)=>{ const reader=new FileReader(); reader.onload=()=>res(reader.result); reader.onerror=rej; reader.readAsDataURL(blob); });
+                images[slot.slot_id] = dataUrl;
+                await idbSet('vi:'+sv.id+':'+slot.slot_id, dataUrl);
+              } catch(e){ console.warn('Image fetch failed:', e.message); }
+            }
+          }
+
+          vaults.push({ id: sv.id, name: sv.name || 'Vault', order, images, locked: [], publicUrls });
+        }
+        activeVaultId = (vaults[0]&&vaults[0].id) || null;
+        return true;
+      }
+    } catch(e){ console.warn('Supabase vault load failed, falling back to IndexedDB:', e.message); }
+  }
+
+  // Fall back to IndexedDB
+  try {
     const s=await idbGet(VAULT_META_KEY);
     if(s&&Array.isArray(s.vaults)&&s.vaults.length){
       vaults=await Promise.all(s.vaults.map(async v=>{
         const images={};
         await Promise.all((v.order||[]).map(async k=>{ const d=await idbGet('vi:'+v.id+':'+k); if(d) images[k]=d; }));
-        return {id:v.id,name:v.name||'Vault',order:(v.order||[]).filter(k=>images[k]),images,locked:v.locked||[]};
+        return {id:v.id,name:v.name||'Vault',order:(v.order||[]).filter(k=>images[k]),images,locked:v.locked||[], publicUrls:{}};
       }));
       activeVaultId=s.activeVaultId||(vaults[0]&&vaults[0].id)||null;
       return true;
@@ -1671,12 +1744,38 @@ async function vaultLoadAll(){
 
 function vaultGetActive(){ return vaults.find(v=>v.id===activeVaultId)||null; }
 
-function vaultCreate(name){
-  const n=name||prompt('Vault name:','New Vault'); if(!n) return;
-  const id=vaultGenId();
-  vaults.push({id,name:n.trim()||'Vault',order:[],images:{},locked:[]});
-  activeVaultId=id; vaultSaveMeta(); renderVaultTabs(); renderVaultGrid();
-  toast('✓ Vault "'+n+'" created','success');
+async function vaultCreate(name){
+  const n = (name || prompt('Vault name:','New Vault'));
+  if(!n) return;
+  const vaultName = n.trim() || 'Vault';
+
+  let supabaseVaultId = null;
+
+  // Insert into Supabase vaults table
+  if(sb && supabaseSession){
+    try {
+      const { data, error } = await sb.from('vaults').insert({
+        user_id: supabaseSession.user.id,
+        name: vaultName
+      }).select('id').single();
+      if(error){
+        console.error('Vault insert failed:', error.message, error.code, error.details, error.hint);
+        toast('DB error: ' + error.message, 'error');
+      } else if(data){
+        supabaseVaultId = data.id;
+      }
+    } catch(e){ console.error('Vault DB exception:', e); }
+  } else {
+    console.warn('vaultCreate: sb=', !!sb, 'session=', !!supabaseSession);
+  }
+
+  const id = supabaseVaultId || vaultGenId();
+  vaults.push({ id, name: vaultName, order:[], images:{}, locked:[], publicUrls:{} });
+  activeVaultId = id;
+  await vaultSaveMeta();
+  renderVaultTabs();
+  renderVaultGrid();
+  toast('✓ Vault "'+vaultName+'" created','success');
 }
 
 function vaultSwitch(id){
@@ -1698,6 +1797,16 @@ async function vaultDelete(){
   const v=vaultGetActive(); if(!v) return;
   if(!confirm('Delete vault "'+v.name+'" and all its images?')) return;
   for(const k of v.order){ try{ await idbDelete('vi:'+v.id+':'+k); }catch(e){} }
+  // Delete from Supabase (vault_slots cascade deletes automatically)
+  if(sb && supabaseSession){
+    try {
+      // Delete all storage files for this vault
+      const storagePaths = v.order.map(k => supabaseSession.user.id + '/' + v.id + '/' + k);
+      if(storagePaths.length) await sb.storage.from('vault-refs').remove(storagePaths);
+      // Delete vault row (vault_slots cascade)
+      await sb.from('vaults').delete().eq('id', v.id).eq('user_id', supabaseSession.user.id);
+    } catch(e){ console.warn('Supabase vault delete failed:', e.message); }
+  }
   vaults=vaults.filter(x=>x.id!==v.id); activeVaultId=vaults[0]?vaults[0].id:null;
   vaultSaveMeta();
   if(activeVaultId){ vaultSwitch(activeVaultId); } else { refsByName={}; refOrder={}; selectedRefs=[]; pinnedRefs=[]; renderVaultTabs(); renderVaultGrid(); updateRefCount(); updateImgCost(); }
@@ -1705,20 +1814,56 @@ async function vaultDelete(){
 }
 
 async function vaultAddFiles(fileList){
-  const v=vaultGetActive(); if(!v){ toast('Create a vault first','error'); return; }
-  const files=Array.from(fileList||[]).filter(f=>(f.type&&f.type.startsWith('image/'))||/\.(png|jpe?g|webp|gif)$/i.test(f.name));
+  const v = vaultGetActive();
+  if(!v){ toast('Create a vault first','error'); return; }
+  const files = Array.from(fileList||[]).filter(f=>(f.type&&f.type.startsWith('image/'))||/\.(png|jpe?g|webp|gif)$/i.test(f.name));
   if(!files.length){ toast('No images found','error'); return; }
-  let added=0;
+  if(!v.publicUrls) v.publicUrls = {};
+  let added = 0;
   for(const f of files){
-    const key=f.name; if(v.images[key]) continue;
-    try{
-      const d=await readFileAsDataURL(f);
-      v.images[key]=d; if(!v.order.includes(key)) v.order.push(key);
-      refsByName[key]=d; if(!refOrder.includes(key)) refOrder.push(key);
-      await idbSet('vi:'+v.id+':'+key,d); added++;
-    }catch(e){}
+    const slotId = f.name.replace(/[^a-zA-Z0-9._-]/g,'_') + '_' + Date.now() + Math.random().toString(36).slice(2,5);
+    if(v.images[slotId]) continue;
+    try {
+      const dataUrl = await readFileAsDataURL(f);
+      let publicUrl = null;
+
+      // Upload to Supabase Storage
+      if(sb && supabaseSession){
+        try {
+          const storagePath = supabaseSession.user.id + '/' + v.id + '/' + slotId;
+          // Convert dataUrl to blob
+          const res = await fetch(dataUrl);
+          const blob = await res.blob();
+          const { error: upErr } = await sb.storage.from('vault-refs').upload(storagePath, blob, {
+            contentType: f.type || 'image/jpeg',
+            upsert: true
+          });
+          if(!upErr){
+            const { data: urlData } = sb.storage.from('vault-refs').getPublicUrl(storagePath);
+            publicUrl = urlData?.publicUrl || null;
+            // Record in vault_slots
+            await sb.from('vault_slots').insert({
+              vault_id: v.id,
+              slot_id: slotId,
+              storage_path: storagePath,
+              public_url: publicUrl
+            });
+          }
+        } catch(e){ console.warn('Storage upload failed:', e.message); }
+      }
+
+      // Store locally regardless
+      v.images[slotId] = dataUrl;
+      if(publicUrl) v.publicUrls[slotId] = publicUrl;
+      if(!v.order.includes(slotId)) v.order.push(slotId);
+      refsByName[slotId] = dataUrl;
+      if(!refOrder.includes(slotId)) refOrder.push(slotId);
+      await idbSet('vi:'+v.id+':'+slotId, dataUrl);
+      added++;
+    } catch(e){ console.warn('File add failed:', e); }
   }
-  await vaultSaveMeta(); renderVaultGrid();
+  await vaultSaveMeta();
+  renderVaultGrid();
   toast('✓ Added '+added+' image'+(added!==1?'s':'')+' to "'+v.name+'"','success');
 }
 
@@ -1765,9 +1910,18 @@ async function vaultRemoveImage(name){
   const v=vaultGetActive(); if(!v) return;
   if((v.locked||[]).includes(name)){ toast('Unlock first','error'); return; }
   delete v.images[name]; v.order=v.order.filter(k=>k!==name);
+  if(v.publicUrls) delete v.publicUrls[name];
   delete refsByName[name]; refOrder=refOrder.filter(k=>k!==name);
   selectedRefs=selectedRefs.filter(r=>r.name!==name); clearRefUploadCache();
   try{ await idbDelete('vi:'+v.id+':'+name); }catch(e){}
+  // Delete from Supabase Storage + vault_slots
+  if(sb && supabaseSession){
+    try {
+      const storagePath = supabaseSession.user.id + '/' + v.id + '/' + name;
+      await sb.storage.from('vault-refs').remove([storagePath]);
+      await sb.from('vault_slots').delete().eq('vault_id', v.id).eq('slot_id', name);
+    } catch(e){ console.warn('Supabase delete failed:', e.message); }
+  }
   await vaultSaveMeta(); renderVaultGrid(); updateRefBadges(); updateRefCount(); updateImgCost(); scheduleRefUploadPrefetch();
 }
 
@@ -1872,8 +2026,11 @@ function buildNanoRefPrompt(fullPrompt) {
 // COST ENGINE
 // ════════════════════════════════════════════
 const IMG_PRICES = {
+  'wan-edit-2k': 0.03,
+  'wan-edit-4k': 0.03,
   'nano-kie': 0.12,
   'seedream-kie': 0.04,
+  'nano-lz-2': 0.03,
   'nano-lz': 0.05,
   'seedream-lz': 0.04,
   'nano-multi': 0.07,
@@ -1937,12 +2094,33 @@ function updateImgCost() {
     return;
   }
 
+  // Wan 2.7 Edit — lock 4K pill, use fixed preset sizes only
+  if (isWanEditModel(model)) {
+    const price = IMG_PRICES[model];
+    const size = computeWanSize(imgState.ar);
+    document.getElementById('img-cost-amount').textContent = `$${price.toFixed(3)}`;
+    document.getElementById('img-cost-breakdown').textContent = `Wan 2.7 Edit · ${size} · $${price}/img`;
+    document.getElementById('input-img-group').style.display = 'flex';
+    document.getElementById('input-img-label-line').innerHTML = `Source Image <span class="hint">— required for Wan 2.7 Edit</span>`;
+    document.querySelectorAll('[data-n]').forEach(p => { p.style.opacity = '0.3'; p.classList.remove('pill-muted-nano'); });
+    const arNote = document.getElementById('img-ar-multi-note');
+    if (arNote) arNote.style.display = 'none';
+    // Lock 4K pill — Wan 2.7 uses preset sizes, not 4K scaling
+    const pill4k = document.getElementById('pill-4k');
+    if (pill4k) { pill4k.style.opacity = '0.35'; pill4k.style.pointerEvents = 'none'; pill4k.title = 'Not available for Wan 2.7'; }
+    return;
+  }
+  // Restore 4K pill for other models
+  const pill4k = document.getElementById('pill-4k');
+  if (pill4k) { pill4k.style.opacity = ''; pill4k.style.pointerEvents = ''; pill4k.title = ''; }
+
   // laozhang models
   if (isLzModel(model)) {
     const price = IMG_PRICES[model];
     const n = imgState.n;
     const total = (price * n).toFixed(2);
-    const label = model === 'nano-lz' ? 'Nano Banana Pro · laozhang.ai' : 'Seedream 4.5 · laozhang.ai';
+    const LZ_LABELS_COST = { 'nano-lz-2': 'Nano Banana 2 · laozhang.ai', 'nano-lz': 'Nano Banana Pro · laozhang.ai', 'seedream-lz': 'Seedream 4.5 · laozhang.ai' };
+    const label = LZ_LABELS_COST[model] || model;
     document.getElementById('img-cost-amount').textContent = `$${total}`;
     document.getElementById('img-cost-breakdown').textContent = `${label} · ${n === 1 ? '' : n + '× '}$${price}/img`;
     document.getElementById('input-img-group').style.display = 'none';
@@ -2773,10 +2951,11 @@ async function reelStep2Motion() {
 // ════════════════════════════════════════════
 // laozhang model IDs (OpenAI-compatible chat completions API)
 const LZ_MODEL_IDS = {
-  'nano-lz': 'gemini-3-pro-image-preview',
+  'nano-lz-2': 'gemini-2.0-flash-preview-image-generation',
+  'nano-lz':   'gemini-3-pro-image-preview',
   'seedream-lz': 'seedream-4.5'
 };
-function isLzModel(model) { return model === 'nano-lz' || model === 'seedream-lz'; }
+function isLzModel(model) { return model === 'nano-lz-2' || model === 'nano-lz' || model === 'seedream-lz'; }
 
 const KIE_MODEL_IDS = {
   'nano-kie': 'nano-banana-pro',
@@ -2790,6 +2969,8 @@ const EVOLINK_API = 'https://api.evolink.ai/v1';
 const EVOLINK_FILES = 'https://files-api.evolink.ai';
 
 const MODEL_ENDPOINTS = {
+  'wan-edit-2k': '/alibaba/wan-2.7/image-edit',
+  'wan-edit-4k': '/alibaba/wan-2.7/image-edit',
   'nano-multi': '/google/nano-banana-pro/text-to-image-multi',
   'nano-edit': '/google/nano-banana-pro/edit',
   'nano-single': '/google/nano-banana-pro/text-to-image',
@@ -3164,6 +3345,9 @@ async function generateImagesKIE(model, prompt) {
           throw new Error('kie.ai: no image URL in result');
         }
         replaceLoadingWithImage(slot, imgUrl, modelLabel, price);
+        if (isNanoBananaModel(model)) {
+          checkSynthID(imgUrl).then(r => { if (r.detected) showSynthIDModal(imgUrl); });
+        }
         addToLibrary({ type: 'image', urls: [imgUrl], model: modelLabel, cost: price });
         updateSession(price);
       } catch (e) {
@@ -3181,6 +3365,62 @@ async function generateImagesKIE(model, prompt) {
     slots.forEach(s => replaceLoadingWithError(s));
     toast(e.message || 'kie.ai failed', 'error');
   }
+  btn.disabled = false; btn.textContent = '▶ GENERATE'; btn.classList.remove('loading');
+}
+
+function isWanEditModel(model) { return model === 'wan-edit-2k' || model === 'wan-edit-4k'; }
+
+// Wan 2.7 valid sizes: each dim 512-4096, total pixels 768*768–2048*2048
+const WAN_SIZES = {
+  '9:16':  '720x1280',   // 921,600px ✓
+  '16:9':  '1280x720',   // 921,600px ✓
+  '1:1':   '1024x1024',  // 1,048,576px ✓
+  '4:5':   '768x960',    // 737,280px ✓
+  '3:2':   '1152x768',   // 884,736px ✓
+};
+function computeWanSize(ar) {
+  return WAN_SIZES[ar] || '720x1280';
+}
+
+async function generateImagesWan(model, prompt) {
+  const size = computeWanSize(imgState.ar);
+  const price = IMG_PRICES[model];
+  const btn = document.getElementById('img-generate-btn');
+  btn.disabled = true; btn.textContent = '⏳ GENERATING...'; btn.classList.add('loading');
+  const slot = addLoadingCard('image');
+
+  try {
+    let imageUrls = [];
+    if (selectedRefs.length > 0) {
+      toast('Uploading reference images...', '');
+      imageUrls = await ensureRefUrlsForSelection();
+    } else if (inputImgFile) {
+      toast('Uploading source image...', '');
+      const url = await uploadFile(inputImgFile);
+      imageUrls = [url];
+    }
+    if (imageUrls.length === 0) throw new Error('No source image — upload at least one image');
+
+    const body = { prompt, images: imageUrls, size, seed: -1 };
+    console.log('Wan 2.7 Edit Pro body:', JSON.stringify(body));
+    toast(`⚡ Generating with Wan 2.7 Edit (${size})…`, 'success');
+
+    const taskRes = await submitTask(MODEL_ENDPOINTS[model], body);
+    const result = await pollResult(taskRes.data.id);
+    const urls = result.outputs || [];
+    if (urls.length === 0) throw new Error('No output from Wan 2.7 — try again');
+
+    const wanLabel = `Wan 2.7 Edit · ${size}`;
+    replaceLoadingWithImage(slot, urls[0], wanLabel, price);
+    addToLibrary({ type: 'image', urls, model: wanLabel, cost: price });
+    updateSession(price);
+    outputCount++;
+    document.getElementById('img-output-count').textContent = `${outputCount} images`;
+  } catch (e) {
+    replaceLoadingWithError(slot);
+    toast(e.message || 'Wan 2.7 generation failed', 'error');
+  }
+
   btn.disabled = false; btn.textContent = '▶ GENERATE'; btn.classList.remove('loading');
 }
 
@@ -3214,17 +3454,24 @@ async function generateImagesLZ(model, prompt) {
       return content;
     };
 
+    const LZ_LABELS = {
+      'nano-lz-2': 'Nano Banana 2 · laozhang',
+      'nano-lz':   'Nano Banana Pro · laozhang',
+      'seedream-lz': 'Seedream 4.5 · laozhang'
+    };
     const lzModelId = LZ_MODEL_IDS[model];
+    const lzLabel = LZ_LABELS[model] || model;
     toast(`⚡ ${n} image${n > 1 ? 's' : ''} generating via laozhang…`, 'success');
 
-    // Fire n parallel requests
-    const tasks = slots.map((slot, idx) => (async () => {
-      try {
+    // Fire n parallel requests — nano-lz-2 auto-falls back to nano-lz (Pro) on failure
+    const tasks = slots.map((slot) => (async () => {
+      const tryGenerate = async (useModel) => {
+        const modelId = LZ_MODEL_IDS[useModel];
         const res = await fetch(`${LZ_BASE}/chat/completions`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${LZ_KEY}` },
           body: JSON.stringify({
-            model: lzModelId,
+            model: modelId,
             messages: [{ role: 'user', content: buildContent() }],
             max_tokens: 8192
           })
@@ -3237,9 +3484,31 @@ async function generateImagesLZ(model, prompt) {
         console.log('LZ full response:', JSON.stringify(data).slice(0, 3000));
         const imgUrl = extractLZImageUrl(data);
         if (!imgUrl) throw new Error('No image URL in LZ response — check console');
-        replaceLoadingWithImage(slot, imgUrl, model === 'nano-lz' ? 'Nano Banana Pro · laozhang' : 'Seedream 4.5 · laozhang', price);
-        addToLibrary({ type: 'image', urls: [imgUrl], model: model === 'nano-lz' ? 'Nano Banana Pro · laozhang' : 'Seedream 4.5 · laozhang', cost: price });
-        updateSession(price);
+        return { imgUrl, usedModel: useModel };
+      };
+
+      try {
+        let result;
+        try {
+          result = await tryGenerate(model);
+        } catch (e) {
+          if (model === 'nano-lz-2') {
+            console.warn('Nano Banana 2 failed, falling back to Pro:', e.message);
+            toast('Nano Banana 2 unavailable — retrying with Pro…', '');
+            result = await tryGenerate('nano-lz');
+          } else {
+            throw e;
+          }
+        }
+        const { imgUrl, usedModel } = result;
+        const usedLabel = LZ_LABELS[usedModel] || usedModel;
+        const usedPrice = IMG_PRICES[usedModel] || price;
+        replaceLoadingWithImage(slot, imgUrl, usedLabel, usedPrice);
+        if (isNanoBananaModel(usedModel)) {
+          checkSynthID(imgUrl).then(r => { if (r.detected) showSynthIDModal(imgUrl); });
+        }
+        addToLibrary({ type: 'image', urls: [imgUrl], model: usedLabel, cost: usedPrice });
+        updateSession(usedPrice);
       } catch (e) {
         console.error('LZ generation error:', e);
         replaceLoadingWithError(slot);
@@ -3330,19 +3599,35 @@ async function generateImages() {
 
   // ── kie.ai path ───────────────────────────
   if (isKieModel(model)) {
-    if (!KIE_KEY && !sessionStorage.getItem('studio_bypass')) { openModal(); toast('Set your kie.ai API key first', 'error'); return; }
+    if (!KIE_KEY) { openModal(); toast('Set your kie.ai API key first', 'error'); return; }
     const prompt = document.getElementById('img-prompt').value.trim();
     if (!prompt) { toast('Write a prompt first', 'error'); return; }
+    const kieCost = (IMG_PRICES[model] || 0) * imgState.n;
+    if (!await checkAndDeductCredits(kieCost, model)) return;
     await generateImagesKIE(model, prompt);
     return;
   }
 
   // ── laozhang.ai path ──────────────────────
   if (isLzModel(model)) {
-    if (!LZ_KEY && !sessionStorage.getItem('studio_bypass')) { openModal(); toast('Set your laozhang.ai API key first', 'error'); return; }
+    if (!LZ_KEY) { openModal(); toast('Set your laozhang.ai API key first', 'error'); return; }
     const prompt = document.getElementById('img-prompt').value.trim();
     if (!prompt) { toast('Write a prompt first', 'error'); return; }
+    const lzCost = (IMG_PRICES[model] || 0) * imgState.n;
+    if (!await checkAndDeductCredits(lzCost, model)) return;
     await generateImagesLZ(model, prompt);
+    return;
+  }
+
+  // ── Wan 2.7 Edit Pro path ─────────────────
+  if (isWanEditModel(model)) {
+    if (!API_KEY) { toast('API unavailable — contact support', 'error'); return; }
+    const prompt = document.getElementById('img-prompt').value.trim();
+    if (!prompt) { toast('Write a prompt first', 'error'); return; }
+    if (!inputImgFile && selectedRefs.length === 0) { toast('Upload a source image first', 'error'); return; }
+    const wanCost = IMG_PRICES[model];
+    if (!await checkAndDeductCredits(wanCost, model)) return;
+    await generateImagesWan(model, prompt);
     return;
   }
 
@@ -3392,6 +3677,8 @@ async function generateImages() {
 
   let body = null;
   const slots = [];
+
+  if (!await checkAndDeductCredits(cost, model)) return;
 
   try {
     btn.disabled = true; btn.textContent = '⏳ GENERATING...'; btn.classList.add('loading');
@@ -3568,6 +3855,9 @@ async function generateImages() {
             replaceLoadingWithImage(targetSlots[i], url, taskModel, task.perCard != null ? task.perCard : price);
           }
         });
+        if (isNanoBananaModel(taskModel)) {
+          urls.forEach(url => checkSynthID(url).then(r => { if (r.detected) showSynthIDModal(url); }));
+        }
         addToLibrary({ type: 'image', urls, model: taskModel, cost: task.cost });
         updateSession(task.cost);
       } catch(e) {
@@ -3594,7 +3884,7 @@ async function generateImages() {
 // GENERATE VIDEO
 // ════════════════════════════════════════════
 async function generateVideo() {
-  if (!API_KEY && !isEvoVideo() && !sessionStorage.getItem('studio_bypass')) { openModal(); toast('Set WaveSpeed or EvoLink API key first', 'error'); return; }
+  if (!API_KEY && !isEvoVideo()) { openModal(); toast('Set WaveSpeed or EvoLink API key first', 'error'); return; }
   const model = vidState.model;
   const endpoint = MODEL_ENDPOINTS[model];
   const isMotion = model.includes('motion');
@@ -3617,6 +3907,12 @@ async function generateVideo() {
   const price = vidPriceWithEvo(VID_PRICES[model]);
   const audioMult = (!isMotion && vidState.audio) ? 2 : 1;
   const cost = price * vidState.dur * audioMult;
+
+  if (!await checkAndDeductCredits(cost, model)) {
+    slot.remove();
+    btn.disabled = false; btn.textContent = '▶ GENERATE VIDEO'; btn.classList.remove('loading');
+    return;
+  }
 
   try {
     let body = {
@@ -4175,6 +4471,161 @@ function clearLibrary() {
 // ════════════════════════════════════════════
 // SESSION COST
 // ════════════════════════════════════════════
+// ════════════════════════════════════════════
+// SUPABASE CREDITS
+// ════════════════════════════════════════════
+function updateBalanceDisplay(balance) {
+  document.getElementById('balance-display').textContent = `$${parseFloat(balance).toFixed(2)}`;
+}
+
+async function checkAndDeductCredits(costUsd, modelName) {
+  // Founders generate free
+  const fs = localStorage.getItem(STORAGE_KEY);
+  if (fs === '1' || fs === 'ethan') return true;
+  if (!sb || !supabaseSession) return true;
+  const { data } = await sb.from('credits')
+    .select('balance_usd')
+    .eq('user_id', supabaseSession.user.id)
+    .single();
+  if (!data || data.balance_usd < costUsd) {
+    toast('Insufficient credits — top up your account', 'error');
+    window.location.href = '/account';
+    return false;
+  }
+  await sb.from('credits')
+    .update({ balance_usd: data.balance_usd - costUsd, updated_at: new Date().toISOString() })
+    .eq('user_id', supabaseSession.user.id);
+  await sb.from('transactions').insert({
+    user_id: supabaseSession.user.id,
+    type: 'generation',
+    amount_usd: -costUsd,
+    description: `Generation — ${modelName}`
+  });
+  updateBalanceDisplay(data.balance_usd - costUsd);
+  return true;
+}
+
+// ════════════════════════════════════════════
+// SYNTHID DETECTION + REMOVAL
+// ════════════════════════════════════════════
+function isNanoBananaModel(modelKey) {
+  if (!modelKey) return false;
+  return String(modelKey).toLowerCase().includes('nano');
+}
+
+let synthIDCurrentUrl = '';
+let synthIDCurrentFilename = '';
+
+function showSynthIDModal(imgUrl) {
+  synthIDCurrentUrl = imgUrl;
+  synthIDCurrentFilename = imgUrl.split('/').pop().split('?')[0] || 'image';
+  document.getElementById('synthid-overlay').classList.add('open');
+}
+
+function closeSynthIDModal() {
+  document.getElementById('synthid-overlay').classList.remove('open');
+  synthIDCurrentUrl = '';
+}
+
+function triggerSynthIDStrip() {
+  if (!synthIDCurrentUrl) return;
+  const url = synthIDCurrentUrl;
+  const fname = synthIDCurrentFilename;
+  closeSynthIDModal();
+  stripSynthID(url, fname);
+}
+
+async function checkSynthID(imgUrl) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+      let totalVariance = 0;
+      const sampleStep = 8;
+      const blockSize = 8;
+      let samples = 0;
+
+      for (let y = blockSize; y < canvas.height - blockSize; y += sampleStep * 4) {
+        for (let x = blockSize; x < canvas.width - blockSize; x += sampleStep * 4) {
+          let blockVals = [];
+          for (let by = 0; by < blockSize; by++) {
+            for (let bx = 0; bx < blockSize; bx++) {
+              const idx = ((y + by) * canvas.width + (x + bx)) * 4;
+              blockVals.push(0.299 * data[idx] + 0.587 * data[idx+1] + 0.114 * data[idx+2]);
+            }
+          }
+          const mean = blockVals.reduce((a,b) => a+b, 0) / blockVals.length;
+          const variance = blockVals.reduce((a,b) => a + Math.pow(b-mean, 2), 0) / blockVals.length;
+          totalVariance += variance;
+          samples++;
+        }
+      }
+
+      const avgVariance = totalVariance / samples;
+      const likelyWatermarked = avgVariance > 180 && avgVariance < 420;
+      resolve({ detected: likelyWatermarked, variance: avgVariance });
+    };
+    img.onerror = () => resolve({ detected: false });
+    img.src = imgUrl;
+  });
+}
+
+async function stripSynthID(imgUrl, originalFilename) {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    for (let y = 0; y < canvas.height; y += 8) {
+      for (let x = 0; x < canvas.width; x += 8) {
+        for (let by = 0; by < 8 && y+by < canvas.height; by++) {
+          for (let bx = 0; bx < 8 && x+bx < canvas.width; bx++) {
+            const idx = ((y+by) * canvas.width + (x+bx)) * 4;
+            const isMidFreq = (by + bx) > 2 && (by + bx) < 12;
+            if (isMidFreq) {
+              const noise = (Math.random() - 0.5) * 2.2;
+              data[idx]   = Math.max(0, Math.min(255, data[idx]   + noise));
+              data[idx+1] = Math.max(0, Math.min(255, data[idx+1] + noise));
+              data[idx+2] = Math.max(0, Math.min(255, data[idx+2] + noise));
+            }
+          }
+        }
+      }
+    }
+
+    for (let i = 0; i < data.length; i += 4) {
+      const g = (Math.random() - 0.5) * 2.0;
+      data[i]   = Math.max(0, Math.min(255, data[i]   + g));
+      data[i+1] = Math.max(0, Math.min(255, data[i+1] + g));
+      data[i+2] = Math.max(0, Math.min(255, data[i+2] + g));
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = (originalFilename || 'image').replace(/\.[^.]+$/, '') + '_clean.jpg';
+      a.click();
+      URL.revokeObjectURL(url);
+    }, 'image/jpeg', 0.92);
+  };
+  img.src = imgUrl;
+}
+
 function updateSession(add, reset) {
   if (reset) { sessionCost = 0; }
   else { sessionCost += add; }
@@ -4206,10 +4657,6 @@ function saveApiKey() {
   LZ_KEY = lz;
   API_KEY = key;
   EVOLINK_KEY = evo;
-  if (kie) localStorage.setItem('kie_api_key', kie); else localStorage.removeItem('kie_api_key');
-  if (lz) localStorage.setItem('lz_api_key', lz); else localStorage.removeItem('lz_api_key');
-  if (key) localStorage.setItem('ws_api_key', key); else localStorage.removeItem('ws_api_key');
-  if (evo) localStorage.setItem('evolink_key', evo); else localStorage.removeItem('evolink_key');
   const btn = document.getElementById('api-key-btn');
   btn.textContent = (kie || lz || key || evo) ? '✓ KEY SET' : '⚙ API KEY';
   btn.classList.toggle('set', !!(kie || lz || key || evo));
@@ -4225,6 +4672,71 @@ document.getElementById('lz-key-input').addEventListener('keydown', e => { if (e
 document.getElementById('api-key-input').addEventListener('keydown', e => { if (e.key === 'Enter') saveApiKey(); });
 document.getElementById('evolink-key-input').addEventListener('keydown', e => { if (e.key === 'Enter') saveApiKey(); });
 document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === document.getElementById('modal-overlay')) closeModal(); });
+
+// ════════════════════════════════════════════
+// FOUNDER AUTH
+// ════════════════════════════════════════════
+const STORAGE_KEY = 'bam_founder_session';
+
+// 4K pill × 4 → founder modal
+let _pillClicks = 0, _pillTimer = null;
+function founderPillClick() {
+  _pillClicks++;
+  clearTimeout(_pillTimer);
+  _pillTimer = setTimeout(() => { _pillClicks = 0; }, 1500);
+  if (_pillClicks >= 4) {
+    _pillClicks = 0;
+    const m = document.getElementById('founder-modal');
+    if (m) { m.style.display = 'flex'; setTimeout(() => { const i = document.getElementById('founder-pw-input'); if(i) i.focus(); }, 100); }
+  }
+}
+
+function founderModalClose() {
+  const m = document.getElementById('founder-modal');
+  if (m) m.style.display = 'none';
+  const inp = document.getElementById('founder-pw-input');
+  if (inp) { inp.value = ''; inp.disabled = false; }
+}
+
+function founderActivate() {
+  // Re-render any founder-mode UI elements as needed
+  updateVidEvolinkBadge();
+  toast('Founder mode activated', 'success');
+}
+
+async function founderConfirm() {
+  const val = document.getElementById('founder-pw-input').value;
+  if (!val) return;
+  const inp = document.getElementById('founder-pw-input');
+  inp.disabled = true;
+
+  try {
+    const res = await fetch('/api/founder-auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: val })
+    });
+    const data = await res.json();
+    if (res.ok && data.founder) {
+      const storageVal = data.founder === 'ethan' ? 'ethan' : '1';
+      localStorage.setItem(STORAGE_KEY, storageVal);
+      founderModalClose();
+      founderActivate();
+      // Re-fetch keys for the correct founder mode
+      await fetchApiKeys();
+    } else {
+      inp.classList.add('error');
+      inp.value = '';
+      setTimeout(() => inp.classList.remove('error'), 400);
+    }
+  } catch(e) {
+    inp.classList.add('error');
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('error'), 400);
+  } finally {
+    inp.disabled = false;
+  }
+}
 
 // ════════════════════════════════════════════
 // BALANCE CHECK
@@ -4268,7 +4780,8 @@ function switchPage(name) {
   document.querySelectorAll('.tab').forEach(t => {
     if (t.dataset.page === name) t.classList.add('active');
   });
-  if (name === 'billing') refreshAllBalances();
+  if (name === 'billing') { refreshAllBalances(); studioLoadBilling(); }
+  if (name === 'nsfw') renderNsfwVaultSelector();
 }
 
 // ════════════════════════════════════════════
@@ -4923,105 +5436,368 @@ function weekClear() {
   toast('Week cleared', '');
 }
 
-// ════════════════════════════════════════════
-// LORI — DREAMPRINT PICKUP
-// ════════════════════════════════════════════
-async function loriLoadFromDreamPrint() {
-  const btn = document.getElementById('lori-load-btn');
-  const appliedAt = localStorage.getItem('bam_lori_applied_at');
-  const vaultName = localStorage.getItem('bam_lori_vault_name') || 'DreamPrint';
 
-  if (!appliedAt) {
-    toast('No DreamPrint applied — open DreamPrint page and hit Lori first', 'error');
-    return;
+
+// ── VISIT TRACKING ─────────────────────────────────────────────
+const BAM_VISITS_KEY = 'bam_studio_visits';
+const BAM_TOUR_DONE_KEY = 'bam_tour_done';
+function getVisitCount() { return parseInt(localStorage.getItem(BAM_VISITS_KEY) || '0', 10); }
+function incrementVisits() { localStorage.setItem(BAM_VISITS_KEY, String(getVisitCount() + 1)); }
+function vaultOnboardTourCheck() {
+  const visits = getVisitCount();
+  if (visits <= 2 && !localStorage.getItem(BAM_TOUR_DONE_KEY)) {
+    setTimeout(() => {
+      const t = document.getElementById('tour-toast');
+      if (t) t.style.display = 'flex';
+    }, 800);
   }
+}
 
-  // Try localStorage refs first (fast path)
-  let refs = {};
-  try {
-    const raw = localStorage.getItem('bam_lori_refs');
-    if (raw) refs = JSON.parse(raw);
-  } catch(e) {}
-
-  // If not in localStorage, read from IDB (large image fallback)
-  if (!Object.keys(refs).length) {
-    const vaultId = localStorage.getItem('bam_lori_vault_id');
-    if (vaultId) {
-      try {
-        await new Promise((res, rej) => {
-          const req = indexedDB.open('bam_dreamprint', 1);
-          req.onsuccess = async e => {
-            const dpDb = e.target.result;
-            const tx = dpDb.transaction('vaults', 'readonly');
-            const r = tx.objectStore('vaults').get('dp_imgs_' + vaultId);
-            r.onsuccess = () => { if (r.result) refs = r.result; res(); };
-            r.onerror = () => res();
-          };
-          req.onerror = () => res();
-        });
-      } catch(e) {}
+// ── VAULT ONBOARDING MODAL ─────────────────────────────────────
+let _onboardFiles = [];
+function vaultOnboardShow() {
+  const el = document.getElementById('vault-onboard-overlay');
+  if (el) el.style.display = 'flex';
+}
+function vaultOnboardHide() {
+  const el = document.getElementById('vault-onboard-overlay');
+  if (el) el.style.display = 'none';
+  vaultOnboardTourCheck();
+}
+function vaultOnboardRenderThumbs() {
+  const container = document.getElementById('vault-onboard-thumbs');
+  if (!container) return;
+  container.innerHTML = '';
+  _onboardFiles.forEach((f, i) => {
+    const url = URL.createObjectURL(f);
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;width:60px;height:60px';
+    const img = document.createElement('img');
+    img.src = url;
+    img.style.cssText = 'width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border2)';
+    const del = document.createElement('div');
+    del.textContent = '✕';
+    del.style.cssText = 'position:absolute;top:-4px;right:-4px;background:#f44;color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;cursor:pointer';
+    del.onclick = () => { _onboardFiles.splice(i, 1); vaultOnboardRenderThumbs(); };
+    wrap.appendChild(img); wrap.appendChild(del);
+    container.appendChild(wrap);
+  });
+  const hint = document.getElementById('vault-onboard-hint');
+  if (hint) {
+    if (_onboardFiles.length > 0) {
+      hint.textContent = _onboardFiles.length + ' image' + (_onboardFiles.length !== 1 ? 's' : '') + ' selected' + (_onboardFiles.length < 2 ? ' — add at least 2' : '');
+      hint.style.color = _onboardFiles.length >= 2 ? '#4fd98a' : 'var(--muted2)';
+    } else {
+      hint.textContent = 'Add 2–4 images (face and body shots work best)';
+      hint.style.color = 'var(--muted2)';
     }
   }
-
-  if (!Object.keys(refs).length) {
-    toast('DreamPrint has no images — upload some on the DreamPrint page', 'error');
+}
+async function vaultOnboardCreate() {
+  const nameEl = document.getElementById('vault-onboard-name');
+  const hint = document.getElementById('vault-onboard-hint');
+  const name = (nameEl ? nameEl.value.trim() : '') || 'My Vault';
+  if(_onboardFiles.length < 2){
+    if(hint){ hint.textContent='Please add at least 2 images'; hint.style.color='#f44'; }
     return;
   }
-
-  // Inject into selectedRefs — replace current selection
-  selectedRefs = [];
-  clearRefUploadCache();
-
-  const entries = Object.entries(refs);
-  const max = 8;
-  let count = 0;
-  for (const [slotId, dataUrl] of entries) {
-    if (count >= max) break;
-    if (!dataUrl || !dataUrl.startsWith('data:')) continue;
-    const name = `lori_${slotId}`;
-    refsByName[name] = dataUrl;
-    selectedRefs.push({ name, src: dataUrl });
-    count++;
-  }
-
-  if (!count) { toast('No valid images in DreamPrint', 'error'); return; }
-
-  // Update button state
-  if (btn) {
-    btn.textContent = `✓ ${vaultName} — ${count} refs loaded`;
-    btn.style.background = 'rgba(79,209,138,0.1)';
-    btn.style.borderColor = 'rgba(79,209,138,0.3)';
-    btn.style.color = 'var(--success)';
-    setTimeout(() => {
-      if (btn) {
-        btn.textContent = '⚡ Lori — Load DreamPrint';
-        btn.style.background = 'rgba(184,240,84,0.06)';
-        btn.style.borderColor = 'rgba(184,240,84,0.3)';
-        btn.style.color = 'var(--accent)';
-      }
-    }, 3000);
-  }
-
-  updateRefCount();
-  updateImgCost();
-  updateImgRefRouteIndicator();
-  toast(`⚡ ${vaultName} loaded — ${count} DreamPrint refs active`, 'success');
+  // Use main vaultCreate flow (inserts to Supabase, creates local vault)
+  await vaultCreate(name);
+  // Now add files using main vaultAddFiles (uploads to bucket)
+  if(_onboardFiles.length) await vaultAddFiles(_onboardFiles);
+  vaultOnboardHide();
 }
+// Wire vault onboard events after DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+  const drop = document.getElementById('vault-onboard-drop');
+  const fileInput = document.getElementById('vault-onboard-file');
+  if (drop && fileInput) {
+    drop.addEventListener('click', () => fileInput.click());
+    drop.addEventListener('dragover', e => { e.preventDefault(); drop.style.borderColor = 'var(--accent)'; drop.style.background = 'rgba(184,240,84,0.05)'; });
+    drop.addEventListener('dragleave', () => { drop.style.borderColor = ''; drop.style.background = ''; });
+    drop.addEventListener('drop', e => {
+      e.preventDefault(); drop.style.borderColor = ''; drop.style.background = '';
+      const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+      _onboardFiles = [..._onboardFiles, ...files].slice(0, 4);
+      vaultOnboardRenderThumbs();
+    });
+    fileInput.addEventListener('change', () => {
+      const files = Array.from(fileInput.files).filter(f => f.type.startsWith('image/'));
+      _onboardFiles = [..._onboardFiles, ...files].slice(0, 4);
+      fileInput.value = '';
+      vaultOnboardRenderThumbs();
+    });
+  }
+  const skipBtn = document.getElementById('vault-onboard-skip');
+  const createBtn = document.getElementById('vault-onboard-create');
+  if (skipBtn) skipBtn.addEventListener('click', vaultOnboardHide);
+  if (createBtn) createBtn.addEventListener('click', vaultOnboardCreate);
+});
 
-(async()=>{ const ok=await vaultLoadAll(); if(ok&&vaults.length){ vaultSwitch(activeVaultId||vaults[0].id); toast('✓ Vaults restored',''); } else { renderVaultTabs(); renderVaultGrid(); } })();
+// ── SPOTLIGHT TOUR ─────────────────────────────────────────────
+const TOUR_STEPS = [
+  { sel: '#ref-sidebar', title: 'Step 1 of 4', text: "Your vault stores your model's reference images — keeping her consistent across every generation." },
+  { sel: '#ref-grid', title: 'Step 2 of 4', text: 'Add 2–4 references — face and body shots work best.' },
+  { sel: '#form-scroll', title: 'Step 3 of 4', text: 'Build your prompt here and generate.' },
+  { sel: '#output-scroll', title: 'Step 4 of 4', text: 'Your generations appear here — download or use as a new reference.' }
+];
+let _tourStep = 0;
+function tourStart() {
+  const t = document.getElementById('tour-toast');
+  if (t) t.style.display = 'none';
+  _tourStep = 0;
+  const ov = document.getElementById('tour-overlay');
+  if (ov) ov.style.display = 'block';
+  tourRender();
+}
+function tourEnd(done) {
+  const ov = document.getElementById('tour-overlay');
+  if (ov) ov.style.display = 'none';
+  if (done) localStorage.setItem(BAM_TOUR_DONE_KEY, '1');
+}
+function tourRender() {
+  const step = TOUR_STEPS[_tourStep];
+  if (!step) return;
+  const el = document.querySelector(step.sel);
+  const cutout = document.getElementById('tour-cutout');
+  const tooltip = document.getElementById('tour-tooltip');
+  if (el && cutout) {
+    const r = el.getBoundingClientRect();
+    const pad = 8;
+    cutout.setAttribute('x', r.left - pad);
+    cutout.setAttribute('y', r.top - pad);
+    cutout.setAttribute('width', r.width + pad * 2);
+    cutout.setAttribute('height', r.height + pad * 2);
+    if (tooltip) {
+      let tipTop = r.bottom + pad + 16;
+      let tipLeft = r.left;
+      if (tipTop + 180 > window.innerHeight) tipTop = Math.max(8, r.top - 180 - pad);
+      if (tipLeft + 295 > window.innerWidth) tipLeft = Math.max(8, window.innerWidth - 300);
+      tooltip.style.top = tipTop + 'px';
+      tooltip.style.left = tipLeft + 'px';
+    }
+  }
+  const stepLabel = document.getElementById('tour-step-label');
+  const tipText = document.getElementById('tour-tip-text');
+  const prevBtn = document.getElementById('tour-prev-btn');
+  const nextBtn = document.getElementById('tour-next-btn');
+  if (stepLabel) stepLabel.textContent = step.title;
+  if (tipText) tipText.textContent = step.text;
+  if (prevBtn) { prevBtn.style.opacity = _tourStep === 0 ? '0.3' : '1'; prevBtn.disabled = _tourStep === 0; }
+  if (nextBtn) nextBtn.textContent = _tourStep === TOUR_STEPS.length - 1 ? 'Done ✓' : 'Next →';
+}
+document.addEventListener('DOMContentLoaded', function() {
+  const yesBtn = document.getElementById('tour-yes-btn');
+  const skipBtn = document.getElementById('tour-skip-btn');
+  const skipAll = document.getElementById('tour-skip-all');
+  const prevBtn = document.getElementById('tour-prev-btn');
+  const nextBtn = document.getElementById('tour-next-btn');
+  if (yesBtn) yesBtn.addEventListener('click', tourStart);
+  if (skipBtn) skipBtn.addEventListener('click', () => { const t = document.getElementById('tour-toast'); if(t) t.style.display='none'; localStorage.setItem(BAM_TOUR_DONE_KEY,'1'); });
+  if (skipAll) skipAll.addEventListener('click', () => tourEnd(true));
+  if (prevBtn) prevBtn.addEventListener('click', () => { if (_tourStep > 0) { _tourStep--; tourRender(); } });
+  if (nextBtn) nextBtn.addEventListener('click', () => { if (_tourStep < TOUR_STEPS.length - 1) { _tourStep++; tourRender(); } else tourEnd(true); });
+});
+
 updateImgCost();
 updateVidCost();
-if (LZ_KEY || API_KEY || isEvoVideo()) {
-  document.getElementById('api-key-btn').textContent = '✓ KEY SET';
-  document.getElementById('api-key-btn').classList.add('set');
-}
-if (API_KEY) fetchBalance();
 updateVidEvolinkBadge();
 reelRefreshCostLabels();
+(async () => {
+  incrementVisits();
+  // Initialize Supabase first so vaultLoadAll can pull from it
+  if (window.KIRA_CONFIG?.supabase_url && window.KIRA_CONFIG?.supabase_anon) {
+    const { createClient } = window.supabase;
+    sb = createClient(window.KIRA_CONFIG.supabase_url, window.KIRA_CONFIG.supabase_anon);
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = '/auth'; return; }
+    supabaseSession = session;
+    await fetchApiKeys();
+    const { data } = await sb.from('credits').select('balance_usd').eq('user_id', session.user.id).single();
+    if (data) updateBalanceDisplay(data.balance_usd);
+  }
+  // Load vaults (uses Supabase if available, falls back to IndexedDB)
+  const ok=await vaultLoadAll();
+  if(ok&&vaults.length){
+    vaultSwitch(activeVaultId||vaults[0].id);
+    toast('✓ Vaults restored','');
+    vaultOnboardTourCheck();
+  } else {
+    renderVaultTabs();
+    renderVaultGrid();
+    vaultOnboardShow();
+  }
+  renderNsfwVaultSelector();
+})();
 
-// ── STUDIO BYPASS corner trigger ─────────────────────────────────
-// window.bypassStudio is defined at the TOP of this script.
-// This only wires up the bottom-left corner ×4 click gesture.
+// ── STUDIO BILLING ──────────────────────────────────────────────
+let _studioTopupAmount = null, _studioTopupType = null;
+
+async function studioLoadBilling() {
+  if (!sb || !supabaseSession) return;
+  // Update balance display
+  const { data } = await sb.from('credits').select('balance_usd').eq('user_id', supabaseSession.user.id).single();
+  if (data) {
+    const gbp = (data.balance_usd * 0.79).toFixed(2);
+    const el = document.getElementById('billing-balance-display');
+    if (el) el.textContent = gbp;
+  }
+  // Load transactions
+  const { data: txs } = await sb.from('transactions').select('*').eq('user_id', supabaseSession.user.id).order('created_at', { ascending: false }).limit(20);
+  const list = document.getElementById('studio-tx-list');
+  if (!list) return;
+  if (!txs || txs.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted2);font-size:13px">No transactions yet — top up to get started</div>';
+    return;
+  }
+  list.innerHTML = txs.map(tx => {
+    const isCredit = tx.type === 'topup' || tx.type === 'refund';
+    const icon = isCredit ? '⬆' : '⚡';
+    const amountStr = (isCredit ? '+' : '-') + '£' + Math.abs((tx.amount_usd||0) * 0.79).toFixed(2);
+    const date = new Date(tx.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    return `<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:${isCredit?'var(--accent2)':'rgba(91,168,245,0.1)'}">${icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${String(tx.description||tx.type).replace(/&/g,'&amp;').replace(/</g,'&lt;')}</div>
+        <div style="font-size:11px;color:var(--muted2);font-family:var(--font-mono);margin-top:2px">${date}</div>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:13px;font-weight:600;white-space:nowrap;color:${isCredit?'#4fd98a':'var(--muted)'}">${amountStr}</div>
+    </div>`;
+  }).join('');
+}
+
+function studioOpenTopup() {
+  const m = document.getElementById('studio-topup-modal');
+  if (m) m.style.display = 'flex';
+}
+function studioCloseTopup() {
+  const m = document.getElementById('studio-topup-modal');
+  if (m) m.style.display = 'none';
+  _studioTopupAmount = null; _studioTopupType = null;
+  document.querySelectorAll('#studio-topup-modal [onclick^="studioSelectTopup"]').forEach(c => c.style.outline = '');
+  const btn = document.getElementById('studio-topup-pay-btn');
+  if (btn) btn.disabled = true;
+}
+function studioSelectTopup(amount, el) {
+  const typeMap = { 10:'topup_10', 20:'topup_20', 50:'topup_50' };
+  document.querySelectorAll('#studio-topup-modal [onclick^="studioSelectTopup"]').forEach(c => c.style.outline = '');
+  el.style.outline = '2px solid var(--accent)';
+  _studioTopupAmount = amount; _studioTopupType = typeMap[amount];
+  const btn = document.getElementById('studio-topup-pay-btn');
+  if (btn) btn.disabled = false;
+}
+async function studioHandleTopup() {
+  if (!_studioTopupType || !supabaseSession) return;
+  const btn = document.getElementById('studio-topup-pay-btn');
+  if (btn) { btn.textContent = 'Redirecting...'; btn.disabled = true; }
+  try {
+    const res = await fetch('/api/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: _studioTopupType, userId: supabaseSession.user.id, userEmail: supabaseSession.user.email })
+    });
+    const { url, error } = await res.json();
+    if (error) throw new Error(error);
+    window.location.href = url;
+  } catch(e) {
+    const alert = document.getElementById('studio-topup-alert');
+    if (alert) { alert.textContent = 'Payment setup failed. Please try again.'; alert.style.display = 'block'; }
+    if (btn) { btn.textContent = 'Pay with Stripe'; btn.disabled = false; }
+  }
+}
+
+// ── NSFW VAULT SELECTOR ────────────────────────────────────────
+function renderNsfwVaultSelector() {
+  const container = document.getElementById('nsfw-vault-selector');
+  if (!container) return;
+  if (!vaults.length) {
+    container.innerHTML = '<div style="font-size:10px;color:var(--muted2);padding:8px">No vaults yet — create one on the Image tab.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  vaults.forEach(vault => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.style.cssText = 'background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;text-align:left;cursor:pointer;font-family:var(--font);font-size:11px;color:var(--text);display:flex;align-items:center;gap:8px;transition:all .15s';
+    btn.onmouseover = () => { btn.style.borderColor = 'var(--accent)'; btn.style.color = 'var(--accent)'; };
+    btn.onmouseout = () => { btn.style.borderColor = 'var(--border2)'; btn.style.color = 'var(--text)'; };
+
+    // Thumbnail preview
+    const firstImg = vault.order[0] ? vault.images[vault.order[0]] : null;
+    if (firstImg) {
+      const thumb = document.createElement('img');
+      thumb.src = firstImg;
+      thumb.style.cssText = 'width:28px;height:28px;object-fit:cover;border-radius:4px;flex-shrink:0';
+      btn.appendChild(thumb);
+    } else {
+      const icon = document.createElement('span');
+      icon.textContent = '📁';
+      icon.style.cssText = 'width:28px;text-align:center;flex-shrink:0';
+      btn.appendChild(icon);
+    }
+
+    const info = document.createElement('div');
+    info.innerHTML = `<div style="font-weight:600">${vault.name}</div><div style="font-size:9px;color:var(--muted)">${vault.order.length} image${vault.order.length!==1?'s':''}</div>`;
+    btn.appendChild(info);
+
+    btn.onclick = () => loadVaultIntoNsfw(vault);
+    container.appendChild(btn);
+  });
+}
+
+function loadVaultIntoNsfw(vault) {
+  // Get all vault images in order
+  const images = vault.order.map(k => vault.images[k]).filter(Boolean);
+  if (!images.length) { toast('Vault is empty', 'error'); return; }
+
+  images.forEach((dataUrl, i) => {
+    // Ensure slot exists
+    let slot = document.getElementById('nsfw-ref-drop-' + i);
+    if (!slot) {
+      if (typeof addNsfwRefSlot === 'function') addNsfwRefSlot();
+      slot = document.getElementById('nsfw-ref-drop-' + i);
+    }
+    if (!slot) return;
+
+    // Set the drop zone to show the image
+    slot.innerHTML = `<img src="${dataUrl}" style="max-height:80px;max-width:100%;border-radius:4px;object-fit:contain" /><div class="file-name">${vault.name} — Image ${i+1}</div>`;
+    slot.classList.add('has-file');
+    slot.classList.remove('dragover');
+
+    // Also call the existing handler if it accepts data URLs
+    if (typeof nsfwRefSlots !== 'undefined') {
+      if (!nsfwRefSlots) window.nsfwRefSlots = [];
+      nsfwRefSlots[i] = dataUrl;
+    }
+    // Try to set via the existing label element
+    const label = document.getElementById('nsfw-ref-label-' + i);
+    if (label) label.textContent = vault.name + ' — Image ' + (i+1);
+  });
+
+  // Also update nsfwRefs array used by the generate function
+  if (typeof window.nsfwRefs !== 'undefined') {
+    window.nsfwRefs = images.slice(0, 8);
+  }
+
+  toast('✓ Loaded ' + images.length + ' refs from "' + vault.name + '"', 'success');
+}
+
+// ── VAULT RENAME FROM INPUT ────────────────────────────────────
+function vaultRenameFromInput() {
+  const input = document.getElementById('vault-rename-input');
+  if (!input) return;
+  const n = input.value.trim();
+  if (!n) return;
+  const v = vaultGetActive();
+  if (!v) { toast('No active vault', 'error'); return; }
+  v.name = n;
+  input.value = '';
+  vaultSaveMeta();
+  renderVaultTabs();
+  toast('✓ Vault renamed to "' + n + '"', 'success');
+}
+
+// ── BYPASS corner trigger (×4 clicks, bottom-left) ──────────────────────────
 (function () {
   const corner = document.createElement('div');
   corner.style.cssText = 'position:fixed;bottom:0;left:0;width:40px;height:40px;z-index:9999;cursor:default';
