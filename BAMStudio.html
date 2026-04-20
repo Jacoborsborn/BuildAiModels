@@ -1465,6 +1465,70 @@ let KIE_KEY = localStorage.getItem('kie_api_key') || window.KIRA_CONFIG?.kie_api
 let LZ_KEY = localStorage.getItem('lz_api_key') || window.KIRA_CONFIG?.lz_api_key || '';
 let API_KEY = localStorage.getItem('ws_api_key') || window.KIRA_CONFIG?.ws_api_key || '';
 let EVOLINK_KEY = localStorage.getItem('evolink_key') || window.KIRA_CONFIG?.evolink_key || '';
+
+// ── BYPASS (defined early — before any code that might throw) ────────────────
+// Activate by: typing  bypassStudio()  in the console, adding ?bypass to URL,
+// or clicking the bottom-left corner of the screen 4 times.
+window.bypassStudio = function applyBypass() {
+  if (sessionStorage.getItem('studio_bypass')) {
+    console.log('%c⚡ Bypass already active', 'color:#b8f054;font-weight:bold');
+    return;
+  }
+  sessionStorage.setItem('studio_bypass', '1');
+
+  // Pull keys from KIRA_CONFIG into runtime vars + localStorage
+  const cfg = window.KIRA_CONFIG || {};
+  if (!KIE_KEY     && cfg.kie_api_key)  { KIE_KEY     = cfg.kie_api_key;  localStorage.setItem('kie_api_key',  KIE_KEY); }
+  if (!LZ_KEY      && cfg.lz_api_key)   { LZ_KEY      = cfg.lz_api_key;   localStorage.setItem('lz_api_key',   LZ_KEY); }
+  if (!API_KEY     && cfg.ws_api_key)   { API_KEY     = cfg.ws_api_key;    localStorage.setItem('ws_api_key',   API_KEY); }
+  if (!EVOLINK_KEY && cfg.evolink_key)  { EVOLINK_KEY = cfg.evolink_key;   localStorage.setItem('evolink_key',  EVOLINK_KEY); }
+
+  // Show badge — DOM may not be ready yet, so wait for DOMContentLoaded if needed
+  function _showBadge() {
+    if (document.getElementById('bypass-badge')) return;
+    const badge = document.createElement('div');
+    badge.id = 'bypass-badge';
+    badge.textContent = '⚡ UNRESTRICTED';
+    badge.style.cssText = 'background:var(--accent);color:#000;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:4px;pointer-events:none;flex-shrink:0';
+    const topbar = document.getElementById('topbar');
+    const apiBtn = document.getElementById('api-key-btn');
+    if (topbar && apiBtn) topbar.insertBefore(badge, apiBtn);
+    if (apiBtn) { apiBtn.textContent = '✓ KEYS OK'; apiBtn.classList.add('set'); }
+    if (typeof toast === 'function') toast('⚡ Unrestricted mode active — all key guards off', 'success');
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _showBadge);
+  else _showBadge();
+
+  console.log('%c⚡ Studio bypass active', 'color:#b8f054;font-weight:bold;font-size:16px');
+};
+
+// Silently restore badge if bypass was already set in this session
+(function _restoreBypass() {
+  if (!sessionStorage.getItem('studio_bypass')) return;
+  const cfg = window.KIRA_CONFIG || {};
+  if (!KIE_KEY     && cfg.kie_api_key)  KIE_KEY     = cfg.kie_api_key;
+  if (!LZ_KEY      && cfg.lz_api_key)   LZ_KEY      = cfg.lz_api_key;
+  if (!API_KEY     && cfg.ws_api_key)   API_KEY     = cfg.ws_api_key;
+  if (!EVOLINK_KEY && cfg.evolink_key)  EVOLINK_KEY = cfg.evolink_key;
+  function _showRestoredBadge() {
+    if (document.getElementById('bypass-badge')) return;
+    const badge = document.createElement('div');
+    badge.id = 'bypass-badge';
+    badge.textContent = '⚡ UNRESTRICTED';
+    badge.style.cssText = 'background:var(--accent);color:#000;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:4px;pointer-events:none;flex-shrink:0';
+    const topbar = document.getElementById('topbar');
+    const apiBtn = document.getElementById('api-key-btn');
+    if (topbar && apiBtn) topbar.insertBefore(badge, apiBtn);
+    if (apiBtn) { apiBtn.textContent = '✓ KEYS OK'; apiBtn.classList.add('set'); }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _showRestoredBadge);
+  else _showRestoredBadge();
+})();
+
+// URL param auto-activate: add ?bypass to the URL
+if (location.search.includes('bypass')) window.bypassStudio();
+// ── END BYPASS ───────────────────────────────────────────────────────────────
+
 const LZ_BASE = 'https://api.laozhang.ai/v1';
 let sessionCost = 0;
 let outputCount = 0;
@@ -4955,79 +5019,10 @@ if (API_KEY) fetchBalance();
 updateVidEvolinkBadge();
 reelRefreshCostLabels();
 
-// ── STUDIO BYPASS ────────────────────────────────────────────────
-// Activate any of these ways:
-//   • Open browser console and type:  bypassStudio()
-//   • Add  ?bypass  to the page URL before loading
-//   • Click the bottom-left corner of the screen 4 times
+// ── STUDIO BYPASS corner trigger ─────────────────────────────────
+// window.bypassStudio is defined at the TOP of this script.
+// This only wires up the bottom-left corner ×4 click gesture.
 (function () {
-
-  function applyBypass() {
-    if (sessionStorage.getItem('studio_bypass')) return; // already on
-    sessionStorage.setItem('studio_bypass', '1');
-
-    // Pull keys from KIRA_CONFIG into runtime vars + localStorage
-    const cfg = window.KIRA_CONFIG || {};
-    if (!KIE_KEY     && cfg.kie_api_key)  { KIE_KEY     = cfg.kie_api_key;  localStorage.setItem('kie_api_key',  KIE_KEY); }
-    if (!LZ_KEY      && cfg.lz_api_key)   { LZ_KEY      = cfg.lz_api_key;   localStorage.setItem('lz_api_key',   LZ_KEY); }
-    if (!API_KEY     && cfg.ws_api_key)   { API_KEY     = cfg.ws_api_key;    localStorage.setItem('ws_api_key',   API_KEY); }
-    if (!EVOLINK_KEY && cfg.evolink_key)  { EVOLINK_KEY = cfg.evolink_key;   localStorage.setItem('evolink_key',  EVOLINK_KEY); }
-
-    // Show UNRESTRICTED badge in topbar
-    const badge = document.createElement('div');
-    badge.id = 'bypass-badge';
-    badge.textContent = '⚡ UNRESTRICTED';
-    badge.style.cssText = [
-      'background:var(--accent)',
-      'color:#000',
-      'font-family:var(--font)',
-      'font-size:10px',
-      'font-weight:700',
-      'letter-spacing:1px',
-      'padding:4px 10px',
-      'border-radius:4px',
-      'pointer-events:none',
-      'flex-shrink:0',
-    ].join(';');
-    const topbar = document.getElementById('topbar');
-    const apiBtn = document.getElementById('api-key-btn');
-    if (topbar && apiBtn) topbar.insertBefore(badge, apiBtn);
-
-    // Update the API key button too
-    if (apiBtn) { apiBtn.textContent = '✓ KEYS OK'; apiBtn.classList.add('set'); }
-
-    toast('⚡ Unrestricted mode active — all key guards off', 'success');
-    console.log('%c⚡ Studio bypass active', 'color:#b8f054;font-weight:bold;font-size:14px');
-  }
-
-  function restoreBypass() {
-    // Silently re-show the badge if already active (e.g. after a soft reload)
-    if (!sessionStorage.getItem('studio_bypass')) return;
-    const cfg = window.KIRA_CONFIG || {};
-    if (!KIE_KEY     && cfg.kie_api_key)  { KIE_KEY     = cfg.kie_api_key; }
-    if (!LZ_KEY      && cfg.lz_api_key)   { LZ_KEY      = cfg.lz_api_key; }
-    if (!API_KEY     && cfg.ws_api_key)   { API_KEY     = cfg.ws_api_key; }
-    if (!EVOLINK_KEY && cfg.evolink_key)  { EVOLINK_KEY = cfg.evolink_key; }
-    const badge = document.createElement('div');
-    badge.id = 'bypass-badge';
-    badge.textContent = '⚡ UNRESTRICTED';
-    badge.style.cssText = 'background:var(--accent);color:#000;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:4px;pointer-events:none;flex-shrink:0';
-    const topbar = document.getElementById('topbar');
-    const apiBtn = document.getElementById('api-key-btn');
-    if (topbar && apiBtn) topbar.insertBefore(badge, apiBtn);
-    if (apiBtn) { apiBtn.textContent = '✓ KEYS OK'; apiBtn.classList.add('set'); }
-  }
-
-  // ① Expose on window — type  bypassStudio()  in browser console
-  window.bypassStudio = applyBypass;
-
-  // Restore on page reload within same session
-  restoreBypass();
-
-  // ② URL param — ?bypass
-  if (location.search.includes('bypass')) applyBypass();
-
-  // ③ Bottom-left corner tap ×4 (no text = no selection issues)
   const corner = document.createElement('div');
   corner.style.cssText = 'position:fixed;bottom:0;left:0;width:40px;height:40px;z-index:9999;cursor:default';
   document.body.appendChild(corner);
@@ -5036,8 +5031,7 @@ reelRefreshCostLabels();
     hits++;
     clearTimeout(t);
     t = setTimeout(() => { hits = 0; }, 2000);
-    if (hits >= 4) { hits = 0; applyBypass(); }
+    if (hits >= 4) { hits = 0; window.bypassStudio(); }
   });
-
 })();
 </script></body></html>
