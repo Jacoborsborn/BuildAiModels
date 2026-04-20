@@ -4455,9 +4455,10 @@ function updateBalanceDisplay(balance) {
 }
 
 async function checkAndDeductCredits(costUsd, modelName) {
-  // Founders generate free
+  // Founders and bypass mode generate free
   const fs = localStorage.getItem(STORAGE_KEY);
   if (fs === '1' || fs === 'ethan') return true;
+  if (_isBypassed()) return true;
   if (!sb || !supabaseSession) return true;
   const { data } = await sb.from('credits')
     .select('balance_usd')
