@@ -1458,24 +1458,8 @@ let API_KEY     = '';
 let EVOLINK_KEY = '';
 
 // ── BYPASS (defined first — before anything that could throw) ────────────────
-// Activate: type  bypassStudio()  in console  |  add ?bypass to URL  |  click bottom-left corner ×4
-window.bypassStudio = function () {
-  if (sessionStorage.getItem('studio_bypass')) {
-    console.log('%c⚡ Bypass already active', 'color:#b8f054;font-weight:bold');
-    return;
-  }
-  sessionStorage.setItem('studio_bypass', '1');
-  // Load keys from KIRA_CONFIG immediately
-  const cfg = window.KIRA_CONFIG || {};
-  if (cfg.kie_api_key)  KIE_KEY     = cfg.kie_api_key;
-  if (cfg.lz_api_key)   LZ_KEY      = cfg.lz_api_key;
-  if (cfg.ws_api_key)   API_KEY     = cfg.ws_api_key;
-  if (cfg.evolink_key)  EVOLINK_KEY = cfg.evolink_key;
-  _bypassShowBadge();
-  if (typeof fetchBalance === 'function' && API_KEY) fetchBalance();
-  if (typeof updateVidEvolinkBadge === 'function') updateVidEvolinkBadge();
-  console.log('%c⚡ Studio bypass active', 'color:#b8f054;font-weight:bold;font-size:16px');
-};
+// Activate: bypassStudio() in console  |  ?bypass in URL  |  bottom-left corner ×4
+const _isBypassed = () => !!sessionStorage.getItem('studio_bypass');
 
 function _bypassShowBadge() {
   function _inject() {
@@ -1494,36 +1478,28 @@ function _bypassShowBadge() {
   else _inject();
 }
 
-// Restore on same-tab reload
-if (sessionStorage.getItem('studio_bypass')) {
-  const _cfg = window.KIRA_CONFIG || {};
-  if (_cfg.kie_api_key)  KIE_KEY     = _cfg.kie_api_key;
-  if (_cfg.lz_api_key)   LZ_KEY      = _cfg.lz_api_key;
-  if (_cfg.ws_api_key)   API_KEY     = _cfg.ws_api_key;
-  if (_cfg.evolink_key)  EVOLINK_KEY = _cfg.evolink_key;
+window.bypassStudio = async function () {
+  if (_isBypassed()) {
+    console.log('%c⚡ Bypass already active', 'color:#b8f054;font-weight:bold');
+    return;
+  }
+  sessionStorage.setItem('studio_bypass', '1');
   _bypassShowBadge();
-}
+  // Fetch real keys from the server using the existing Supabase session
+  if (typeof fetchApiKeys === 'function') {
+    await fetchApiKeys();
+  }
+  console.log('%c⚡ Studio bypass active', 'color:#b8f054;font-weight:bold;font-size:16px');
+};
 
-// URL param auto-activate
-if (location.search.includes('bypass')) window.bypassStudio();
+// Restore badge silently on same-tab reload (keys re-fetched by fetchApiKeys on init)
+if (_isBypassed()) _bypassShowBadge();
+
+// URL param auto-activate (after page load so supabaseSession exists)
+if (location.search.includes('bypass')) window.addEventListener('load', () => window.bypassStudio());
 // ── END BYPASS ───────────────────────────────────────────────────────────────
 
 async function fetchApiKeys() {
-  // Bypass mode — load keys directly from KIRA_CONFIG, no auth needed
-  if (sessionStorage.getItem('studio_bypass')) {
-    const cfg = window.KIRA_CONFIG || {};
-    if (cfg.kie_api_key)  KIE_KEY     = cfg.kie_api_key;
-    if (cfg.lz_api_key)   LZ_KEY      = cfg.lz_api_key;
-    if (cfg.ws_api_key)   API_KEY     = cfg.ws_api_key;
-    if (cfg.evolink_key)  EVOLINK_KEY = cfg.evolink_key;
-    const keyBtn = document.getElementById('api-key-btn');
-    if (keyBtn && !document.getElementById('bypass-badge')) {
-      keyBtn.textContent = '✓ KEYS OK'; keyBtn.classList.add('set');
-    }
-    if (API_KEY) fetchBalance();
-    updateVidEvolinkBadge();
-    return;
-  }
   if (!supabaseSession) return;
   try {
     const founderMode = localStorage.getItem('bam_founder_session'); // 'ethan', '1', or null
@@ -2714,7 +2690,7 @@ function reelRegenerateFrame() {
 async function reelStep1Kira() {
   const useKie = !!KIE_KEY;
   const useLZ = !useKie && !!LZ_KEY;
-  if (!useKie && !useLZ && !API_KEY) { openModal(); toast('Set kie.ai, laozhang or WaveSpeed key', 'error'); return; }
+  if (!useKie && !useLZ && !API_KEY && !_isBypassed()) { openModal(); toast('Set kie.ai, laozhang or WaveSpeed key', 'error'); return; }
   if (!reelFirstFrameFile) return;
   const extraDetails = (document.getElementById('reel-extra-details')?.value || '').trim();
   const reelPrompt = extraDetails ? REEL_NANO_PROMPT_PREFIX + '\n\nAdditional instructions: ' + extraDetails : REEL_NANO_PROMPT_PREFIX;
@@ -2841,7 +2817,7 @@ async function reelStep1Kira() {
 
 async function reelStep2Motion() {
   if (!reelKiraImageFile || !reelVideoFile) return;
-  if (!isEvoVideo() && !API_KEY) { openModal(); toast('Add EvoLink or WaveSpeed key', 'error'); return; }
+  if (!isEvoVideo() && !API_KEY && !_isBypassed()) { openModal(); toast('Add EvoLink or WaveSpeed key', 'error'); return; }
 
   const btn = document.getElementById('reel-step2-btn');
   const sess2 = activeReelSession;
@@ -3599,7 +3575,7 @@ async function generateImages() {
 
   // ── kie.ai path ───────────────────────────
   if (isKieModel(model)) {
-    if (!KIE_KEY) { openModal(); toast('Set your kie.ai API key first', 'error'); return; }
+    if (!KIE_KEY && !_isBypassed()) { openModal(); toast('Set your kie.ai API key first', 'error'); return; }
     const prompt = document.getElementById('img-prompt').value.trim();
     if (!prompt) { toast('Write a prompt first', 'error'); return; }
     const kieCost = (IMG_PRICES[model] || 0) * imgState.n;
@@ -3610,7 +3586,7 @@ async function generateImages() {
 
   // ── laozhang.ai path ──────────────────────
   if (isLzModel(model)) {
-    if (!LZ_KEY) { openModal(); toast('Set your laozhang.ai API key first', 'error'); return; }
+    if (!LZ_KEY && !_isBypassed()) { openModal(); toast('Set your laozhang.ai API key first', 'error'); return; }
     const prompt = document.getElementById('img-prompt').value.trim();
     if (!prompt) { toast('Write a prompt first', 'error'); return; }
     const lzCost = (IMG_PRICES[model] || 0) * imgState.n;
@@ -3632,7 +3608,7 @@ async function generateImages() {
   }
 
   // ── WaveSpeed path (fallback) ─────────────
-  if (!API_KEY) { openModal(); toast('Set your WaveSpeed API key first', 'error'); return; }
+  if (!API_KEY && !_isBypassed()) { openModal(); toast('Set your WaveSpeed API key first', 'error'); return; }
   const prompt = document.getElementById('img-prompt').value.trim();
   if (!prompt) { toast('Write a prompt first', 'error'); return; }
 
@@ -3884,7 +3860,7 @@ async function generateImages() {
 // GENERATE VIDEO
 // ════════════════════════════════════════════
 async function generateVideo() {
-  if (!API_KEY && !isEvoVideo()) { openModal(); toast('Set WaveSpeed or EvoLink API key first', 'error'); return; }
+  if (!API_KEY && !isEvoVideo() && !_isBypassed()) { openModal(); toast('Set WaveSpeed or EvoLink API key first', 'error'); return; }
   const model = vidState.model;
   const endpoint = MODEL_ENDPOINTS[model];
   const isMotion = model.includes('motion');
@@ -4186,7 +4162,7 @@ async function cardApplyFluxEdit(btn) {
   const ta = block.querySelector('.card-edit-ta');
   const text = (ta && ta.value || '').trim();
   if (!text) { toast('Describe what to change', 'error'); return; }
-  if (!API_KEY) { openModal(); toast('WaveSpeed key required', 'error'); return; }
+  if (!API_KEY && !_isBypassed()) { openModal(); toast('WaveSpeed key required', 'error'); return; }
   const wrapped = `Change ${text}. Keep absolutely everything else in the image identical — same person, same face, same pose, same outfit, same background, same lighting. Only modify what was requested and nothing else.`;
   const price = IMG_PRICES['flux-kontext-dev'];
   btn.disabled = true;
@@ -4214,7 +4190,7 @@ async function cardApplyFluxExpand(btn) {
   const dir = panel.dataset.expDir || 'all';
   const amt = panel.dataset.expAmt || 'medium';
   const ctx = (panel.querySelector('.card-expand-ctx') && panel.querySelector('.card-expand-ctx').value || '').trim();
-  if (!API_KEY) { openModal(); toast('WaveSpeed key required', 'error'); return; }
+  if (!API_KEY && !_isBypassed()) { openModal(); toast('WaveSpeed key required', 'error'); return; }
   let prompt = `Expand the image ${expandDirPhrase(dir)} to show more of the scene. ${expandAmtPhrase(amt)}`;
   if (ctx) prompt += ` ${ctx}`;
   prompt += ' Keep the existing content completely unchanged, only add new content in the expanded area. Match the same lighting, style, and atmosphere as the original.';
@@ -4966,7 +4942,7 @@ async function generateNsfw() {
   const useLZ = model.includes('lz');
   const useWS5 = model === 'seedream5-ws-nsfw';
   const key = useLZ ? LZ_KEY : API_KEY;
-  if (!key) { openModal(); toast(useLZ ? 'Set laozhang.ai key' : 'Set WaveSpeed key', 'error'); return; }
+  if (!key && !_isBypassed()) { openModal(); toast(useLZ ? 'Set laozhang.ai key' : 'Set WaveSpeed key', 'error'); return; }
   const prompt = document.getElementById('nsfw-prompt').value.trim();
   if (!prompt) { toast('Write a prompt first', 'error'); return; }
   const avoid = document.getElementById('nsfw-avoid').value.trim();
@@ -5273,7 +5249,7 @@ function weekRenderDays() {
 }
 
 async function weekGenerateDay(di) {
-  if (!LZ_KEY) { openModal(); toast('Set laozhang.ai key first', 'error'); return; }
+  if (!LZ_KEY && !_isBypassed()) { openModal(); toast('Set laozhang.ai key first', 'error'); return; }
   const day = weekDays[di]; if (!day) return;
   day.slots.forEach((slot, si) => {
     if (slot.prompt && slot.status === 'pending') { slot.status = 'running'; weekUpdateSlotUI(di, si); }
@@ -5299,7 +5275,7 @@ async function weekGenerateDay(di) {
 }
 
 async function weekGenerateAll() {
-  if (!LZ_KEY) { openModal(); toast('Set laozhang.ai key first', 'error'); return; }
+  if (!LZ_KEY && !_isBypassed()) { openModal(); toast('Set laozhang.ai key first', 'error'); return; }
   if (!weekDays.length) { toast('Parse prompts first', 'error'); return; }
   const btn = document.getElementById('week-generate-all-btn');
   btn.disabled = true; btn.textContent = '⏳ GENERATING WEEK...';
@@ -5370,7 +5346,7 @@ function weekSendToVideo(di, si) {
 async function weekMakeNsfw(di, si) {
   const slot = weekDays[di]?.slots[si];
   if (!slot?.imgUrl) { toast('Generate image first', 'error'); return; }
-  if (!API_KEY) { openModal(); toast('WaveSpeed key needed for NSFW', 'error'); return; }
+  if (!API_KEY && !_isBypassed()) { openModal(); toast('WaveSpeed key needed for NSFW', 'error'); return; }
   const actEl = document.getElementById(`week-slot-act-${di}-${si}`);
   if (actEl) actEl.innerHTML = '<span style="font-size:9px;color:var(--orange)">⏳ NSFW…</span>';
   try {
