@@ -4957,47 +4957,73 @@ reelRefreshCostLabels();
 
 // ── STUDIO BYPASS (4× logo click) ────────────────────────────────
 (function () {
-  // Restore bypass across same-tab navigations
+  // Restore bypass if page is reloaded within same tab
   if (sessionStorage.getItem('studio_bypass')) applyBypass(false);
 
-  let clickCount = 0, clickTimer = null;
+  let hitCount = 0, resetTimer = null;
+
   const logoEl = document.querySelector('#topbar .logo');
-  if (logoEl) {
-    logoEl.style.cursor = 'pointer';
-    logoEl.addEventListener('click', function () {
-      clickCount++;
-      clearTimeout(clickTimer);
-      clickTimer = setTimeout(() => { clickCount = 0; }, 800);
-      if (clickCount >= 4) {
-        clickCount = 0;
-        activateBypass();
-      }
+  if (!logoEl) return;
+
+  // Prevent text selection on rapid clicks
+  logoEl.style.cssText += ';cursor:pointer;user-select:none;-webkit-user-select:none';
+
+  // Pip counter — 4 small dots that fill as you click
+  const pips = document.createElement('span');
+  pips.id = 'bypass-pips';
+  pips.style.cssText = 'display:inline-flex;gap:3px;margin-left:8px;vertical-align:middle;opacity:0;transition:opacity .2s';
+  for (let i = 0; i < 4; i++) {
+    const d = document.createElement('span');
+    d.style.cssText = 'width:4px;height:4px;border-radius:50%;background:var(--muted2);display:inline-block;transition:background .15s';
+    pips.appendChild(d);
+  }
+  logoEl.appendChild(pips);
+
+  function updatePips() {
+    pips.style.opacity = hitCount > 0 ? '1' : '0';
+    Array.from(pips.children).forEach((d, i) => {
+      d.style.background = i < hitCount ? 'var(--accent)' : 'var(--muted2)';
     });
   }
 
-  function activateBypass() {
+  // Use mousedown — fires before browser text-selection logic kicks in
+  logoEl.addEventListener('mousedown', function (e) {
+    e.preventDefault(); // blocks text selection
     if (sessionStorage.getItem('studio_bypass')) {
-      toast('Studio bypass already active this session', '');
+      toast('⚡ Bypass already active this session', '');
       return;
     }
-    sessionStorage.setItem('studio_bypass', '1');
-    applyBypass(true);
-  }
+    hitCount++;
+    updatePips();
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => { hitCount = 0; updatePips(); }, 1200);
+    if (hitCount >= 4) {
+      hitCount = 0;
+      updatePips();
+      sessionStorage.setItem('studio_bypass', '1');
+      applyBypass(true);
+    }
+  });
 
   function applyBypass(announce) {
-    // Re-inject any keys that are in KIRA_CONFIG but not yet in the runtime vars
+    // Re-inject any keys sitting in KIRA_CONFIG that haven't been set yet
     const cfg = window.KIRA_CONFIG || {};
-    if (!KIE_KEY && cfg.kie_api_key)      { KIE_KEY = cfg.kie_api_key; localStorage.setItem('kie_api_key', KIE_KEY); }
-    if (!LZ_KEY  && cfg.lz_api_key)       { LZ_KEY  = cfg.lz_api_key;  localStorage.setItem('lz_api_key',  LZ_KEY); }
-    if (!API_KEY && cfg.ws_api_key)        { API_KEY  = cfg.ws_api_key;  localStorage.setItem('ws_api_key',  API_KEY); }
-    if (!EVOLINK_KEY && cfg.evolink_key)   { EVOLINK_KEY = cfg.evolink_key; localStorage.setItem('evolink_key', EVOLINK_KEY); }
+    if (!KIE_KEY      && cfg.kie_api_key)  { KIE_KEY      = cfg.kie_api_key;  localStorage.setItem('kie_api_key',   KIE_KEY); }
+    if (!LZ_KEY       && cfg.lz_api_key)   { LZ_KEY       = cfg.lz_api_key;   localStorage.setItem('lz_api_key',    LZ_KEY); }
+    if (!API_KEY      && cfg.ws_api_key)   { API_KEY      = cfg.ws_api_key;    localStorage.setItem('ws_api_key',    API_KEY); }
+    if (!EVOLINK_KEY  && cfg.evolink_key)  { EVOLINK_KEY  = cfg.evolink_key;   localStorage.setItem('evolink_key',   EVOLINK_KEY); }
 
-    // Update the API key button to look set
+    // Mark the API KEY button as satisfied
     const btn = document.getElementById('api-key-btn');
-    if (btn) { btn.textContent = '✓ KEY SET'; btn.classList.add('set'); }
+    if (btn) {
+      btn.textContent = '⚡ BYPASS ON';
+      btn.classList.add('set');
+      btn.style.borderColor = 'var(--accent)';
+      btn.style.color = 'var(--accent)';
+    }
 
     if (announce) {
-      toast('⚡ Studio bypass active — all key guards disabled for this session', 'success');
+      toast('⚡ Studio bypass active — key guards off for this session', 'success');
     }
   }
 })();
