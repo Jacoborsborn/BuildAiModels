@@ -5,6 +5,7 @@
       { "source": "/auth", "destination": "/BAMAuth.html" },
       { "source": "/account", "destination": "/BAMAccount.html" },
       { "source": "/legal", "destination": "/BAMLegal.html" },
-      { "source": "/course", "destination": "/Course.html" }
+      { "source": "/course", "destination": "/Course.html" },
+      { "source": "/waitlist", "destination": "/Waitlist.html" }
     ]
   }
