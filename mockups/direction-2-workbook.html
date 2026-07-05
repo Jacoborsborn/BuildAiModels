@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Direction 2 — The Workbook (textbook editorial)</title>
+<!--
+  DIRECTION 2 · "THE WORKBOOK"
+  The adventurous textbook take: cream paper, ruled lines with a red margin,
+  Fraunces serif chapter numerals, real highlighter swipes, sticky notes,
+  a contents page with dotted leaders. Feels like a beautiful printed manual
+  you want to finish. Assumption: "p.XX" page numbers are a motif, not real pages.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800;9..144,900&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper: oklch(0.965 0.012 85);
+  --paper2: oklch(0.985 0.008 85);
+  --ink: oklch(0.23 0.02 260);
+  --muted: oklch(0.48 0.015 260);
+  --rule: oklch(0.88 0.02 240 / .55);          /* notebook blue rule */
+  --margin-red: oklch(0.62 0.13 25 / .5);
+  --hl: oklch(0.89 0.17 95);                    /* highlighter */
+  --hl-soft: oklch(0.94 0.09 95);
+  --green: oklch(0.6 0.13 150);
+  --blue: oklch(0.5 0.1 250);
+  --line: oklch(0.85 0.015 85);
+  --serif:'Fraunces',serif;
+  --sans:'Source Sans 3',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px}
+
+/* top bar styled like a book's running header */
+header{border-bottom:2px solid var(--ink)}
+.head-in{display:flex;align-items:baseline;gap:24px;padding:20px 0}
+.bookmark{font-family:var(--serif);font-weight:900;font-size:20px;letter-spacing:-.5px;margin-right:auto}
+.bookmark small{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--muted);display:block;font-weight:400}
+.head-in a.link{font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.head-in a.link:hover{color:var(--ink)}
+.enrol{font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;background:var(--hl);padding:9px 18px;border:1.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink);transition:transform .12s,box-shadow .12s}
+.enrol:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+
+/* HERO — ruled paper */
+.hero{position:relative;padding:96px 0 110px;background:
+  linear-gradient(var(--margin-red),var(--margin-red)) 88px 0/1.5px 100% no-repeat,
+  repeating-linear-gradient(transparent 0 35px, var(--rule) 35px 36.5px);
+}
+.hero-in{padding-left:128px;max-width:940px;margin:0 auto}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+.kicker b{color:var(--ink)}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(44px,6.4vw,84px);line-height:1.02;letter-spacing:-1.5px;margin:20px 0 26px;max-width:14ch}
+h1 .mark{position:relative;white-space:nowrap}
+h1 .mark::before{content:'';position:absolute;inset:58% -2% -4% -1%;background:var(--hl);transform:skew(-8deg) rotate(-.6deg);z-index:-1}
+.hero p.lede{font-size:19px;max-width:52ch;color:var(--muted)}
+.hero p.lede strong{color:var(--ink)}
+.hero-actions{display:flex;align-items:center;gap:22px;margin-top:38px;flex-wrap:wrap}
+.pencil-link{font-family:var(--mono);font-size:13px;border-bottom:2px solid var(--ink);padding-bottom:3px}
+
+/* sticky note */
+.sticky{position:absolute;right:6%;top:96px;width:210px;background:oklch(0.93 0.12 98);padding:20px 18px 24px;transform:rotate(2.5deg);box-shadow:0 10px 24px oklch(0.23 0.02 260/.16);font-family:var(--serif);font-weight:600;font-size:15.5px;line-height:1.45}
+.sticky::before{content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%) rotate(-2deg);width:70px;height:22px;background:oklch(0.95 0.02 95/.7);border:1px solid oklch(0.8 0.02 85/.5)}
+.sticky em{font-style:normal;background:linear-gradient(transparent 60%,var(--hl) 60%)}
+
+/* CONTENTS — dotted leaders */
+.toc{padding:88px 0;border-top:2px solid var(--ink)}
+.toc-grid{display:grid;grid-template-columns:.9fr 1.5fr;gap:64px}
+.toc-left h2{font-family:var(--serif);font-weight:900;font-size:42px;letter-spacing:-1px;line-height:1.05}
+.toc-left .ch-num{font-family:var(--serif);font-weight:900;font-size:150px;line-height:.8;color:transparent;-webkit-text-stroke:1.5px var(--ink);opacity:.25;display:block;margin-bottom:18px}
+.toc-left p{color:var(--muted);margin-top:18px;max-width:34ch}
+.toc-left p b{color:var(--ink)}
+ol.contents{list-style:none;counter-reset:ch -1}
+ol.contents li{counter-increment:ch;display:flex;align-items:baseline;gap:14px;padding:13px 4px;border-bottom:1px solid var(--line);font-size:16.5px;transition:background .15s;cursor:pointer}
+ol.contents li:hover{background:var(--hl-soft)}
+ol.contents li::before{content:counter(ch,decimal-leading-zero);font-family:var(--mono);font-size:13px;color:var(--muted);min-width:30px}
+ol.contents li .t{font-family:var(--serif);font-weight:600}
+ol.contents li .leader{flex:1;border-bottom:2px dotted var(--line);transform:translateY(-4px)}
+ol.contents li .pg{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+ol.contents li .badge-free{font-family:var(--mono);font-size:10px;letter-spacing:1px;background:var(--green);color:oklch(0.98 0.01 150);padding:2px 8px;border-radius:2px}
+ol.contents li .hl-note{font-family:var(--mono);font-size:10.5px;color:var(--blue)}
+
+/* WORKSHEET / receipts strip */
+.worksheet{background:var(--paper2);border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);padding:72px 0}
+.ws-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px}
+.ws-card{border:1.5px solid var(--ink);background:var(--paper);padding:26px;position:relative}
+.ws-card::after{content:attr(data-tab);position:absolute;top:-13px;left:20px;background:var(--hl);border:1.5px solid var(--ink);font-family:var(--mono);font-size:10px;letter-spacing:1.5px;padding:3px 12px}
+.ws-card h3{font-family:var(--serif);font-weight:800;font-size:20px;margin-bottom:10px}
+.ws-card p{font-size:14.5px;color:var(--muted)}
+.ws-card p code{font-family:var(--mono);font-size:12.5px;background:var(--hl-soft);padding:1px 6px}
+
+/* PRICING — price sticker */
+.shop{padding:90px 0}
+.shop h2{font-family:var(--serif);font-weight:900;font-size:42px;letter-spacing:-1px;text-align:left;margin-bottom:8px}
+.shop .sub{color:var(--muted);margin-bottom:44px}
+.shelf{display:grid;grid-template-columns:1fr 1fr;gap:26px;max-width:860px}
+.book{border:2px solid var(--ink);background:var(--paper2);padding:34px;position:relative}
+.book.feature{background:var(--hl-soft)}
+.book h3{font-family:var(--serif);font-weight:800;font-size:24px;letter-spacing:-.4px}
+.book .edition{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:block}
+.book ul{list-style:none;margin:18px 0 30px}
+.book li{padding:8px 0;border-bottom:1px dotted var(--line);font-size:15px}
+.book li b{font-weight:600}
+.book li::before{content:'☐  ';font-size:15px;color:var(--muted)}
+.book li.inc::before{content:'☑  ';color:var(--green)}
+.sticker{position:absolute;top:-26px;right:-20px;width:96px;height:96px;border-radius:50%;background:var(--hl);border:2px solid var(--ink);display:grid;place-items:center;font-family:var(--serif);font-weight:900;font-size:26px;transform:rotate(8deg);box-shadow:3px 3px 0 var(--ink)}
+.sticker small{display:block;font-family:var(--mono);font-size:9px;font-weight:400;letter-spacing:1px;text-align:center}
+.book .enrol{display:inline-block}
+
+footer{border-top:2px solid var(--ink);padding:30px 0;font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center}
+@media(max-width:900px){
+  .hero{background:repeating-linear-gradient(transparent 0 35px,var(--rule) 35px 36.5px)}
+  .hero-in{padding-left:0}.sticky{display:none}
+  .toc-grid,.ws-grid,.shelf{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header><div class="wrap head-in">
+  <a class="bookmark" href="#">The Agency Workbook<small>BUILDAIMODELS · FIELD EDITION 2026</small></a>
+  <a class="link" href="#contents">Contents</a>
+  <a class="link" href="#shop">Editions</a>
+  <a class="enrol" href="#shop">Open Chapter 00 — free</a>
+</div></header>
+
+<section class="hero">
+  <aside class="sticky">Remember: <em>price the offer</em> before you touch the phone. — Ch.02</aside>
+  <div class="hero-in">
+    <div class="kicker">A WORKING AGENCY, <b>WRITTEN DOWN</b></div>
+    <h1>Everything I know,<br>in <span class="mark">one workbook.</span></h1>
+    <p class="lede">The prompts, call scripts, lead sheets and pricing maths behind a <strong>real UK web-design agency for tradespeople</strong> — organised into 14 chapters you work through with a pen in your hand.</p>
+    <div class="hero-actions">
+      <a class="enrol" href="#shop">Get the workbook →</a>
+      <a class="pencil-link" href="#contents">Skim the contents first ↓</a>
+    </div>
+  </div>
+</section>
+
+<section class="toc" id="contents">
+  <div class="wrap toc-grid">
+    <div class="toc-left">
+      <span class="ch-num">14</span>
+      <h2>Table of Contents</h2>
+      <p>Chapters are ordered so <b>money comes before outreach</b> — you'll know your offer, your price and your patch before you ever scrape a lead.</p>
+    </div>
+    <ol class="contents">
+      <li><span class="t">Start Here — tools, setup, costs</span><span class="leader"></span><span class="badge-free">FREE</span><span class="pg">p.01</span></li>
+      <li><span class="t">Basics — design skills, councils, MCPs</span><span class="leader"></span><span class="pg">p.09</span></li>
+      <li><span class="t">Your Offer &amp; Pricing</span><span class="leader"></span><span class="hl-note">★ start here twice</span><span class="pg">p.21</span></li>
+      <li><span class="t">Niche &amp; Territory</span><span class="leader"></span><span class="pg">p.30</span></li>
+      <li><span class="t">Your Main Website</span><span class="leader"></span><span class="pg">p.38</span></li>
+      <li><span class="t">Demos That Sell Themselves</span><span class="leader"></span><span class="pg">p.47</span></li>
+      <li><span class="t">Scraping Leads with Claude</span><span class="leader"></span><span class="pg">p.55</span></li>
+      <li><span class="t">Cold Outreach — calls, DMs, email, the law</span><span class="leader"></span><span class="pg">p.64</span></li>
+      <li><span class="t">Follow-up &amp; Pipeline</span><span class="leader"></span><span class="pg">p.78</span></li>
+      <li><span class="t">Closing the Deal</span><span class="leader"></span><span class="pg">p.85</span></li>
+      <li><span class="t">Fulfilment — deliver what you sold</span><span class="leader"></span><span class="pg">p.92</span></li>
+      <li><span class="t">Getting Paid — retainers &amp; contracts</span><span class="leader"></span><span class="pg">p.101</span></li>
+      <li><span class="t">Retention &amp; Upsells</span><span class="leader"></span><span class="pg">p.108</span></li>
+      <li><span class="t">Case Study — one lead, end to end</span><span class="leader"></span><span class="pg">p.115</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="worksheet">
+  <div class="wrap">
+    <div class="ws-grid">
+      <div class="ws-card" data-tab="EXHIBIT A">
+        <h3>Real receipts, not stock photos</h3>
+        <p>Every chapter shows the actual artefact: the live lead sheet, the demo that got the reply, the <code>GSC</code> graph from the content engine.</p>
+      </div>
+      <div class="ws-card" data-tab="EXHIBIT B">
+        <h3>Worksheets you tear out</h3>
+        <p>Prompts and scripts are laid out as copy-ready answer boxes — <code>one click</code> and it's in your Claude session.</p>
+      </div>
+      <div class="ws-card" data-tab="EXHIBIT C">
+        <h3>Marked honestly</h3>
+        <p>Each chapter ends with what can go wrong and what you still have to do yourself. No guru voice, ever.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="shop" id="shop">
+  <div class="wrap">
+    <h2>Two editions.</h2>
+    <p class="sub">One-time payment · lifetime access · every future chapter update included.</p>
+    <div class="shelf">
+      <div class="book">
+        <span class="edition">Standard edition</span>
+        <h3>The Agency Workbook</h3>
+        <ul>
+          <li class="inc"><b>All 14 chapters</b> + v2 updates</li>
+          <li class="inc">Prompt &amp; script library</li>
+          <li class="inc">Lead sheet + contract templates</li>
+          <li>SEO Automation volume</li>
+        </ul>
+        <div class="sticker">£99<small>ONE-TIME</small></div>
+        <a class="enrol" href="#">Get the workbook</a>
+      </div>
+      <div class="book feature">
+        <span class="edition">Collector's set · both volumes</span>
+        <h3>Workbook + SEO Automation</h3>
+        <ul>
+          <li class="inc">Everything in the <b>Standard edition</b></li>
+          <li class="inc"><b>Volume II:</b> the content engine</li>
+          <li class="inc">Domain warming + GEO writing system</li>
+          <li class="inc">Resell it as a client add-on</li>
+        </ul>
+        <div class="sticker">£179<small>ONE-TIME</small></div>
+        <a class="enrol" href="#">Get both volumes</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>Direction 2 · “The Workbook” — cream paper, ruled lines, highlighter marks, chapter numerals</footer>
+</body>
+</html>

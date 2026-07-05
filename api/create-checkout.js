@@ -4,17 +4,24 @@
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
+// Reused price IDs: `agency` was the old `beginner` tier, `bundle` was `advanced`.
+// Amounts + product names/descriptions are managed in the Stripe dashboard — IDs stay.
 const PRICE_MAP = {
-  topup_10: 'price_1TME8uDbHWgvBRLbCLxxBZxv',
-  topup_20: 'price_1TME9MDbHWgvBRLbVV4OhlLY',
-  topup_50: 'price_1TME9mDbHWgvBRLbyNoIqYE8',
-  beginner: 'price_1TMED4DbHWgvBRLbBu3XYchs',
-  advanced: 'price_1TMEDQDbHWgvBRLbwcFK5wK0',
+  agency: 'price_1TMED4DbHWgvBRLbBu3XYchs', // Web Design Agency Starter Kit
+  bundle: 'price_1TMEDQDbHWgvBRLbwcFK5wK0', // Agency Kit + SEO Automation Kit
 };
 
+const ALLOWED_ORIGINS = [
+  'https://buildaimodels.co.uk',
+  'https://www.buildaimodels.co.uk',
+  'http://localhost:3000',
+];
+
 module.exports = async (req, res) => {
-  // CORS headers for local dev
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin || '';
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();

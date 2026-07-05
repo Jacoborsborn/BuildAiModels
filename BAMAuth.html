@@ -3,38 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BuildAIModels — Sign In</title>
+<title>BuildAIModels — Sign in</title>
 <link rel="stylesheet" href="global.css">
 <script src="/ETHANconfig.js"></script>
-<script src="/Content%20Generation/Generator/ETHANconfig.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root {
-  --red2: rgba(255,79,106,0.1);
-}
 html, body { height: 100%; }
 body {
   display: flex;
   flex-direction: column;
 }
 
-/* BG GRID */
+/* BG — faint ruled-paper grid on cream */
 body::before {
   content: '';
   position: fixed; inset: 0; z-index: 0;
   background-image:
-    linear-gradient(rgba(184,240,84,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(184,240,84,0.03) 1px, transparent 1px);
+    linear-gradient(oklch(0.25 0.03 260 / .025) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.25 0.03 260 / .025) 1px, transparent 1px);
   background-size: 48px 48px;
   pointer-events: none;
 }
 
-/* GLOW */
+/* Soft yellow wash behind the card */
 .glow {
   position: fixed;
   width: 600px; height: 600px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(184,240,84,0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, oklch(0.86 0.16 95 / .12) 0%, transparent 70%);
   top: -200px; left: 50%; transform: translateX(-50%);
   pointer-events: none; z-index: 0;
 }
@@ -50,67 +46,69 @@ nav { position: relative; z-index: 10; }
 
 .auth-card {
   width: 100%; max-width: 420px;
-  background: var(--panel);
-  border: 1px solid var(--border2);
-  border-radius: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
   padding: 40px 36px;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+  box-shadow: var(--shadow);
 }
 
 .auth-header { margin-bottom: 28px; text-align: center; }
 .auth-title {
   font-family: var(--font-display);
   font-size: 26px; font-weight: 800;
-  letter-spacing: -0.5px; color: var(--text);
+  letter-spacing: -0.5px; color: var(--ink);
   margin-bottom: 6px;
 }
-.auth-sub { font-size: 13px; color: var(--muted); }
+.auth-sub { font-size: 13.5px; color: var(--muted); }
 
 /* FORM */
 .field { margin-bottom: 16px; }
 .field-label {
   display: block;
-  font-size: 11px; font-weight: 600;
-  letter-spacing: 0.8px; text-transform: uppercase;
+  font-size: 11px; font-weight: 800;
+  letter-spacing: 0.6px; text-transform: uppercase;
   color: var(--muted); margin-bottom: 7px;
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
 }
 .field input {
   width: 100%;
-  background: var(--panel2);
-  border: 1px solid var(--border2);
-  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
   padding: 11px 14px;
-  color: var(--text);
+  color: var(--ink);
   font-family: var(--font);
   font-size: 14px;
   transition: border-color .15s, box-shadow .15s;
   outline: none;
 }
 .field input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(184,240,84,0.1);
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 3px oklch(0.86 0.16 95 / .18);
 }
-.field input::placeholder { color: var(--muted2); }
-.field input.error { border-color: var(--red); }
+.field input::placeholder { color: var(--muted); opacity: .6; }
+.field input.error { border-color: var(--coral); }
 
 .field-hint {
-  font-size: 11px; color: var(--muted2);
+  font-size: 11.5px; color: var(--muted);
   margin-top: 5px; line-height: 1.5;
 }
 
 /* PASSWORD TOGGLE */
 .input-wrap { position: relative; }
-.input-wrap input { padding-right: 42px; }
+.input-wrap input { padding-right: 52px; }
 .pwd-toggle {
   position: absolute; right: 12px; top: 50%;
   transform: translateY(-50%);
   background: none; border: none;
   color: var(--muted); cursor: pointer;
-  font-size: 14px; padding: 4px;
+  font-size: 11px; font-weight: 700; font-family: var(--font-display);
+  letter-spacing: .5px; text-transform: uppercase;
+  padding: 4px;
   transition: color .15s;
 }
-.pwd-toggle:hover { color: var(--text); }
+.pwd-toggle:hover { color: var(--ink); }
 
 /* CHECKBOX */
 .check-field {
@@ -121,13 +119,13 @@ nav { position: relative; z-index: 10; }
 .check-field input[type="checkbox"] {
   width: 16px; height: 16px; min-width: 16px;
   margin-top: 2px;
-  accent-color: var(--accent);
+  accent-color: var(--green);
   cursor: pointer;
 }
 .check-label {
-  font-size: 12px; color: var(--muted); line-height: 1.5;
+  font-size: 12.5px; color: var(--muted); line-height: 1.5;
 }
-.check-label a { color: var(--accent); text-decoration: none; }
+.check-label a { color: var(--blue); text-decoration: none; }
 .check-label a:hover { text-decoration: underline; }
 
 /* DIVIDER */
@@ -137,55 +135,56 @@ nav { position: relative; z-index: 10; }
 }
 .divider::before, .divider::after {
   content: ''; flex: 1;
-  height: 1px; background: var(--border2);
+  height: 1px; background: var(--line);
 }
 .divider span {
-  font-size: 11px; color: var(--muted2);
-  font-family: var(--font-mono); white-space: nowrap;
+  font-size: 11px; color: var(--muted);
+  font-family: var(--font-display); font-weight: 700;
+  letter-spacing: .5px; text-transform: uppercase; white-space: nowrap;
 }
 
 /* BUTTONS */
 .btn {
   width: 100%; padding: 12px;
-  border-radius: 8px; border: none;
+  border-radius: 12px; border: none;
   font-family: var(--font-display);
-  font-size: 14px; font-weight: 700;
+  font-size: 14px; font-weight: 800;
   cursor: pointer; transition: all .15s;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 .btn-primary {
-  background: var(--accent); color: #000;
+  background: var(--yellow); color: var(--ink);
 }
-.btn-primary:hover { background: #ceff6b; transform: translateY(-1px); }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px oklch(0.86 0.16 95 / .45); }
 .btn-primary:active { transform: translateY(0); }
 .btn-primary:disabled {
-  background: var(--border2); color: var(--muted);
-  cursor: not-allowed; transform: none;
+  background: var(--line); color: var(--muted);
+  cursor: not-allowed; transform: none; box-shadow: none;
 }
 .btn-secondary {
-  background: var(--panel2);
-  border: 1px solid var(--border2);
-  color: var(--text);
+  background: var(--bg);
+  border: 1.5px solid var(--line);
+  color: var(--ink);
 }
-.btn-secondary:hover { border-color: var(--muted2); background: #1a1a1a; }
+.btn-secondary:hover { border-color: var(--ink); }
 
 .btn-loading { opacity: 0.7; cursor: not-allowed; }
 
 /* ALERT */
 .alert {
-  padding: 11px 14px; border-radius: 8px;
+  padding: 11px 14px; border-radius: 10px;
   font-size: 13px; margin-bottom: 16px;
   display: none;
 }
 .alert.error {
-  background: var(--red2);
-  border: 1px solid rgba(255,79,106,0.3);
-  color: #ff8fa0; display: block;
+  background: var(--coral-soft);
+  border: 1px solid oklch(0.62 0.16 25 / .35);
+  color: var(--coral); display: block;
 }
 .alert.success {
-  background: var(--accent2);
-  border: 1px solid rgba(184,240,84,0.2);
-  color: var(--accent); display: block;
+  background: var(--green-soft);
+  border: 1px solid oklch(0.64 0.14 150 / .35);
+  color: var(--green); display: block;
 }
 
 /* SWITCH LINK */
@@ -194,7 +193,7 @@ nav { position: relative; z-index: 10; }
   font-size: 13px; color: var(--muted);
 }
 .switch-link a {
-  color: var(--accent); text-decoration: none; font-weight: 600;
+  color: var(--blue); text-decoration: none; font-weight: 600;
 }
 .switch-link a:hover { text-decoration: underline; }
 
@@ -203,22 +202,22 @@ nav { position: relative; z-index: 10; }
   font-size: 12px;
 }
 .back-link a { color: var(--muted); text-decoration: none; }
-.back-link a:hover { color: var(--text); }
+.back-link a:hover { color: var(--ink); }
 
 /* PASSWORD STRENGTH */
 .pwd-strength { margin-top: 6px; }
 .pwd-strength-bar {
-  height: 3px; border-radius: 2px;
-  background: var(--border2); overflow: hidden;
+  height: 4px; border-radius: 99px;
+  background: var(--line); overflow: hidden;
 }
 .pwd-strength-fill {
-  height: 100%; border-radius: 2px;
+  height: 100%; border-radius: 99px;
   transition: width .3s, background .3s;
   width: 0;
 }
 .pwd-strength-label {
-  font-size: 10px; color: var(--muted2);
-  margin-top: 4px; font-family: var(--font-mono);
+  font-size: 10.5px; color: var(--muted);
+  margin-top: 4px; font-weight: 600;
 }
 
 /* OTP BOXES */
@@ -228,64 +227,69 @@ nav { position: relative; z-index: 10; }
 }
 .otp-box {
   width: 40px; height: 52px;
-  background: var(--panel2); border: 1px solid var(--border2);
-  border-radius: 8px; text-align: center;
+  background: var(--bg); border: 1px solid var(--line);
+  border-radius: 10px; text-align: center;
   font-family: var(--font-mono); font-size: 22px; font-weight: 700;
-  color: var(--text); outline: none; transition: border-color .15s;
+  color: var(--ink); outline: none; transition: border-color .15s;
 }
-.otp-box:focus { border-color: var(--accent); }
-.otp-box.filled { border-color: var(--accent); color: var(--accent); }
-.otp-box.error { border-color: var(--red); }
+.otp-box:focus { border-color: var(--yellow); }
+.otp-box.filled { border-color: var(--green); color: var(--green); }
+.otp-box.error { border-color: var(--coral); }
 
 /* FOUNDER MODAL */
 .founder-modal-overlay {
   display: none; position: fixed; inset: 0; z-index: 9999;
-  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+  background: oklch(0.25 0.03 260 / .4); backdrop-filter: blur(8px);
   align-items: center; justify-content: center;
 }
 .founder-modal-overlay.open { display: flex; }
 .founder-modal {
-  background: var(--panel); border: 1px solid var(--border2);
-  border-radius: 10px; padding: 32px; width: 360px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 16px; padding: 32px; width: 360px;
   display: flex; flex-direction: column; gap: 16px;
+  box-shadow: var(--shadow);
 }
 .founder-modal-title {
   font-family: var(--font-display); font-size: 18px; font-weight: 800;
-  color: var(--accent); letter-spacing: 0.5px;
+  color: var(--ink); letter-spacing: -.2px;
 }
 .founder-modal-sub {
-  font-size: 11px; color: var(--muted); margin-top: -8px; line-height: 1.5;
+  font-size: 12px; color: var(--muted); margin-top: -8px; line-height: 1.5;
 }
 .founder-modal input {
   width: 100%; padding: 10px 14px; background: var(--bg);
-  border: 1px solid var(--border2); border-radius: 5px;
-  color: var(--text); font-family: var(--font-mono); font-size: 14px;
+  border: 1px solid var(--line); border-radius: 10px;
+  color: var(--ink); font-family: var(--font-mono); font-size: 14px;
   outline: none; letter-spacing: 2px; transition: border-color .15s;
 }
-.founder-modal input:focus { border-color: var(--accent); }
-.founder-modal input.error { border-color: var(--red); animation: shake .3s; }
+.founder-modal input:focus { border-color: var(--yellow); }
+.founder-modal input.error { border-color: var(--coral); animation: shake .3s; }
 @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
 .founder-modal-actions { display: flex; gap: 8px; }
 .founder-modal-confirm {
-  flex: 1; padding: 10px; background: var(--accent); color: #000;
-  border: none; border-radius: 5px; cursor: pointer;
-  font-family: var(--font-display); font-size: 13px; font-weight: 700;
-  transition: background .15s;
+  flex: 1; padding: 10px; background: var(--yellow); color: var(--ink);
+  border: none; border-radius: 10px; cursor: pointer;
+  font-family: var(--font-display); font-size: 13px; font-weight: 800;
+  transition: transform .15s;
 }
-.founder-modal-confirm:hover { background: #cbff5e; }
+.founder-modal-confirm:hover { transform: translateY(-1px); }
 .founder-modal-cancel {
   padding: 10px 16px; background: transparent; color: var(--muted);
-  border: 1px solid var(--border2); border-radius: 5px; cursor: pointer;
-  font-family: var(--font-mono); font-size: 11px; transition: all .15s;
+  border: 1px solid var(--line); border-radius: 10px; cursor: pointer;
+  font-family: var(--font); font-size: 11px; transition: all .15s;
 }
-.founder-modal-cancel:hover { color: var(--text); border-color: var(--muted); }
+.founder-modal-cancel:hover { color: var(--ink); border-color: var(--muted); }
 
 footer {
   position: relative; z-index: 1;
   text-align: center; padding: 20px;
-  font-size: 11px;
+  font-size: 11.5px;
 }
 footer a { margin: 0 8px; }
+.made-by { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; transition: color .15s; }
+.made-by:hover { color: var(--ink); }
+.made-by .mark { width: 13px; height: 13px; }
+.made-by strong { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -294,7 +298,7 @@ footer a { margin: 0 8px; }
 <!-- FOUNDER MODAL -->
 <div class="founder-modal-overlay" id="founder-modal">
   <div class="founder-modal">
-    <div class="founder-modal-title">⚡ Founder Access</div>
+    <div class="founder-modal-title">Founder Access</div>
     <div class="founder-modal-sub">Enter your founder password to unlock edit mode.</div>
     <input type="password" id="founder-pw-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')founderConfirm()">
     <div class="founder-modal-actions">
@@ -305,7 +309,7 @@ footer a { margin: 0 8px; }
 </div>
 
 <nav>
-  <a class="nav-logo" href="#" id="nav-logo-trigger" onclick="return false">BUILD<em>AI</em>MODELS</a>
+  <a class="nav-logo" href="#" id="nav-logo-trigger" onclick="return false">bam<em>.</em></a>
   <a href="/" class="nav-link">Home</a>
   <a href="/auth" class="nav-signin">Sign In</a>
   <a href="/auth" class="nav-cta">Get Started →</a>
@@ -313,11 +317,19 @@ footer a { margin: 0 8px; }
 
 <div class="page-wrap">
 
+  <!-- ══════ MAINTENANCE ══════ -->
+  <div id="view-maintenance" class="auth-card" style="display:none;text-align:center">
+    <svg viewBox="0 0 24 24" style="width:34px;height:34px;stroke:var(--blue);stroke-width:1.8;fill:none;margin:0 auto 16px"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>
+    <div class="auth-title">Back shortly</div>
+    <p class="auth-sub" style="margin-bottom:24px">We're doing backend maintenance on accounts and course access right now. Sign-up and sign-in are paused — check back in a few hours.</p>
+    <a href="/" class="btn btn-secondary" style="display:block">← Back to home</a>
+  </div>
+
   <!-- ══════ SIGN IN ══════ -->
   <div id="view-signin" class="auth-card">
     <div class="auth-header">
       <div class="auth-title">Welcome back</div>
-      <div class="auth-sub">Sign in to your Synthia studio</div>
+      <div class="auth-sub">Sign in to continue the course</div>
     </div>
     <div id="signin-alert" class="alert"></div>
     <div class="field">
@@ -328,7 +340,7 @@ footer a { margin: 0 8px; }
       <label class="field-label" for="si-password">Password</label>
       <div class="input-wrap">
         <input type="password" id="si-password" placeholder="••••••••" autocomplete="current-password">
-        <button class="pwd-toggle" onclick="togglePwd('si-password', this)" type="button">👁</button>
+        <button class="pwd-toggle" onclick="togglePwd('si-password', this)" type="button">Show</button>
       </div>
     </div>
     <div style="text-align:right;margin-bottom:20px">
@@ -344,7 +356,7 @@ footer a { margin: 0 8px; }
   <div id="view-signup" class="auth-card" style="display:none">
     <div class="auth-header">
       <div class="auth-title">Create account</div>
-      <div class="auth-sub">Start building AI models today</div>
+      <div class="auth-sub">Create a free account — module 00 is on us</div>
     </div>
     <div id="signup-alert" class="alert"></div>
     <div class="field">
@@ -359,7 +371,7 @@ footer a { margin: 0 8px; }
       <label class="field-label" for="su-password">Password</label>
       <div class="input-wrap">
         <input type="password" id="su-password" placeholder="Min. 8 characters" autocomplete="new-password" oninput="checkPwdStrength(this.value)">
-        <button class="pwd-toggle" onclick="togglePwd('su-password', this)" type="button">👁</button>
+        <button class="pwd-toggle" onclick="togglePwd('su-password', this)" type="button">Show</button>
       </div>
       <div class="pwd-strength">
         <div class="pwd-strength-bar"><div class="pwd-strength-fill" id="pwd-fill"></div></div>
@@ -368,16 +380,8 @@ footer a { margin: 0 8px; }
     </div>
     <div class="divider"><span>before you continue</span></div>
     <label class="check-field">
-      <input type="checkbox" id="su-age">
-      <span class="check-label">I confirm I am <strong style="color:var(--text)">18 years of age or older</strong></span>
-    </label>
-    <label class="check-field">
       <input type="checkbox" id="su-terms">
-      <span class="check-label">I agree to the <a href="/legal" target="_blank">Terms & Conditions</a> and <a href="/legal" target="_blank">Privacy Policy</a></span>
-    </label>
-    <label class="check-field">
-      <input type="checkbox" id="su-aup">
-      <span class="check-label">I have read and agree to the <a href="/legal" target="_blank">Acceptable Use Policy</a></span>
+      <span class="check-label">I agree to the <a href="/legal#terms" target="_blank">Terms & Conditions</a> and <a href="/legal#privacy" target="_blank">Privacy Policy</a></span>
     </label>
     <div style="margin-top:8px">
       <button class="btn btn-primary" id="signup-btn" onclick="handleSignUp()">Create Account</button>
@@ -415,7 +419,7 @@ footer a { margin: 0 8px; }
       <label class="field-label" for="rp-password">New Password</label>
       <div class="input-wrap">
         <input type="password" id="rp-password" placeholder="Min. 8 characters" autocomplete="new-password" oninput="checkPwdStrength(this.value, 'rp')">
-        <button class="pwd-toggle" onclick="togglePwd('rp-password', this)" type="button">👁</button>
+        <button class="pwd-toggle" onclick="togglePwd('rp-password', this)" type="button">Show</button>
       </div>
       <div class="pwd-strength">
         <div class="pwd-strength-bar"><div class="pwd-strength-fill" id="rp-pwd-fill"></div></div>
@@ -426,7 +430,7 @@ footer a { margin: 0 8px; }
       <label class="field-label" for="rp-confirm">Confirm Password</label>
       <div class="input-wrap">
         <input type="password" id="rp-confirm" placeholder="••••••••" autocomplete="new-password">
-        <button class="pwd-toggle" onclick="togglePwd('rp-confirm', this)" type="button">👁</button>
+        <button class="pwd-toggle" onclick="togglePwd('rp-confirm', this)" type="button">Show</button>
       </div>
     </div>
     <button class="btn btn-primary" id="reset-btn" onclick="handleReset()">Update Password</button>
@@ -462,10 +466,10 @@ footer a { margin: 0 8px; }
 
 <footer>
   <span>© 2026 BuildAIModels.co.uk</span>
-  <a href="/legal">Terms</a>
-  <a href="/legal">Privacy</a>
-  <a href="/legal">Acceptable Use</a>
+  <a href="/legal#terms">Terms</a>
+  <a href="/legal#privacy">Privacy</a>
   <a href="mailto:support@buildaimodels.co.uk">Support</a>
+  <a href="https://www.sitework.uk/" class="made-by" rel="noopener" target="_blank"><svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18V8l8-4 8 4v10M4 18h16M9 18v-5h6v5"/></svg> Website by <strong>Sitework.uk</strong></a>
 </footer>
 
 <script>
@@ -476,15 +480,23 @@ const sb = createClient(
   window.KIRA_CONFIG.supabase_anon
 );
 
+// Where to land after auth: preserve ?plan= intent from the landing page
+const _plan = new URLSearchParams(window.location.search).get('plan');
+const AUTH_DEST = (_plan === 'agency' || _plan === 'bundle') ? '/account?plan=' + _plan : '/course';
+
 // ── OTP context ──
 let otpContext = null  // 'signup' | 'recovery' | 'magiclink'
 let otpEmail = ''
 
 // ── Route on load ──
 window.addEventListener('load', async () => {
+  if (window.KIRA_CONFIG?.MAINTENANCE_MODE) {
+    showView('maintenance');
+    return;
+  }
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
-    window.location.href = '/course';
+    window.location.href = AUTH_DEST;
     return;
   }
   initOTPBoxes();
@@ -492,7 +504,7 @@ window.addEventListener('load', async () => {
 
 // ── View switcher ──
 function showView(v) {
-  ['signin','signup','forgot','reset','otp'].forEach(id => {
+  ['signin','signup','forgot','reset','otp','maintenance'].forEach(id => {
     const el = document.getElementById('view-' + id);
     if (el) el.style.display = id === v ? 'block' : 'none';
   });
@@ -523,7 +535,7 @@ function togglePwd(inputId, btn) {
   const input = document.getElementById(inputId);
   const show = input.type === 'password';
   input.type = show ? 'text' : 'password';
-  btn.textContent = show ? '🙈' : '👁';
+  btn.textContent = show ? 'Hide' : 'Show';
 }
 
 // ── Password strength ──
@@ -541,10 +553,10 @@ function checkPwdStrength(val, prefix = '') {
   if (/[^A-Za-z0-9]/.test(val)) score++;
   const levels = [
     { w: '0%', color: 'transparent', text: '' },
-    { w: '25%', color: '#ff4f6a', text: 'Weak' },
-    { w: '50%', color: '#f5a623', text: 'Fair' },
-    { w: '75%', color: '#5ba8f5', text: 'Good' },
-    { w: '100%', color: '#b8f054', text: 'Strong' },
+    { w: '25%', color: 'oklch(0.62 0.16 25)', text: 'Weak' },
+    { w: '50%', color: 'oklch(0.75 0.14 70)', text: 'Fair' },
+    { w: '75%', color: 'oklch(0.55 0.12 250)', text: 'Good' },
+    { w: '100%', color: 'oklch(0.64 0.14 150)', text: 'Strong' },
   ];
   const lvl = Math.min(score, 4);
   fill.style.width = levels[lvl].w;
@@ -625,7 +637,7 @@ async function handleSignIn() {
     const msg = error.message.includes('Invalid login') ? 'Incorrect email or password.' : error.message;
     showAlert('signin-alert', msg);
   } else {
-    window.location.href = '/course';
+    window.location.href = AUTH_DEST;
   }
 }
 
@@ -634,16 +646,12 @@ async function handleSignUp() {
   const name = document.getElementById('su-name').value.trim();
   const email = document.getElementById('su-email').value.trim();
   const password = document.getElementById('su-password').value;
-  const age = document.getElementById('su-age').checked;
   const terms = document.getElementById('su-terms').checked;
-  const aup = document.getElementById('su-aup').checked;
 
   if (!name) { showAlert('signup-alert', 'Please enter your display name.'); return; }
   if (!email) { showAlert('signup-alert', 'Please enter your email address.'); return; }
   if (password.length < 8) { showAlert('signup-alert', 'Password must be at least 8 characters.'); return; }
-  if (!age) { showAlert('signup-alert', 'You must confirm you are 18 or older to use this platform.'); return; }
   if (!terms) { showAlert('signup-alert', 'Please accept the Terms & Conditions and Privacy Policy.'); return; }
-  if (!aup) { showAlert('signup-alert', 'Please accept the Acceptable Use Policy.'); return; }
 
   setLoading('signup-btn', true, 'Create Account');
   const { data, error } = await sb.auth.signUp({
@@ -706,7 +714,7 @@ async function handleOTP() {
         type: 'signup'
       })
       if (error) throw error
-      window.location.href = '/course'
+      window.location.href = AUTH_DEST
 
     } else if (otpContext === 'recovery') {
       const { error } = await sb.auth.verifyOtp({
@@ -724,7 +732,7 @@ async function handleOTP() {
         type: 'magiclink'
       })
       if (error) throw error
-      window.location.href = '/course'
+      window.location.href = AUTH_DEST
     }
 
   } catch (e) {
@@ -766,7 +774,7 @@ async function handleReset() {
   if (error) {
     showAlert('reset-alert', error.message);
   } else {
-    window.location.href = '/course';
+    window.location.href = AUTH_DEST;
   }
 }
 
@@ -809,7 +817,7 @@ async function founderConfirm() {
     if (res.ok && data.founder) {
       localStorage.setItem(STORAGE_KEY, data.founder === 'ethan' ? 'ethan' : '1');
       founderModalClose();
-      window.location.href = '/course';
+      window.location.href = AUTH_DEST;
     } else {
       inp.classList.add('error');
       setTimeout(() => inp.classList.remove('error'), 600);
