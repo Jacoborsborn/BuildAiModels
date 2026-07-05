@@ -13,7 +13,7 @@
 const https = require('https');
 const { getPublicPages } = require('./lib/public-urls');
 
-const HOST = 'buildaimodels.co.uk';
+const HOST = 'www.buildaimodels.co.uk';
 const KEY = 'b52c083553398e347d55f5279ea3db13'; // must match /<KEY>.txt at the site root
 
 const URLS = getPublicPages().map((p) => `https://${HOST}${p.url}`);

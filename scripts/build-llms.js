@@ -18,7 +18,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const BASE = 'https://buildaimodels.co.uk';
+const BASE = 'https://www.buildaimodels.co.uk';
 
 // ── Static sections (edit these by hand; the offer rarely changes) ──────────
 const HEADER = `# BuildAIModels — The Web Design Agency Starter Kit
