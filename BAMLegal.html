@@ -3,31 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BuildAIModels — Terms, Refunds &amp; Privacy</title>
-<meta name="description" content="Terms of sale, refund policy, licence and privacy policy for the BuildAIModels course platform.">
+<title>BuildAIModels — Terms &amp; Conditions and Privacy Policy</title>
+<meta name="description" content="Terms and conditions, refund policy, licence and privacy policy for the BuildAIModels course platform.">
 <link rel="stylesheet" href="/global.css">
 <style>
 body { line-height: 1.7; }
 .wrap { max-width: 760px; margin: 0 auto; padding: 48px 28px 80px; }
-.page-head { margin-bottom: 40px; }
+.page-head { margin-bottom: 36px; }
 .page-head h1 { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
 .page-head p { color: var(--muted); font-size: 14px; }
 .updated { font-size: 12px; color: var(--muted); opacity: .8; margin-top: 6px; }
 
-.toc { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 22px; margin-bottom: 40px; box-shadow: var(--shadow); }
-.toc a { display: block; color: var(--blue); text-decoration: none; font-size: 13.5px; padding: 4px 0; }
+.doc-nav { display: flex; gap: 10px; margin-bottom: 36px; flex-wrap: wrap; }
+.doc-nav a {
+  font-family: var(--font-display); font-weight: 700; font-size: 13.5px;
+  padding: 9px 18px; border-radius: 999px; text-decoration: none;
+  background: var(--card); border: 1px solid var(--line); color: var(--muted);
+  box-shadow: var(--shadow); transition: all .15s;
+}
+.doc-nav a:hover { color: var(--ink); border-color: var(--ink); }
+
+.toc { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 22px; margin-bottom: 36px; box-shadow: var(--shadow); columns: 2; column-gap: 24px; }
+.toc a { display: block; color: var(--blue); text-decoration: none; font-size: 13px; padding: 3px 0; break-inside: avoid; }
 .toc a:hover { text-decoration: underline; }
 
-section { margin-bottom: 44px; }
-section h2 { font-size: 21px; font-weight: 800; letter-spacing: -.4px; margin-bottom: 14px; padding-top: 12px; }
-section h3 { font-size: 15px; font-weight: 700; margin: 20px 0 8px; }
+.doc { margin-bottom: 72px; }
+.doc-title { font-size: 26px; font-weight: 800; letter-spacing: -.7px; margin: 0 0 6px; padding-top: 8px; }
+.doc-sub { color: var(--muted); font-size: 13.5px; margin-bottom: 28px; }
+
+section { margin-bottom: 36px; }
+section h3 { font-size: 18px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 12px; padding-top: 8px; }
+section h4 { font-size: 14.5px; font-weight: 700; margin: 18px 0 8px; }
 section p, section li { font-size: 14px; color: var(--muted); margin-bottom: 12px; }
 section strong { color: var(--ink); font-weight: 600; }
+section a { color: var(--blue); text-decoration: none; }
+section a:hover { text-decoration: underline; }
 section ul { padding-left: 22px; margin-bottom: 12px; }
 section li { margin-bottom: 6px; }
 
 .callout { background: var(--blue-soft); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; font-size: 13.5px; color: var(--ink); margin: 14px 0; }
 .callout.warn { background: var(--coral-soft); }
+
+.legal-table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 13px; }
+.legal-table th { text-align: left; font-family: var(--font-display); font-size: 11px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--line); }
+.legal-table td { padding: 9px 10px; color: var(--muted); border-bottom: 1px solid var(--line); vertical-align: top; }
+.legal-table td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.legal-table tr:last-child td { border-bottom: none; }
+
+/* footer with Sitework credit */
+.foot-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; max-width: 760px; margin: 0 auto; flex-wrap: wrap; }
+.made-by { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); text-decoration: none; transition: color .15s; }
+.made-by:hover { color: var(--ink); }
+.made-by .mark { width: 15px; height: 15px; }
+.made-by strong { font-weight: 700; }
+
+@media (max-width: 640px) { .toc { columns: 1; } }
 </style>
 </head>
 <body>
@@ -41,95 +71,294 @@ section li { margin-bottom: 6px; }
 
 <div class="wrap">
   <div class="page-head">
-    <h1>Terms, Refunds &amp; Privacy</h1>
-    <p>The legal bits for buildaimodels.co.uk — written to be actually readable.</p>
+    <h1>The legal pages</h1>
+    <p>Terms &amp; Conditions and Privacy Policy for buildaimodels.co.uk — written to be actually readable.</p>
     <div class="updated">Last updated: 5 July 2026</div>
   </div>
 
-  <div class="toc">
-    <a href="#terms">1. Terms of sale</a>
-    <a href="#licence">2. Licence — what you can and can't do with the materials</a>
-    <a href="#refunds">3. Refund policy</a>
-    <a href="#disclaimer">4. Earnings disclaimer</a>
-    <a href="#privacy">5. Privacy policy</a>
-    <a href="#contact">6. Contact</a>
+  <div class="doc-nav">
+    <a href="#terms">Terms &amp; Conditions</a>
+    <a href="#privacy">Privacy Policy</a>
   </div>
 
-  <section id="terms">
-    <h2>1. Terms of sale</h2>
-    <p>BuildAIModels ("we", "us") sells online courses — currently the <strong>Web Design Agency Starter Kit</strong> and the <strong>Agency Kit + SEO Automation Kit bundle</strong> — as one-time digital purchases.</p>
-    <ul>
-      <li><strong>What you buy:</strong> lifetime access to the purchased course content through your account, including future updates to that course.</li>
-      <li><strong>Payment:</strong> processed by Stripe. We never see or store your card details.</li>
-      <li><strong>Access:</strong> granted automatically to your account immediately after successful payment.</li>
-      <li><strong>Accounts:</strong> you're responsible for keeping your login credentials private. One account per buyer; accounts are personal and non-transferable.</li>
-      <li><strong>"Lifetime":</strong> the lifetime of the platform. If we ever wind the platform down, we'll give at least 90 days' notice and a reasonable way to download the materials.</li>
-    </ul>
-  </section>
+  <!-- ═══════════════════════ TERMS ═══════════════════════ -->
+  <div class="doc" id="terms">
+    <h2 class="doc-title">Terms &amp; Conditions</h2>
+    <p class="doc-sub">The agreement between you and us when you create an account or buy a course.</p>
 
-  <section id="licence">
-    <h2>2. Licence</h2>
-    <p>Your purchase gives you a <strong>personal, non-exclusive, non-transferable licence</strong> to use the course materials — lessons, prompts, scripts, templates — for your own learning and your own business.</p>
-    <h3>You can</h3>
-    <ul>
-      <li>Use the prompts, scripts and templates in your own agency, with your own clients, commercially.</li>
-      <li>Adapt and modify the materials for your own use.</li>
-    </ul>
-    <h3>You can't</h3>
-    <ul>
-      <li>Reshare, resell, republish or redistribute the course content or any part of it.</li>
-      <li>Share your account login with others.</li>
-      <li>Use the materials to build a competing course or product.</li>
-    </ul>
-    <p>Breach of this licence ends your access without refund.</p>
-  </section>
+    <div class="toc">
+      <a href="#t1">1. Who we are</a>
+      <a href="#t2">2. What we sell</a>
+      <a href="#t3">3. Your account</a>
+      <a href="#t4">4. Price and payment</a>
+      <a href="#t5">5. Access and delivery</a>
+      <a href="#t6">6. Cancellation and refunds</a>
+      <a href="#t7">7. Licence — using the materials</a>
+      <a href="#t8">8. Fair use of the platform</a>
+      <a href="#t9">9. Earnings disclaimer and no advice</a>
+      <a href="#t10">10. Course changes and updates</a>
+      <a href="#t11">11. Our liability</a>
+      <a href="#t12">12. Ending the agreement</a>
+      <a href="#t13">13. General</a>
+      <a href="#t14">14. Contact</a>
+    </div>
 
-  <section id="refunds">
-    <h2>3. Refund policy</h2>
-    <p>Under the UK Consumer Contracts Regulations 2013 you have a <strong>14-day cancellation right</strong> on digital purchases, with one standard condition:</p>
-    <div class="callout">When you first open any <strong>paid</strong> module, you're asking us to supply the digital content immediately — and you acknowledge that this waives the 14-day cancellation right, as the regulations allow. That's why <strong>module 00 is free</strong>: you can judge the course properly before anything is charged or waived.</div>
-    <ul>
-      <li><strong>Within 14 days, paid content not accessed:</strong> full refund, no questions — email us.</li>
-      <li><strong>Paid content accessed:</strong> the cancellation right is waived, but if something is genuinely broken or badly not as described, email us and we'll be reasonable.</li>
-    </ul>
-    <p>Refunds go back to the original payment method via Stripe, usually within 5–10 working days.</p>
-  </section>
+    <section id="t1">
+      <h3>1. Who we are</h3>
+      <!-- TODO: insert the legal trading identity (sole trader name / partnership / Ltd) before launch — required by the UK Ecommerce Regulations -->
+      <p><strong>BuildAIModels</strong> ("we", "us", "our") operates buildaimodels.co.uk, an online course platform based in the United Kingdom. You can contact us at <a href="mailto:support@buildaimodels.co.uk">support@buildaimodels.co.uk</a>.</p>
+      <p>These terms apply when you create an account or buy a course. By doing either, you agree to them. If you don't agree, don't use the platform.</p>
+    </section>
 
-  <section id="disclaimer">
-    <h2>4. Earnings disclaimer</h2>
-    <div class="callout warn">The course documents a real system from a real agency, but <strong>we make no promise you will earn anything</strong>. Results depend on your effort, your consistency and your market. Any figures shown in the course are examples of what the system has produced in specific circumstances, not projections of what you will make. Nobody honest can guarantee income — treat anyone who does with suspicion.</div>
-    <p>The course also contains practical guidance on UK outreach rules (TPS/CTPS, PECR, GDPR). It is education, not legal advice — for legal advice about your specific situation, speak to a solicitor.</p>
-  </section>
+    <section id="t2">
+      <h3>2. What we sell</h3>
+      <p>We sell online courses as <strong>one-time digital purchases</strong>. At the time of writing:</p>
+      <ul>
+        <li><strong>Web Design Agency Starter Kit</strong> — 14 modules on building and running a web design agency for local trades, plus the prompt, script and template library.</li>
+        <li><strong>Agency Kit + SEO Automation Kit bundle</strong> — everything in the Starter Kit plus the SEO Automation Kit course.</li>
+      </ul>
+      <p>A purchase gives you access to the bought course through your account for the lifetime of the platform, including future updates to that course (see section 10). It is a licence to access content, not the sale of a copy — see section 7.</p>
+      <p>Module 00 of each course is <strong>free with an account</strong>, so you can judge the course before paying anything.</p>
+    </section>
 
-  <section id="privacy">
-    <h2>5. Privacy policy</h2>
-    <p>We collect the minimum we need to run the platform:</p>
-    <ul>
-      <li><strong>Account data:</strong> your email, display name and password (hashed), stored with Supabase (our database and authentication provider).</li>
-      <li><strong>Purchase records:</strong> what you bought and when, linked to your Stripe payment ID. Card details stay with Stripe.</li>
-      <li><strong>Course progress:</strong> which lessons you've completed, stored in your browser and/or your account.</li>
-      <li><strong>Analytics:</strong> cookieless, aggregate page analytics only — no advertising trackers, no third-party cookies, no selling of data. Ever.</li>
-    </ul>
-    <h3>Your rights</h3>
-    <p>Under UK GDPR you can request a copy of your data, correction, or deletion at any time — email us. Deleting your account removes your personal data from the platform; Stripe retains transaction records as required by financial regulations.</p>
-    <h3>Emails</h3>
-    <p>We email you about your account, purchases and course updates. Course-update emails include an unsubscribe link; account and receipt emails are transactional and can't be opted out of while you hold an account.</p>
-  </section>
+    <section id="t3">
+      <h3>3. Your account</h3>
+      <ul>
+        <li>You need an account to access any course content, free or paid.</li>
+        <li>You must give us accurate details and keep your login credentials private. Anything done through your account is treated as done by you.</li>
+        <li>One account per person. Accounts are personal and <strong>non-transferable</strong> — you can't sell, lend or share access.</li>
+        <li>You must be at least 16 to create an account. The courses are business education aimed at adults.</li>
+        <li>Tell us straight away if you think someone else has access to your account.</li>
+      </ul>
+    </section>
 
-  <section id="contact">
-    <h2>6. Contact</h2>
-    <p>Anything legal, refund-related or privacy-related: <a href="mailto:support@buildaimodels.co.uk" style="color:var(--blue);text-decoration:none">support@buildaimodels.co.uk</a>. We aim to reply within 2 working days.</p>
-  </section>
+    <section id="t4">
+      <h3>4. Price and payment</h3>
+      <ul>
+        <li>Prices are shown in pounds sterling on the site at the time of purchase. The price you see at checkout is the price you pay — there are no subscriptions, recurring charges or hidden fees.</li>
+        <li>Payment is processed by <strong>Stripe</strong>. We never see or store your card details.</li>
+        <li>The contract between us forms when your payment succeeds and we grant course access to your account.</li>
+        <li>If a payment is later reversed (for example a chargeback made in bad faith after you've consumed the content), we may suspend the associated course access while it's resolved.</li>
+        <li>Obvious pricing errors don't bind us — if a price is clearly wrong and you order at it, we'll tell you and offer the correct price or a full refund.</li>
+      </ul>
+    </section>
+
+    <section id="t5">
+      <h3>5. Access and delivery</h3>
+      <ul>
+        <li>Course access is granted to your account <strong>automatically and immediately</strong> after successful payment. There is nothing physical to deliver.</li>
+        <li>"Lifetime access" means the lifetime of the platform. If we ever close the platform down, we'll give at least <strong>90 days' notice</strong> and a reasonable way to download the course materials.</li>
+        <li>We aim for the platform to be available at all times but don't guarantee uninterrupted access — occasional maintenance and outages happen. We're not liable for losses caused by temporary unavailability.</li>
+      </ul>
+    </section>
+
+    <section id="t6">
+      <h3>6. Cancellation and refunds</h3>
+      <p>Under the Consumer Contracts Regulations 2013 you have a <strong>14-day right to cancel</strong> a digital purchase, subject to the standard digital-content rule:</p>
+      <div class="callout">By opening any <strong>paid</strong> module, you request immediate supply of the digital content and acknowledge that this <strong>waives your 14-day cancellation right</strong>, as the regulations allow. That's exactly why module 00 is free — judge the course properly before anything is charged or waived.</div>
+      <ul>
+        <li><strong>Within 14 days, no paid content accessed:</strong> full refund, no questions asked — just email us.</li>
+        <li><strong>Paid content accessed:</strong> the statutory cancellation right is waived. If something is genuinely broken, or the course is seriously not as described, email us and we'll be reasonable — your statutory rights under the Consumer Rights Act 2015 (digital content must be as described, fit for purpose and of satisfactory quality) are never affected.</li>
+      </ul>
+      <p>Refunds go back to your original payment method via Stripe, normally within 5–10 working days. To cancel, email <a href="mailto:support@buildaimodels.co.uk">support@buildaimodels.co.uk</a> from your account email with the word "cancel" — no form or reason needed.</p>
+    </section>
+
+    <section id="t7">
+      <h3>7. Licence — using the materials</h3>
+      <p>All course content — lessons, videos, prompts, scripts, templates, lead-sheet formats and everything else — is our intellectual property or licensed to us. Buying a course gives you a <strong>personal, non-exclusive, non-transferable, revocable licence</strong> to use it.</p>
+      <h4>You can</h4>
+      <ul>
+        <li>Use the prompts, scripts and templates <strong>commercially in your own business</strong>, with your own clients.</li>
+        <li>Adapt and modify the materials for your own use.</li>
+      </ul>
+      <h4>You can't</h4>
+      <ul>
+        <li>Reshare, resell, republish, redistribute or publicly post the course content or any substantial part of it — including in private communities, group buys or "course vaults".</li>
+        <li>Share your login or let anyone else consume the course through your account.</li>
+        <li>Use the materials to create a competing course, product or training programme.</li>
+        <li>Systematically scrape, download or archive the platform's content beyond your personal use.</li>
+      </ul>
+      <p>Breach of this section ends your licence and access immediately, without refund (section 12).</p>
+    </section>
+
+    <section id="t8">
+      <h3>8. Fair use of the platform</h3>
+      <p>You agree not to: attempt to gain access to content you haven't bought or to other users' accounts; probe, disrupt or overload the platform; upload malicious code; or use the platform for anything unlawful. We may suspend accounts involved in any of this while we investigate.</p>
+    </section>
+
+    <section id="t9">
+      <h3>9. Earnings disclaimer and no advice</h3>
+      <div class="callout warn">The courses document a real system from a real agency, but <strong>we promise no earnings and no outcomes</strong>. Results depend on your effort, consistency, skill and market. Any figures mentioned in the course are examples of what the system has produced in specific circumstances — not typical results, and not projections of what you will make. Nobody honest can guarantee income.</div>
+      <p>Course content — including the modules covering UK outreach rules (TPS/CTPS, PECR, UK GDPR), contracts and payments — is <strong>education, not professional advice</strong>. It is not legal, financial, tax or accounting advice, and you shouldn't rely on it as such. For advice about your specific situation, consult a qualified professional.</p>
+      <p>You are responsible for how you run your own business — including complying with the laws that apply to your outreach, your client work and your data handling.</p>
+    </section>
+
+    <section id="t10">
+      <h3>10. Course changes and updates</h3>
+      <ul>
+        <li>We update, improve and extend course content over time. Updates to a course you've bought are <strong>included at no extra charge</strong>.</li>
+        <li>We may reorganise, rewrite or replace lessons where we think it improves the course. We won't materially strip out the substance of what you paid for.</li>
+        <li>New, separate courses (as opposed to updates) may be sold separately.</li>
+      </ul>
+    </section>
+
+    <section id="t11">
+      <h3>11. Our liability</h3>
+      <ul>
+        <li>Nothing in these terms excludes or limits liability that can't legally be excluded — including for death or personal injury caused by negligence, fraud, or your statutory consumer rights.</li>
+        <li>Subject to that, our total liability to you in connection with a course is limited to <strong>the amount you paid for it</strong>.</li>
+        <li>We're not liable for business losses — lost profits, lost revenue, lost clients or lost opportunities — arising from your use of the course materials. The course teaches a business method; running the business is yours.</li>
+      </ul>
+    </section>
+
+    <section id="t12">
+      <h3>12. Ending the agreement</h3>
+      <ul>
+        <li><strong>You</strong> can close your account at any time from your account page. This deletes your personal data (see the Privacy Policy) and ends your access, including to purchased courses — so download anything you're entitled to keep first.</li>
+        <li><strong>We</strong> can suspend or end your access if you seriously or repeatedly breach these terms — most obviously the licence in section 7. Where the breach is repairable, we'll warn you first; where it's flagrant (like redistributing the course), we won't.</li>
+        <li>Sections that by their nature should survive (licence restrictions, liability, general) survive the end of the agreement.</li>
+      </ul>
+    </section>
+
+    <section id="t13">
+      <h3>13. General</h3>
+      <ul>
+        <li><strong>Changes to these terms:</strong> we may update them; the "last updated" date at the top changes when we do. Material changes will be flagged by email or on the site. Changes don't retroactively reduce what you bought.</li>
+        <li><strong>Transfer:</strong> we may transfer our rights and obligations under these terms to another organisation (for example if the business is sold); your rights won't be reduced by it. You may not transfer yours, since accounts are personal.</li>
+        <li><strong>Severability:</strong> if any part of these terms is found unenforceable, the rest still applies.</li>
+        <li><strong>Governing law:</strong> these terms are governed by the law of England and Wales, and the courts of England and Wales have jurisdiction — though if you live in Scotland or Northern Ireland you can also bring proceedings there.</li>
+      </ul>
+    </section>
+
+    <section id="t14">
+      <h3>14. Contact</h3>
+      <p>Questions, cancellations, complaints: <a href="mailto:support@buildaimodels.co.uk">support@buildaimodels.co.uk</a>. We aim to reply within 2 working days.</p>
+    </section>
+  </div>
+
+  <!-- ═══════════════════════ PRIVACY ═══════════════════════ -->
+  <div class="doc" id="privacy">
+    <h2 class="doc-title">Privacy Policy</h2>
+    <p class="doc-sub">What we collect, why, where it lives, and your rights under UK GDPR.</p>
+
+    <div class="toc">
+      <a href="#p1">1. Who's responsible for your data</a>
+      <a href="#p2">2. What we collect</a>
+      <a href="#p3">3. Why we use it (lawful bases)</a>
+      <a href="#p4">4. Who processes it for us</a>
+      <a href="#p5">5. Cookies and local storage</a>
+      <a href="#p6">6. How long we keep it</a>
+      <a href="#p7">7. International transfers</a>
+      <a href="#p8">8. Your rights</a>
+      <a href="#p9">9. Children</a>
+      <a href="#p10">10. Changes and complaints</a>
+    </div>
+
+    <section id="p1">
+      <h3>1. Who's responsible for your data</h3>
+      <p>BuildAIModels (buildaimodels.co.uk) is the <strong>data controller</strong> for the personal data described here. Contact for anything privacy-related: <a href="mailto:support@buildaimodels.co.uk">support@buildaimodels.co.uk</a>.</p>
+      <p>The short version of this whole policy: <strong>we collect the minimum needed to run a course platform, we use no advertising trackers, and we never sell data.</strong></p>
+    </section>
+
+    <section id="p2">
+      <h3>2. What we collect</h3>
+      <table class="legal-table">
+        <thead><tr><th>Data</th><th>What it is</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td>Account data</td><td>Email address, display name, password (stored only as a secure hash)</td><td>When you sign up</td></tr>
+          <tr><td>Purchase records</td><td>What you bought, when, and the Stripe payment reference. Card details go to Stripe directly and never touch our servers</td><td>When you buy a course</td></tr>
+          <tr><td>Course progress</td><td>Which lessons you've completed and your position in the course</td><td>As you use the course</td></tr>
+          <tr><td>Support correspondence</td><td>Emails you send us and our replies</td><td>When you contact us</td></tr>
+          <tr><td>Aggregate analytics</td><td>Cookieless, aggregated page-view counts — not tied to your identity</td><td>As you browse</td></tr>
+        </tbody>
+      </table>
+      <p>That's the list. We don't collect browsing history across other sites, we don't buy data about you, and we don't run advertising pixels.</p>
+    </section>
+
+    <section id="p3">
+      <h3>3. Why we use it (lawful bases)</h3>
+      <ul>
+        <li><strong>To run your account and deliver the course you bought</strong> — necessary for our contract with you.</li>
+        <li><strong>To keep payment and tax records</strong> — legal obligation.</li>
+        <li><strong>To email you about your account, receipts and material changes</strong> — necessary for the contract (these are transactional and can't be opted out of while you hold an account).</li>
+        <li><strong>To email you course updates</strong> — legitimate interest in telling buyers their course has grown; every such email has an unsubscribe link.</li>
+        <li><strong>To improve the platform using aggregate analytics</strong> — legitimate interest; the data isn't tied to you personally.</li>
+        <li><strong>To prevent fraud and abuse</strong> (for example account-sharing or chargeback fraud) — legitimate interest.</li>
+      </ul>
+    </section>
+
+    <section id="p4">
+      <h3>4. Who processes it for us</h3>
+      <p>We use a small set of service providers ("processors") to run the platform. They process your data only on our instructions:</p>
+      <table class="legal-table">
+        <thead><tr><th>Provider</th><th>Role</th><th>Data involved</th></tr></thead>
+        <tbody>
+          <tr><td>Supabase</td><td>Database and authentication</td><td>Account data, purchase records, course progress</td></tr>
+          <tr><td>Stripe</td><td>Payment processing</td><td>Payment details (held by Stripe, not us), purchase amount, email</td></tr>
+          <tr><td>Vercel</td><td>Website hosting</td><td>Standard server logs (IP address, requested pages) needed to serve the site</td></tr>
+          <tr><td>Google Fonts</td><td>Font delivery</td><td>Your IP address is visible to Google when your browser fetches the fonts</td></tr>
+        </tbody>
+      </table>
+      <p>We share data with nobody else, except if the law requires it or as part of a business transfer (in which case this policy still protects it).</p>
+    </section>
+
+    <section id="p5">
+      <h3>5. Cookies and local storage</h3>
+      <p>We use <strong>no advertising or third-party tracking cookies</strong>. What we do store in your browser:</p>
+      <ul>
+        <li><strong>Authentication session</strong> — keeps you signed in (set by Supabase; strictly necessary).</li>
+        <li><strong>Course progress and preferences</strong> — your completed lessons and content cache, in local storage.</li>
+      </ul>
+      <p>Our page analytics are cookieless — they set nothing in your browser at all. Because everything we store is strictly necessary for the service to work, there's no cookie banner to click.</p>
+    </section>
+
+    <section id="p6">
+      <h3>6. How long we keep it</h3>
+      <ul>
+        <li><strong>Account data and progress:</strong> for as long as you hold an account. Deleting your account removes it.</li>
+        <li><strong>Purchase and transaction records:</strong> up to 6 years after the transaction, as required by UK tax and accounting rules — this survives account deletion. Stripe retains its own transaction records under financial regulations.</li>
+        <li><strong>Support emails:</strong> up to 2 years, so we have context if you come back.</li>
+      </ul>
+    </section>
+
+    <section id="p7">
+      <h3>7. International transfers</h3>
+      <p>Supabase, Stripe, Vercel and Google may process data on servers outside the UK (including the US). Each of them relies on recognised safeguards — the UK International Data Transfer Agreement/Addendum, or an adequacy-recognised framework such as the UK–US Data Bridge — so your data keeps UK-standard protection wherever it's processed.</p>
+    </section>
+
+    <section id="p8">
+      <h3>8. Your rights</h3>
+      <p>Under UK GDPR you can ask us, at any time and for free, to:</p>
+      <ul>
+        <li><strong>Access</strong> — get a copy of the personal data we hold about you.</li>
+        <li><strong>Rectify</strong> — correct anything inaccurate (name and email you can change yourself on the account page).</li>
+        <li><strong>Erase</strong> — delete your data (the account page has a delete button; tax-required purchase records are exempt until their retention period ends).</li>
+        <li><strong>Restrict or object</strong> — limit how we use your data, or object to a legitimate-interest use like course-update emails.</li>
+        <li><strong>Port</strong> — receive your data in a machine-readable format.</li>
+      </ul>
+      <p>Email <a href="mailto:support@buildaimodels.co.uk">support@buildaimodels.co.uk</a> from your account email. We respond within one month.</p>
+    </section>
+
+    <section id="p9">
+      <h3>9. Children</h3>
+      <p>The platform is business education for adults and isn't directed at children. You must be at least 16 to hold an account. If we learn we hold data on someone younger, we'll delete it.</p>
+    </section>
+
+    <section id="p10">
+      <h3>10. Changes and complaints</h3>
+      <p>If we change this policy materially, we'll flag it by email or on the site; the "last updated" date at the top always reflects the current version.</p>
+      <p>If you're unhappy with how we've handled your data, please tell us first so we can fix it. You also have the right to complain to the UK regulator: the <strong>Information Commissioner's Office</strong> — <a href="https://ico.org.uk" target="_blank" rel="noopener">ico.org.uk</a>, or 0303 123 1113.</p>
+    </section>
+  </div>
 </div>
 
 <footer>
-  <div style="display:flex;justify-content:space-between;align-items:center;max-width:760px;margin:0 auto;flex-wrap:wrap;gap:10px">
-    <span>© 2026 BuildAIModels — buildaimodels.co.uk</span>
-    <div>
-      <a href="/">Home</a> ·
-      <a href="/course">Course</a> ·
-      <a href="mailto:support@buildaimodels.co.uk">Support</a>
-    </div>
+  <div class="foot-in">
+    <span>© 2026 BuildAIModels — <a href="/">buildaimodels.co.uk</a> · <a href="/course">Course</a> · <a href="mailto:support@buildaimodels.co.uk">Support</a></span>
+    <a href="https://www.sitework.uk/" class="made-by" rel="noopener" target="_blank">
+      <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18V8l8-4 8 4v10M4 18h16M9 18v-5h6v5"/></svg>
+      Website by <strong>Sitework.uk</strong>
+    </a>
   </div>
 </footer>
 

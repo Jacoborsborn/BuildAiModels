@@ -110,7 +110,11 @@
 
 /* ── FOOTER ── */
 .foot-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; max-width: 1120px; margin: 0 auto; flex-wrap: wrap; }
-.foot-links { display: flex; gap: 20px; }
+.foot-links { display: flex; gap: 20px; align-items: center; }
+.made-by { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); text-decoration: none; transition: color .15s; }
+.made-by:hover { color: var(--ink); }
+.made-by .mark { width: 15px; height: 15px; }
+.made-by strong { font-weight: 700; }
 
 /* ── Reveal ── */
 .reveal { opacity: 0; transform: translateY(16px); transition: opacity .5s ease, transform .5s ease; }
@@ -341,6 +345,10 @@
       <a href="/auth">Sign in</a>
       <a href="/account">Account</a>
       <a href="/legal">Legal</a>
+      <a href="https://www.sitework.uk/" class="made-by" rel="noopener" target="_blank">
+        <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18V8l8-4 8 4v10M4 18h16M9 18v-5h6v5"/></svg>
+        Website by <strong>Sitework.uk</strong>
+      </a>
     </div>
   </div>
 </footer>

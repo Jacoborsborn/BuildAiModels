@@ -286,6 +286,10 @@ footer {
   font-size: 11.5px;
 }
 footer a { margin: 0 8px; }
+.made-by { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; transition: color .15s; }
+.made-by:hover { color: var(--ink); }
+.made-by .mark { width: 13px; height: 13px; }
+.made-by strong { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -369,7 +373,7 @@ footer a { margin: 0 8px; }
     <div class="divider"><span>before you continue</span></div>
     <label class="check-field">
       <input type="checkbox" id="su-terms">
-      <span class="check-label">I agree to the <a href="/legal" target="_blank">Terms & Conditions</a> and <a href="/legal" target="_blank">Privacy Policy</a></span>
+      <span class="check-label">I agree to the <a href="/legal#terms" target="_blank">Terms & Conditions</a> and <a href="/legal#privacy" target="_blank">Privacy Policy</a></span>
     </label>
     <div style="margin-top:8px">
       <button class="btn btn-primary" id="signup-btn" onclick="handleSignUp()">Create Account</button>
@@ -454,8 +458,10 @@ footer a { margin: 0 8px; }
 
 <footer>
   <span>© 2026 BuildAIModels.co.uk</span>
-  <a href="/legal">Terms &amp; Privacy</a>
+  <a href="/legal#terms">Terms</a>
+  <a href="/legal#privacy">Privacy</a>
   <a href="mailto:support@buildaimodels.co.uk">Support</a>
+  <a href="https://www.sitework.uk/" class="made-by" rel="noopener" target="_blank"><svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18V8l8-4 8 4v10M4 18h16M9 18v-5h6v5"/></svg> Website by <strong>Sitework.uk</strong></a>
 </footer>
 
 <script>
