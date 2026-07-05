@@ -10,6 +10,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://buildaimodels.co.uk/">
 <link rel="stylesheet" href="/global.css">
+<script src="/ETHANconfig.js"></script>
 <style>
 .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
 
@@ -141,6 +142,10 @@
   <a class="nav-signin" href="/auth">Sign in</a>
   <a class="nav-cta" href="/auth">Start free preview</a>
 </nav>
+
+<div id="maintenance-banner" style="display:none;background:var(--yellow-soft);border-bottom:1px solid var(--line);padding:12px 28px;text-align:center;font-size:13.5px;color:var(--ink)">
+  Backend maintenance in progress — sign-up and course access are temporarily paused. Back shortly.
+</div>
 
 <div class="wrap">
   <section class="hero">
@@ -354,6 +359,11 @@
 </footer>
 
 <script>
+// Maintenance notice — flip MAINTENANCE_MODE off in ETHANconfig.js once Supabase is restored
+if (window.KIRA_CONFIG?.MAINTENANCE_MODE) {
+  document.getElementById('maintenance-banner').style.display = 'block';
+}
+
 // FAQ toggle
 function toggleFaq(el) {
   const item = el.closest('.faq-item');

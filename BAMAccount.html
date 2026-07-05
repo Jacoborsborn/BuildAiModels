@@ -353,8 +353,23 @@ const sb = createClient(
 
 let currentUser = null;
 
+// Maintenance overlay — flip MAINTENANCE_MODE off in ETHANconfig.js once Supabase is restored
+function showMaintenanceOverlay() {
+  document.body.insertAdjacentHTML('beforeend', `
+    <div style="position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px">
+      <div class="card" style="max-width:420px;text-align:center;padding:36px 32px">
+        <svg viewBox="0 0 24 24" style="width:34px;height:34px;stroke:var(--blue);stroke-width:1.8;fill:none;margin:0 auto 16px"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>
+        <div style="font-family:var(--font-display);font-size:20px;font-weight:800;margin-bottom:8px">Back shortly</div>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:20px;line-height:1.6">We're doing backend maintenance right now — accounts and course access are temporarily unavailable. Check back in a few hours.</p>
+        <a href="/" class="btn-primary" style="display:inline-block">← Back to home</a>
+      </div>
+    </div>
+  `);
+}
+
 // ── Init ──
 window.addEventListener('load', async () => {
+  if (window.KIRA_CONFIG?.MAINTENANCE_MODE) { showMaintenanceOverlay(); return; }
   const { data: { session } } = await sb.auth.getSession();
   if (!session) {
     // Preserve plan intent through the auth redirect

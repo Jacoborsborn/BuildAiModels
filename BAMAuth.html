@@ -317,6 +317,14 @@ footer a { margin: 0 8px; }
 
 <div class="page-wrap">
 
+  <!-- ══════ MAINTENANCE ══════ -->
+  <div id="view-maintenance" class="auth-card" style="display:none;text-align:center">
+    <svg viewBox="0 0 24 24" style="width:34px;height:34px;stroke:var(--blue);stroke-width:1.8;fill:none;margin:0 auto 16px"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>
+    <div class="auth-title">Back shortly</div>
+    <p class="auth-sub" style="margin-bottom:24px">We're doing backend maintenance on accounts and course access right now. Sign-up and sign-in are paused — check back in a few hours.</p>
+    <a href="/" class="btn btn-secondary" style="display:block">← Back to home</a>
+  </div>
+
   <!-- ══════ SIGN IN ══════ -->
   <div id="view-signin" class="auth-card">
     <div class="auth-header">
@@ -482,6 +490,10 @@ let otpEmail = ''
 
 // ── Route on load ──
 window.addEventListener('load', async () => {
+  if (window.KIRA_CONFIG?.MAINTENANCE_MODE) {
+    showView('maintenance');
+    return;
+  }
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
     window.location.href = AUTH_DEST;
@@ -492,7 +504,7 @@ window.addEventListener('load', async () => {
 
 // ── View switcher ──
 function showView(v) {
-  ['signin','signup','forgot','reset','otp'].forEach(id => {
+  ['signin','signup','forgot','reset','otp','maintenance'].forEach(id => {
     const el = document.getElementById('view-' + id);
     if (el) el.style.display = id === v ? 'block' : 'none';
   });

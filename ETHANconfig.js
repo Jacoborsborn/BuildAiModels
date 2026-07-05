@@ -6,4 +6,8 @@ window.KIRA_CONFIG = {
 
   // Checkout goes through /api/create-checkout with type 'agency' | 'bundle';
   // price IDs live server-side in PRICE_MAP.
+
+  // Set to false once the Supabase project (wwwqltetjjwoodiwbabq) is restored —
+  // it's currently paused/deleted so auth, checkout and course access are all dead.
+  MAINTENANCE_MODE: true,
 };
