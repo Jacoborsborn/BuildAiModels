@@ -81,15 +81,12 @@ nav {
 
 /* ── Nav logo ── */
 .nav-logo {
-  font-family: var(--font-display);
-  font-weight: 800; font-size: 19px; letter-spacing: -.3px;
-  color: var(--ink); text-decoration: none;
+  display: inline-flex; align-items: center;
+  text-decoration: none;
   margin-right: auto;
 }
-.nav-logo em {
-  font-style: normal;
-  background: var(--yellow);
-  border-radius: 6px; padding: 2px 7px; margin-left: 2px;
+.nav-logo img {
+  display: block; height: 32px; width: 32px;
 }
 
 /* ── Nav links ── */

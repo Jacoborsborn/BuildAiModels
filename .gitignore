@@ -3,3 +3,4 @@ config.js
 local2.html
 .DS_Store
 node_modules/
+.claude/

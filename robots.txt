@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /account
+Disallow: /course
+Disallow: /waitlist
+Disallow: /api/
+
+Sitemap: https://buildaimodels.co.uk/sitemap.xml

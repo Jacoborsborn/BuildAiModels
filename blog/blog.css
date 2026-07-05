@@ -1,0 +1,116 @@
+/* ═══════════════════════════════════════════════════════
+   BuildAIModels — blog.css
+   Blog layer on the "Study Hall" design system (global.css).
+   Loads AFTER global.css; only post/index-specific styles here.
+═══════════════════════════════════════════════════════ */
+
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+.wrap.narrow { max-width: 760px; }
+
+/* ── Breadcrumb ── */
+.crumb { padding: 26px 0 0; font-size: 13px; color: var(--muted); }
+.crumb ol { list-style: none; display: flex; gap: 8px; }
+.crumb li + li::before { content: '/'; margin-right: 8px; color: var(--line); }
+.crumb a { color: var(--muted); text-decoration: none; }
+.crumb a:hover { color: var(--ink); }
+
+/* ── Post header ── */
+.post-head { padding: 34px 0 8px; }
+.post-head .tag { margin-bottom: 14px; }
+.post-head h1 {
+  font-size: clamp(30px, 4.4vw, 42px); font-weight: 800;
+  letter-spacing: -1.2px; line-height: 1.12; margin-bottom: 16px;
+}
+.post-meta { display: flex; gap: 18px; font-size: 13px; color: var(--muted); }
+
+/* ── Prose ── */
+.prose { font-size: 15.5px; line-height: 1.75; color: var(--ink); }
+.prose p { margin: 0 0 18px; }
+.prose h2 {
+  font-size: 24px; font-weight: 800; letter-spacing: -.6px;
+  margin: 44px 0 14px; line-height: 1.25;
+}
+.prose h3 { font-size: 17px; font-weight: 700; margin: 28px 0 10px; }
+.prose a { color: var(--blue); text-decoration: none; border-bottom: 1px solid var(--blue-soft); }
+.prose a:hover { border-bottom-color: var(--blue); }
+.prose strong { font-weight: 700; }
+.prose ul, .prose ol { margin: 0 0 18px 22px; }
+.prose li { margin-bottom: 6px; }
+.prose .key { color: var(--ink); }
+
+/* ── Quick answer (the extractable block AI engines lift) ── */
+.qa {
+  background: var(--yellow-soft);
+  border: 1px solid var(--yellow);
+  border-radius: var(--radius);
+  padding: 22px 26px; margin: 28px 0 34px;
+}
+.qa .mono-label { display: block; margin-bottom: 8px; }
+.qa p { font-size: 15.5px; line-height: 1.7; margin: 0; }
+
+/* ── FAQ ── */
+.post-faq { margin: 52px 0 0; }
+.post-faq h2 { font-size: 24px; font-weight: 800; letter-spacing: -.6px; margin-bottom: 18px; }
+.post-faq details {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 14px; margin-bottom: 10px; box-shadow: var(--shadow);
+  padding: 0 22px;
+}
+.post-faq summary {
+  cursor: pointer; list-style: none;
+  padding: 17px 0; font-family: var(--font-display);
+  font-weight: 700; font-size: 15px; position: relative; padding-right: 28px;
+}
+.post-faq summary::-webkit-details-marker { display: none; }
+.post-faq summary::after {
+  content: '+'; position: absolute; right: 2px; top: 14px;
+  font-size: 20px; color: var(--muted); transition: transform .2s;
+}
+.post-faq details[open] summary::after { transform: rotate(45deg); }
+.post-faq details p { font-size: 14px; color: var(--muted); line-height: 1.7; padding: 0 0 18px; }
+.post-faq details a { color: var(--blue); text-decoration: none; }
+
+/* ── CTA panel ── */
+.post-cta {
+  background: var(--card); border: 2px solid var(--yellow);
+  border-radius: 20px; box-shadow: var(--shadow);
+  padding: 36px 34px; margin: 52px 0 0; text-align: center;
+}
+.post-cta h2 { font-size: 26px; font-weight: 800; letter-spacing: -.8px; margin: 10px 0 12px; }
+.post-cta p { color: var(--muted); font-size: 14.5px; max-width: 52ch; margin: 0 auto 22px; }
+.cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* ── Related posts ── */
+.related { margin: 52px 0 72px; }
+.related h2 { font-size: 20px; font-weight: 800; letter-spacing: -.5px; margin-bottom: 16px; }
+.rel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.rel-card {
+  display: flex; flex-direction: column; gap: 6px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 16px; padding: 20px 22px; box-shadow: var(--shadow);
+  text-decoration: none; color: var(--ink); transition: border-color .15s, transform .15s;
+}
+.rel-card:hover { border-color: var(--yellow); transform: translateY(-2px); }
+.rel-card strong { font-family: var(--font-display); font-weight: 700; font-size: 15px; }
+.rel-card span:last-child { font-size: 13px; color: var(--muted); }
+
+/* ── Blog index ── */
+.blog-head { padding: 64px 0 10px; }
+.blog-head h1 { font-size: clamp(32px, 4.6vw, 46px); font-weight: 800; letter-spacing: -1.3px; margin: 16px 0 12px; }
+.blog-head p { color: var(--muted); max-width: 56ch; font-size: 16px; }
+.post-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 34px 0 72px; }
+.post-card {
+  display: flex; flex-direction: column; gap: 10px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 26px 26px 22px; box-shadow: var(--shadow);
+  text-decoration: none; color: var(--ink); transition: border-color .15s, transform .15s;
+}
+.post-card:hover { border-color: var(--yellow); transform: translateY(-2px); }
+.post-card h2 { font-size: 18px; font-weight: 800; letter-spacing: -.4px; line-height: 1.3; }
+.post-card p { font-size: 13.5px; color: var(--muted); flex: 1; }
+.post-card .post-meta { font-size: 12.5px; }
+
+@media (max-width: 760px) {
+  .rel-grid, .post-grid { grid-template-columns: 1fr; }
+  nav .nav-link { display: none; }
+}
