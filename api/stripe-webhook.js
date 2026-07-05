@@ -1,6 +1,6 @@
 // /api/stripe-webhook.js
 // Vercel serverless function — handles Stripe webhook events
-// Verifies signature, then writes to Supabase on checkout.session.completed
+// Verifies signature, then grants course access on checkout.session.completed
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { createClient } = require('@supabase/supabase-js');
@@ -8,11 +8,12 @@ const { createClient } = require('@supabase/supabase-js');
 // Disable Vercel's body parser — we need the raw body for signature verification
 module.exports.config = { api: { bodyParser: false } };
 
-// Credit amounts (GBP product → USD credit value)
-const CREDIT_MAP = {
-  topup_10: 12.50,
-  topup_20: 25.00,
-  topup_50: 62.50,
+// What each purchasable type unlocks. Additive: rows are (user_id, product),
+// so buying the SEO kit later never overwrites agency access.
+const GRANT_MAP = {
+  agency: ['agency'],           // Web Design Agency Starter Kit
+  bundle: ['agency', 'seo'],    // Kit + SEO Automation Kit
+  seo:    ['seo'],              // standalone SEO kit (price ID added later)
 };
 
 // Read raw body as Buffer
@@ -53,6 +54,12 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'Missing metadata' });
   }
 
+  const products = GRANT_MAP[type];
+  if (!products) {
+    console.warn(`[webhook] Unrecognised type: ${type}`);
+    return res.status(200).json({ received: true, ignored: true });
+  }
+
   // ── Supabase admin client (service role — bypasses RLS) ─────────
   const sb = createClient(
     process.env.SUPABASE_URL,
@@ -61,63 +68,24 @@ module.exports = async (req, res) => {
   );
 
   try {
-    if (CREDIT_MAP[type] !== undefined) {
-      // ── TOPUP ────────────────────────────────────────────────────
-      const amount = CREDIT_MAP[type];
+    // Grant one row per product — additive, never overwrites other courses
+    const { error: accessErr } = await sb.from('course_access').upsert(
+      products.map(product => ({ user_id: userId, product })),
+      { onConflict: 'user_id,product' }
+    );
+    if (accessErr) throw new Error(`course_access upsert: ${accessErr.message}`);
 
-      // Insert transaction record
-      const { error: txErr } = await sb.from('transactions').insert({
-        user_id: userId,
-        type: 'topup',
-        amount_usd: amount,
-        description: 'Credit top-up',
-        stripe_id: session.id,
-      });
-      if (txErr) throw new Error(`transactions insert: ${txErr.message}`);
+    // Log the transaction
+    const { error: txErr } = await sb.from('transactions').insert({
+      user_id: userId,
+      type: 'purchase',
+      amount_usd: 0,
+      description: `Course purchase: ${type}`,
+      stripe_id: session.id,
+    });
+    if (txErr) throw new Error(`transactions insert: ${txErr.message}`);
 
-      // Fetch current balance (upsert can't do arithmetic, so read-then-write)
-      const { data: existing } = await sb
-        .from('credits')
-        .select('balance_usd')
-        .eq('user_id', userId)
-        .single();
-
-      const newBalance = parseFloat(existing?.balance_usd || 0) + amount;
-
-      const { error: credErr } = await sb.from('credits').upsert(
-        { user_id: userId, balance_usd: newBalance },
-        { onConflict: 'user_id' }
-      );
-      if (credErr) throw new Error(`credits upsert: ${credErr.message}`);
-
-      console.log(`[webhook] Topped up ${amount} USD for user ${userId}`);
-
-    } else if (type === 'beginner' || type === 'advanced') {
-      // ── COURSE PURCHASE ──────────────────────────────────────────
-
-      // Upsert course access row
-      const { error: accessErr } = await sb.from('course_access').upsert(
-        { user_id: userId, tier: type },
-        { onConflict: 'user_id' }
-      );
-      if (accessErr) throw new Error(`course_access upsert: ${accessErr.message}`);
-
-      // Insert transaction record
-      const { error: txErr } = await sb.from('transactions').insert({
-        user_id: userId,
-        type: 'purchase',
-        amount_usd: 0,
-        description: `Course purchase: ${type}`,
-        stripe_id: session.id,
-      });
-      if (txErr) throw new Error(`transactions insert: ${txErr.message}`);
-
-      console.log(`[webhook] Granted ${type} course access for user ${userId}`);
-
-    } else {
-      console.warn(`[webhook] Unrecognised type: ${type}`);
-    }
-
+    console.log(`[webhook] Granted [${products.join(', ')}] to user ${userId}`);
     return res.status(200).json({ received: true });
   } catch (e) {
     console.error('[webhook] DB error:', e.message);
