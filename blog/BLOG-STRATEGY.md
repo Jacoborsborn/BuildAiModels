@@ -55,6 +55,7 @@ Every post follows the sitework GEO spine, adapted to BAM's voice and CTA:
 - **Quick Answer** — one 50–70 word declarative paragraph, quotable verbatim, contains the keyword + a number.
 - **Exactly 5 H2s**, each with 2–3 real H3s; first sentence under each H2 is the bolded extractable fact.
 - **FAQ** — exactly 5 Q&A pairs (powers FAQPage JSON-LD).
+- **≥1 comparison table and, where the numbers allow, a bar chart** — components live in `blog/blog.css` (`.table-wrap` with `.ok-cell`/`.warn-cell` verdict cells, `.chart` CSS bars, `.note` callout). AI engines extract tables verbatim; every "vs", cost or ranked post gets one.
 - **1,600–2,200 words.** British English throughout.
 - **Honesty as the moat**: name the real costs (Claude subscription, hosting, phone time), the failure modes (people who won't do outreach), who *shouldn't* buy. The "who this is for" filter on the landing page is the voice.
 - **≥2 real authority citations** (ONS/gov.uk self-employment stats, Companies House, Anthropic docs/pricing, ICO on PECR/GDPR for outreach posts) — never invented URLs.
