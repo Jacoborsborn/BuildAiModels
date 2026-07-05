@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Direction 3 — The Prospectus (Swiss syllabus)</title>
+<!--
+  DIRECTION 3 · "THE PROSPECTUS"
+  The second adventurous take: a university course catalogue run through a
+  Swiss grid. Graph-paper background, heavy grotesque headline, mono metadata,
+  a rigid module index table, spec sheet, red-pen accent and an enrolment stamp.
+  Feels serious, systematic, productive — "this is a real qualification".
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: oklch(0.962 0.004 100);
+  --grid-line: oklch(0.9 0.008 100 / .7);
+  --ink: oklch(0.22 0.01 260);
+  --muted: oklch(0.47 0.01 260);
+  --line: oklch(0.84 0.008 100);
+  --pen: oklch(0.55 0.19 25);            /* red pen */
+  --pen-soft: oklch(0.93 0.04 25);
+  --done: oklch(0.58 0.13 150);
+  --hl: oklch(0.88 0.16 95);
+  --panel: oklch(0.985 0.003 100);
+  --disp:'Archivo',sans-serif;
+  --body:'IBM Plex Sans',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6;
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:28px 28px;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+.mono{font-family:var(--mono)}
+
+/* top metadata bar */
+.meta-bar{border-bottom:2px solid var(--ink);background:var(--panel)}
+.meta-in{display:flex;align-items:center;height:52px;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);gap:0}
+.meta-in>*{padding:0 22px;border-right:1px solid var(--line);display:flex;align-items:center;height:100%}
+.meta-in .brand{color:var(--ink);font-weight:600;border-left:none;padding-left:0}
+.meta-in .spacer{flex:1;border-right:none}
+.meta-in .status{color:var(--done)}
+.meta-in .status::before{content:'●';margin-right:8px}
+.meta-in a.apply{background:var(--ink);color:var(--bg);border-right:none;font-weight:600;transition:background .15s}
+.meta-in a.apply:hover{background:var(--pen)}
+
+/* HERO */
+.hero{padding:84px 0 64px;border-bottom:2px solid var(--ink);position:relative}
+.hero-grid{display:grid;grid-template-columns:2fr 1fr;gap:60px;align-items:end}
+.course-code{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--pen);font-weight:600;margin-bottom:22px}
+.hero h1{font-family:var(--disp);font-weight:900;font-size:clamp(46px,6.8vw,92px);line-height:.95;letter-spacing:-2.5px;text-transform:uppercase}
+.hero h1 .u{box-shadow:inset 0 -0.14em var(--hl)}
+.hero .dek{font-size:18px;color:var(--muted);max-width:56ch;margin-top:28px}
+.hero .dek b{color:var(--ink)}
+.hero-ctas{display:flex;gap:14px;margin-top:36px;flex-wrap:wrap}
+.btn{font-family:var(--mono);font-size:13px;letter-spacing:1px;text-transform:uppercase;padding:14px 26px;border:2px solid var(--ink);cursor:pointer;transition:all .15s}
+.btn-solid{background:var(--ink);color:var(--bg)}
+.btn-solid:hover{background:var(--pen);border-color:var(--pen)}
+.btn-line{background:transparent}
+.btn-line:hover{background:var(--hl)}
+
+/* spec sheet */
+.spec{border:2px solid var(--ink);background:var(--panel)}
+.spec-head{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:10px 16px;border-bottom:2px solid var(--ink);background:var(--hl)}
+.spec dl{display:grid;grid-template-columns:1fr 1.4fr}
+.spec dt,.spec dd{padding:11px 16px;border-bottom:1px solid var(--line);font-size:13px}
+.spec dt{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-right:1px solid var(--line)}
+.spec dd{font-weight:500}
+.spec dl:last-of-type dt,.spec dl:last-of-type dd{border-bottom:none}
+
+/* stamp */
+.stamp{position:absolute;top:70px;right:32px;font-family:var(--mono);font-size:12px;letter-spacing:3px;color:var(--pen);border:3px double var(--pen);padding:12px 20px;transform:rotate(-7deg);text-transform:uppercase;opacity:.85;background:oklch(0.962 0.004 100/.7)}
+
+/* INDEX TABLE */
+.index{padding:80px 0}
+.sec-label{font-family:var(--mono);font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.sec-label b{color:var(--pen)}
+.index h2{font-family:var(--disp);font-weight:900;font-size:40px;letter-spacing:-1.2px;text-transform:uppercase;margin-bottom:40px}
+.itable{border:2px solid var(--ink);background:var(--panel)}
+.irow{display:grid;grid-template-columns:80px 1.15fr 1.6fr 120px;border-bottom:1px solid var(--line);transition:background .12s;cursor:pointer}
+.irow:last-child{border-bottom:none}
+.irow:hover{background:var(--pen-soft)}
+.irow>div{padding:15px 18px}
+.irow .n{font-family:var(--mono);font-size:13px;color:var(--muted);border-right:1px solid var(--line);display:flex;align-items:center}
+.irow .m{font-family:var(--disp);font-weight:800;font-size:15.5px;letter-spacing:-.2px;display:flex;align-items:center;text-transform:uppercase}
+.irow .d{font-size:13.5px;color:var(--muted);display:flex;align-items:center}
+.irow .wk{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--muted);display:flex;align-items:center;justify-content:flex-end;border-left:1px solid var(--line)}
+.irow.head{background:var(--ink);color:var(--bg);cursor:default}
+.irow.head>div{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:oklch(0.85 0.005 100)}
+.irow.head .n,.irow.head .wk{border-color:oklch(0.35 0.01 260)}
+.irow .free-tag{font-family:var(--mono);font-size:10px;letter-spacing:1px;background:var(--done);color:var(--bg);padding:3px 9px;margin-left:12px}
+.irow .law-tag{font-family:var(--mono);font-size:10px;letter-spacing:1px;border:1px solid var(--pen);color:var(--pen);padding:2px 8px;margin-left:12px}
+
+/* MARGIN NOTES strip */
+.notes{border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);background:var(--panel);padding:0}
+.notes-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.note{padding:38px 34px;border-right:1px solid var(--line)}
+.note:last-child{border-right:none}
+.note .k{font-family:var(--mono);font-size:34px;font-weight:600;color:var(--pen);letter-spacing:-1px}
+.note h3{font-family:var(--disp);font-weight:800;text-transform:uppercase;font-size:15px;letter-spacing:.3px;margin:12px 0 8px}
+.note p{font-size:13.5px;color:var(--muted)}
+
+/* FEES */
+.fees{padding:84px 0}
+.fees h2{font-family:var(--disp);font-weight:900;font-size:40px;letter-spacing:-1.2px;text-transform:uppercase;margin-bottom:40px}
+.ledger{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--ink);max-width:900px;background:var(--panel)}
+.fee{padding:40px;border-right:1px solid var(--line);position:relative}
+.fee:last-child{border-right:none;background:var(--hl)}
+.fee .code{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+.fee:last-child .code{color:var(--ink)}
+.fee h3{font-family:var(--disp);font-weight:900;font-size:22px;text-transform:uppercase;letter-spacing:-.4px;margin:8px 0 20px}
+.fee .amt{font-family:var(--disp);font-weight:900;font-size:58px;letter-spacing:-3px;line-height:1}
+.fee .amt small{font-family:var(--mono);font-size:11px;letter-spacing:1.5px;font-weight:400;display:block;margin-top:8px;color:var(--muted)}
+.fee:last-child .amt small{color:var(--ink)}
+.fee ul{list-style:none;margin:26px 0 30px;font-size:14px}
+.fee li{padding:8px 0;border-bottom:1px dotted var(--line);display:flex;gap:10px}
+.fee li::before{content:'—';color:var(--pen);font-weight:700}
+.fee .btn{display:inline-block}
+
+footer{border-top:2px solid var(--ink);padding:26px 0;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-align:center}
+@media(max-width:940px){
+  .hero-grid{grid-template-columns:1fr}.stamp{display:none}
+  .irow{grid-template-columns:56px 1fr 100px}.irow .d{display:none}
+  .notes-grid,.ledger{grid-template-columns:1fr}.fee,.note{border-right:none;border-bottom:1px solid var(--line)}
+  .meta-in>*:nth-child(2),.meta-in>*:nth-child(3){display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="meta-bar"><div class="wrap meta-in">
+  <span class="brand">BAM — Course Prospectus</span>
+  <span>REF: BAM/AGY/26</span>
+  <span>FORMAT: SELF-PACED</span>
+  <span class="spacer"></span>
+  <span class="status">Enrolment open</span>
+  <a class="apply" href="#fees">Enrol →</a>
+</div></div>
+
+<section class="hero">
+  <div class="stamp">Cohortless · Start today</div>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="course-code">COURSE 01 / AGENCY OPERATIONS — SYLLABUS 2026</div>
+      <h1>Build a web agency <span class="u">from a laptop.</span></h1>
+      <p class="dek">A 14-module operating manual taken directly from a <b>running UK agency</b>: the prompts, the lead system, the call scripts, the pricing maths. You finish with a working pipeline, not a certificate.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-solid" href="#fees">Enrol — one payment</a>
+        <a class="btn btn-line" href="#index">Module 00 is free</a>
+      </div>
+    </div>
+    <aside class="spec">
+      <div class="spec-head">Specification</div>
+      <dl><dt>Prerequisites</dt><dd>None. Claude Code + a phone.</dd></dl>
+      <dl><dt>Modules</dt><dd>14 (+ free updates for life)</dd></dl>
+      <dl><dt>Tooling</dt><dd>Claude, Cloudflare, GitHub, Stripe</dd></dl>
+      <dl><dt>Assessment</dt><dd>Your first paying client</dd></dl>
+      <dl><dt>Running cost</dt><dd>~£30/month all-in</dd></dl>
+    </aside>
+  </div>
+</section>
+
+<section class="index" id="index">
+  <div class="wrap">
+    <div class="sec-label"><b>SECTION A</b> — MODULE INDEX</div>
+    <h2>The Syllabus</h2>
+    <div class="itable">
+      <div class="irow head"><div class="n">No.</div><div class="m">Module</div><div class="d">Outcome</div><div class="wk">Phase</div></div>
+      <div class="irow"><div class="n">00</div><div class="m">Start Here<span class="free-tag">FREE</span></div><div class="d">Full stack installed, costs known</div><div class="wk">SETUP</div></div>
+      <div class="irow"><div class="n">01</div><div class="m">Basics</div><div class="d">Design skills, councils, MCPs, prompt library</div><div class="wk">SETUP</div></div>
+      <div class="irow"><div class="n">02</div><div class="m">Offer &amp; Pricing</div><div class="d">A retainer you can say out loud with a straight face</div><div class="wk">MONEY</div></div>
+      <div class="irow"><div class="n">03</div><div class="m">Niche &amp; Territory</div><div class="d">A patch where the phone gets answered</div><div class="wk">MONEY</div></div>
+      <div class="irow"><div class="n">04</div><div class="m">Your Main Website</div><div class="d">Proof-of-skill site, live</div><div class="wk">BUILD</div></div>
+      <div class="irow"><div class="n">05</div><div class="m">Demos</div><div class="d">The swap-and-send mockup system</div><div class="wk">BUILD</div></div>
+      <div class="irow"><div class="n">06</div><div class="m">Lead Scraping</div><div class="d">A qualified 100-lead sheet, built by Claude</div><div class="wk">SELL</div></div>
+      <div class="irow"><div class="n">07</div><div class="m">Cold Outreach<span class="law-tag">UK LAW</span></div><div class="d">Calls, DMs, email — scripts that got replies</div><div class="wk">SELL</div></div>
+      <div class="irow"><div class="n">08</div><div class="m">Follow-up &amp; Pipeline</div><div class="d">Deals close on touch 3–5, not touch 1</div><div class="wk">SELL</div></div>
+      <div class="irow"><div class="n">09</div><div class="m">Closing</div><div class="d">Booked call → paid client</div><div class="wk">SELL</div></div>
+      <div class="irow"><div class="n">10</div><div class="m">Fulfilment</div><div class="d">Deliver what you sold, without panic</div><div class="wk">RUN</div></div>
+      <div class="irow"><div class="n">11</div><div class="m">Getting Paid</div><div class="d">Direct-debit retainers + a one-page contract</div><div class="wk">RUN</div></div>
+      <div class="irow"><div class="n">12</div><div class="m">Retention &amp; Upsells</div><div class="d">Churn defence and the add-on ladder</div><div class="wk">RUN</div></div>
+      <div class="irow"><div class="n">13</div><div class="m">Case Study</div><div class="d">One real lead followed end to end</div><div class="wk">PROOF</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="notes">
+  <div class="wrap notes-grid" style="padding:0">
+    <div class="note"><div class="k">A.</div><h3>Receipts over theory</h3><p>Every module is illustrated with the real artefact — live lead sheets, sent emails, the actual Search Console graphs.</p></div>
+    <div class="note"><div class="k">B.</div><h3>Ordered for money</h3><p>Offer and pricing come before outreach. You will never cold-call without knowing exactly what you sell.</p></div>
+    <div class="note"><div class="k">C.</div><h3>Marked honestly</h3><p>Each module ends with the failure modes and the parts you still do yourself. No guru voice on the premises.</p></div>
+  </div>
+</section>
+
+<section class="fees" id="fees">
+  <div class="wrap">
+    <div class="sec-label"><b>SECTION B</b> — FEES</div>
+    <h2>Enrolment</h2>
+    <div class="ledger">
+      <div class="fee">
+        <span class="code">BAM/AGY/26</span>
+        <h3>Agency Course</h3>
+        <div class="amt">£99<small>ONE PAYMENT · LIFETIME ACCESS</small></div>
+        <ul>
+          <li>All 14 modules + v2 updates</li>
+          <li>Prompt &amp; script library</li>
+          <li>Lead sheet + contract templates</li>
+        </ul>
+        <a class="btn btn-line" href="#">Enrol on Course 01</a>
+      </div>
+      <div class="fee">
+        <span class="code">BAM/AGY+SEO/26 — RECOMMENDED</span>
+        <h3>Agency + SEO Automation</h3>
+        <div class="amt">£179<small>ONE PAYMENT · BOTH COURSES</small></div>
+        <ul>
+          <li>Everything in Course 01</li>
+          <li>Course 02: the content engine</li>
+          <li>Domain warming + GEO writing system</li>
+          <li>Resellable as a client add-on</li>
+        </ul>
+        <a class="btn btn-solid" href="#">Enrol on both</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>Direction 3 · “The Prospectus” — Swiss grid, course-catalogue index, red pen, graph paper</footer>
+</body>
+</html>

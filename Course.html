@@ -3,19 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BuildAIModels — Course</title>
+<title>Agency Starter Kit — Course</title>
 <link rel="stylesheet" href="global.css">
 <script src="/ETHANconfig.js"></script>
-<script src="/Content%20Generation/Generator/ETHANconfig.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
-  --accent-dim: rgba(184,240,84,0.35);
-  --green2: rgba(79,209,138,0.1);
-  --muted: #666;
-  --muted2: #3a3a3a;
-  --accent2: rgba(184,240,84,0.08);
-  --accent3: rgba(184,240,84,0.16);
+  --accent-dim: oklch(0.86 0.16 95 / .55);
+  --green2: var(--green-soft);
+  --yellow-line: oklch(0.86 0.16 95 / .45);
+  --ink-hover: oklch(0.25 0.03 260 / .04);
 }
 html { height: 100%; }
 body {
@@ -24,87 +21,87 @@ body {
 }
 
 .tier-badge {
-  font-family: var(--font-mono); font-size: 9px;
-  letter-spacing: 0.12em; padding: 4px 10px;
-  border: 1px solid rgba(184,240,84,0.25);
-  color: var(--accent); border-radius: 3px; text-transform: uppercase;
+  font-family: var(--font-display); font-size: 11px; font-weight: 800;
+  letter-spacing: 0.04em; padding: 4px 12px;
+  background: var(--yellow-soft);
+  color: var(--ink); border-radius: 999px; text-transform: uppercase;
 }
 .avatar {
   width: 30px; height: 30px; border-radius: 50%;
-  background: var(--accent2);
-  border: 1px solid rgba(184,240,84,0.25);
+  background: var(--blue-soft);
+  border: 1px solid var(--line);
   display: flex; align-items: center; justify-content: center;
   font-size: 10px; font-weight: 700;
-  font-family: var(--font-mono); color: var(--accent);
+  font-family: var(--font-display); color: var(--blue);
 }
 
 /* ── LAYOUT ── */
-.layout { display: flex; flex: 1; height: calc(100vh - 56px); overflow: hidden; }
+.layout { display: flex; flex: 1; height: calc(100vh - 64px); overflow: hidden; }
 
 /* ── SIDEBAR ── */
 sidebar {
   width: 288px; min-width: 288px;
-  background: var(--panel);
-  border-right: 1px solid var(--border);
+  background: var(--card);
+  border-right: 1px solid var(--line);
   overflow-y: auto; display: flex; flex-direction: column;
 }
 sidebar::-webkit-scrollbar { width: 3px; }
-sidebar::-webkit-scrollbar-thumb { background: var(--border2); }
+sidebar::-webkit-scrollbar-thumb { background: var(--line); }
 
 .sidebar-header {
   padding: 18px 20px 14px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--line);
 }
 .course-label {
-  font-family: var(--font-mono); font-size: 8px;
-  letter-spacing: 2px; text-transform: uppercase;
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
   color: var(--muted); margin-bottom: 4px;
 }
 .course-title-sidebar {
-  font-family: var(--font-display); font-size: 13px;
-  font-weight: 800; color: var(--accent);
-  letter-spacing: 0.5px; margin-bottom: 14px;
+  font-family: var(--font-display); font-size: 14px;
+  font-weight: 800; color: var(--ink);
+  letter-spacing: -.2px; margin-bottom: 14px;
 }
 .progress-wrap { display: flex; align-items: center; gap: 10px; }
 .progress-bar-outer {
-  flex: 1; height: 2px;
-  background: var(--border2); border-radius: 2px; overflow: hidden;
+  flex: 1; height: 6px;
+  background: var(--line); border-radius: 99px; overflow: hidden;
 }
 .progress-bar-inner {
-  height: 100%; background: var(--accent);
-  border-radius: 2px; transition: width .6s ease;
+  height: 100%; background: var(--green);
+  border-radius: 99px; transition: width .6s ease;
 }
 .progress-pct {
-  font-family: var(--font-mono); font-size: 10px;
-  color: var(--accent); min-width: 28px;
+  font-family: var(--font-display); font-weight: 800; font-size: 11px;
+  color: var(--green); min-width: 28px;
 }
 
 /* ── MODULE SECTIONS ── */
-.module-section { border-bottom: 1px solid var(--border); }
+.module-section { border-bottom: 1px solid var(--line); }
 .module-header {
   display: flex; align-items: center; gap: 10px;
   padding: 13px 20px; cursor: pointer;
   transition: background .15s; user-select: none;
 }
-.module-header:hover { background: rgba(255,255,255,0.02); }
+.module-header:hover { background: var(--ink-hover); }
 .module-num {
-  font-family: var(--font-mono); font-size: 9px;
-  color: var(--muted2); min-width: 16px;
+  font-family: var(--font-display); font-weight: 800; font-size: 10px;
+  color: var(--muted); min-width: 18px;
 }
 .module-title-text {
   font-family: var(--font-display);
-  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
   text-transform: uppercase; color: var(--muted); flex: 1;
   transition: color .2s;
 }
-.module-header:hover .module-title-text { color: var(--text); }
-.module-header.open .module-title-text { color: var(--accent); }
+.module-header:hover .module-title-text { color: var(--ink); }
+.module-header.open .module-title-text { color: var(--ink); }
 .module-chevron {
   width: 14px; height: 14px; display: flex;
   align-items: center; justify-content: center;
-  transition: transform .2s; color: var(--muted2);
+  transition: transform .2s; color: var(--muted);
 }
-.module-header.open .module-chevron { transform: rotate(90deg); color: var(--accent); }
+.module-header.open .module-chevron { transform: rotate(90deg); color: var(--ink); }
 .module-chevron svg { width: 10px; height: 10px; }
 .module-lessons { display: none; flex-direction: column; }
 .module-lessons.open { display: flex; }
@@ -116,36 +113,36 @@ sidebar::-webkit-scrollbar-thumb { background: var(--border2); }
   border-left: 2px solid transparent;
   text-decoration: none;
 }
-.lesson-item:hover { background: rgba(255,255,255,0.02); }
+.lesson-item:hover { background: var(--ink-hover); }
 .lesson-item.active {
-  background: var(--accent2);
-  border-left: 2px solid var(--accent);
+  background: var(--yellow-soft);
+  border-left: 2px solid var(--yellow);
 }
 .lesson-dot {
-  width: 14px; height: 14px; border-radius: 50%;
-  border: 1.5px solid var(--muted2);
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--line);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; transition: all .2s;
 }
 .lesson-dot.done { background: var(--green); border-color: var(--green); }
 .lesson-dot.done svg { display: block; }
 .lesson-dot svg { display: none; width: 8px; height: 8px; }
-.lesson-dot.active-dot { border-color: var(--accent); }
+.lesson-dot.active-dot { border-color: var(--yellow); background: var(--yellow-soft); }
 .lesson-dot.active-dot::after {
   content: ''; width: 5px; height: 5px;
-  border-radius: 50%; background: var(--accent);
+  border-radius: 50%; background: var(--yellow);
 }
 .lesson-label {
-  font-size: 11px; color: var(--muted); flex: 1;
+  font-size: 12px; color: var(--muted); flex: 1;
   transition: color .2s; line-height: 1.4;
-  font-family: var(--font);
+  font-family: var(--font); font-weight: 500;
 }
 .lesson-item:hover .lesson-label,
-.lesson-item.active .lesson-label { color: var(--text); }
+.lesson-item.active .lesson-label { color: var(--ink); }
 .lesson-duration {
-  font-family: var(--font-mono); font-size: 9px; color: var(--muted2);
+  font-family: var(--font); font-size: 10px; color: var(--muted);
 }
-.lesson-lock { width: 10px; height: 10px; opacity: 0.2; }
+.lesson-lock { width: 10px; height: 10px; opacity: 0.3; }
 
 /* ── MAIN ── */
 main {
@@ -153,36 +150,36 @@ main {
   display: flex; flex-direction: column;
 }
 main::-webkit-scrollbar { width: 3px; }
-main::-webkit-scrollbar-thumb { background: var(--border2); }
+main::-webkit-scrollbar-thumb { background: var(--line); }
 
 /* ── VIDEO AREA ── */
 .video-zone {
-  background: #000; aspect-ratio: 16/9;
+  background: oklch(0.22 0.02 260); aspect-ratio: 16/9;
   max-height: 58vh;
   display: flex; align-items: center;
   justify-content: center; flex-direction: column; gap: 14px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--line);
   cursor: pointer; position: relative; overflow: hidden;
 }
 .video-zone::before {
   content: ''; position: absolute; inset: 0;
-  background: radial-gradient(ellipse at center, rgba(184,240,84,0.03) 0%, transparent 65%);
+  background: radial-gradient(ellipse at center, oklch(0.86 0.16 95 / .06) 0%, transparent 65%);
 }
 .play-btn {
   width: 60px; height: 60px; border-radius: 50%;
-  border: 1.5px solid var(--accent-dim);
+  border: none;
   display: flex; align-items: center; justify-content: center;
-  transition: all .25s; background: var(--accent2);
+  transition: transform .25s, box-shadow .25s; background: var(--yellow);
   position: relative; z-index: 1;
 }
 .video-zone:hover .play-btn {
-  background: var(--accent3); border-color: var(--accent);
   transform: scale(1.06);
+  box-shadow: 0 8px 24px oklch(0.86 0.16 95 / .4);
 }
-.play-btn svg { width: 20px; height: 20px; fill: var(--accent); margin-left: 3px; }
+.play-btn svg { width: 20px; height: 20px; fill: var(--ink); margin-left: 3px; }
 .video-label {
-  font-family: var(--font-mono); font-size: 10px;
-  letter-spacing: 0.1em; color: var(--muted);
+  font-family: var(--font-display); font-weight: 700; font-size: 11px;
+  letter-spacing: 0.06em; color: oklch(0.9 0.01 90);
   text-transform: uppercase; position: relative; z-index: 1;
 }
 
@@ -192,12 +189,12 @@ main::-webkit-scrollbar-thumb { background: var(--border2); }
   display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
 }
 .lesson-tag {
-  font-family: var(--font-mono); font-size: 9px;
-  letter-spacing: 0.12em; color: var(--accent); text-transform: uppercase;
-  border: 1px solid rgba(184,240,84,0.25); padding: 3px 8px; border-radius: 3px;
+  font-family: var(--font-display); font-size: 10px; font-weight: 800;
+  letter-spacing: 0.06em; color: var(--blue); text-transform: uppercase;
+  background: var(--blue-soft); padding: 4px 10px; border-radius: 999px;
 }
 .lesson-num-label {
-  font-family: var(--font-mono); font-size: 10px; color: var(--muted2);
+  font-family: var(--font); font-size: 12px; color: var(--muted);
 }
 .lesson-main-title {
   font-family: var(--font-display);
@@ -206,7 +203,7 @@ main::-webkit-scrollbar-thumb { background: var(--border2); }
   margin-bottom: 12px;
 }
 .lesson-subtitle {
-  font-size: 13px; color: var(--muted);
+  font-size: 14px; color: var(--muted);
   line-height: 1.75; margin-bottom: 32px; max-width: 520px;
 }
 
@@ -216,30 +213,30 @@ main::-webkit-scrollbar-thumb { background: var(--border2); }
   gap: 10px; margin-bottom: 36px;
 }
 .key-point {
-  background: var(--panel2); border: 1px solid var(--border2);
-  border-radius: 6px; padding: 14px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 12px; padding: 14px;
   display: flex; gap: 12px; align-items: flex-start;
-  transition: border-color .2s;
+  transition: border-color .2s; box-shadow: var(--shadow);
 }
-.key-point:hover { border-color: rgba(184,240,84,0.2); }
+.key-point:hover { border-color: var(--yellow-line); }
 .kp-icon {
-  width: 26px; height: 26px; border-radius: 4px;
-  background: var(--accent2); display: flex;
+  width: 26px; height: 26px; border-radius: 8px;
+  background: var(--yellow-soft); display: flex;
   align-items: center; justify-content: center;
   flex-shrink: 0; font-size: 12px;
 }
 .kp-text strong {
-  display: block; font-size: 11px; font-weight: 600;
-  color: var(--text); margin-bottom: 3px;
+  display: block; font-size: 12px; font-weight: 700;
+  color: var(--ink); margin-bottom: 3px;
   font-family: var(--font-display); letter-spacing: 0.02em;
 }
-.kp-text span { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.kp-text span { font-size: 12px; color: var(--muted); line-height: 1.5; }
 
 /* ── RESOURCES ── */
 .section-label {
-  font-family: var(--font-mono); font-size: 9px; font-weight: 500;
-  letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--muted2); margin-bottom: 12px;
+  font-family: var(--font-display); font-size: 10px; font-weight: 800;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 12px;
 }
 .resource-list {
   display: flex; flex-direction: column;
@@ -247,45 +244,45 @@ main::-webkit-scrollbar-thumb { background: var(--border2); }
 }
 .resource-item {
   display: flex; align-items: center; gap: 12px;
-  padding: 11px 14px; background: var(--panel2);
-  border: 1px solid var(--border2); border-radius: 5px;
+  padding: 11px 14px; background: var(--card);
+  border: 1px solid var(--line); border-radius: 10px;
   cursor: pointer; transition: all .15s; text-decoration: none;
 }
 .resource-item:hover {
-  border-color: rgba(184,240,84,0.25); background: var(--accent2);
+  border-color: var(--yellow-line); background: var(--yellow-soft);
 }
 .resource-icon { font-size: 13px; width: 18px; text-align: center; flex-shrink: 0; }
-.resource-name { font-size: 12px; color: var(--text); flex: 1; }
+.resource-name { font-size: 13px; color: var(--ink); flex: 1; }
 .resource-tag {
-  font-family: var(--font-mono); font-size: 8px;
-  letter-spacing: 0.1em; color: var(--muted2); text-transform: uppercase;
+  font-family: var(--font-display); font-size: 9px; font-weight: 800;
+  letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase;
 }
 
 /* ── COMPLETE BTN ── */
 .complete-btn {
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 12px 24px; background: var(--accent); color: #000;
+  padding: 12px 24px; background: var(--yellow); color: var(--ink);
   font-family: var(--font-display); font-size: 13px;
-  font-weight: 800; letter-spacing: 0.5px;
-  border: none; border-radius: 5px; cursor: pointer;
-  transition: all .2s;
+  font-weight: 800; letter-spacing: 0.3px;
+  border: none; border-radius: 12px; cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
 }
-.complete-btn:hover { background: #cbff5e; transform: translateY(-1px); }
+.complete-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px oklch(0.86 0.16 95 / .45); }
 .complete-btn:active { transform: translateY(0); }
 
 /* ── RIGHT PANEL ── */
 .right-panel {
   width: 240px; min-width: 240px;
-  background: var(--panel); border-left: 1px solid var(--border);
+  background: var(--card); border-left: 1px solid var(--line);
   overflow-y: auto; padding: 20px 16px;
   display: flex; flex-direction: column; gap: 28px;
 }
 .right-panel::-webkit-scrollbar { width: 3px; }
-.right-panel::-webkit-scrollbar-thumb { background: var(--border2); }
+.right-panel::-webkit-scrollbar-thumb { background: var(--line); }
 .panel-section-title {
-  font-family: var(--font-mono); font-size: 8px;
-  letter-spacing: 2px; text-transform: uppercase;
-  color: var(--muted2); margin-bottom: 12px;
+  font-family: var(--font-display); font-size: 10px; font-weight: 800;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 12px;
 }
 
 /* ── STAT GRID ── */
@@ -293,81 +290,82 @@ main::-webkit-scrollbar-thumb { background: var(--border2); }
   display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
 }
 .stat-card {
-  background: var(--panel2); border: 1px solid var(--border2);
-  border-radius: 5px; padding: 12px 10px;
+  background: var(--bg); border: 1px solid var(--line);
+  border-radius: 10px; padding: 12px 10px;
 }
 .stat-value {
   font-family: var(--font-display); font-size: 22px;
-  font-weight: 800; color: var(--accent); line-height: 1;
-  margin-bottom: 4px;
+  font-weight: 800; color: var(--ink); line-height: 1;
+  margin-bottom: 4px; letter-spacing: -.5px;
 }
 .stat-label { font-size: 10px; color: var(--muted); }
 
 /* ── TIER CARDS ── */
 .tier-card {
-  border: 1px solid var(--border2);
-  border-radius: 6px; padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px; padding: 14px;
   margin-bottom: 8px; transition: border-color .15s;
+  background: var(--bg);
 }
 .tier-card.current {
-  border-color: rgba(184,240,84,0.3);
-  background: var(--accent2);
+  border-color: var(--yellow-line);
+  background: var(--yellow-soft);
 }
-.tier-card.locked { opacity: 0.45; }
+.tier-card.locked { opacity: 0.55; }
 .tier-name {
   font-family: var(--font-display); font-size: 13px;
-  font-weight: 800; color: var(--text);
+  font-weight: 800; color: var(--ink);
   display: flex; align-items: center;
   justify-content: space-between; margin-bottom: 4px;
 }
 .tier-check {
   width: 16px; height: 16px; border-radius: 50%;
-  background: var(--accent); display: flex;
+  background: var(--green); display: flex;
   align-items: center; justify-content: center;
 }
-.tier-check svg { width: 8px; height: 8px; stroke: #000; stroke-width: 2; fill: none; }
+.tier-check svg { width: 8px; height: 8px; stroke: #fff; stroke-width: 2; fill: none; }
 .tier-price {
-  font-family: var(--font-mono); font-size: 16px;
-  font-weight: 500; color: var(--accent); margin-bottom: 4px;
+  font-family: var(--font-display); font-size: 16px;
+  font-weight: 800; color: var(--ink); margin-bottom: 4px; letter-spacing: -.3px;
 }
-.tier-desc { font-size: 10px; color: var(--muted); line-height: 1.5; }
+.tier-desc { font-size: 10.5px; color: var(--muted); line-height: 1.5; }
 
 /* ── COMMUNITY FEED ── */
 .community-item {
   display: flex; gap: 10px; align-items: flex-start;
-  padding: 8px 0; border-bottom: 1px solid var(--border);
+  padding: 8px 0; border-bottom: 1px solid var(--line);
 }
 .community-item:last-child { border-bottom: none; }
 .comm-avatar {
   width: 26px; height: 26px; border-radius: 50%;
-  background: var(--panel3); border: 1px solid var(--border2);
+  background: var(--blue-soft); border: 1px solid var(--line);
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-mono); font-size: 8px;
-  font-weight: 700; color: var(--muted); flex-shrink: 0;
+  font-family: var(--font-display); font-size: 8px;
+  font-weight: 800; color: var(--blue); flex-shrink: 0;
 }
 .comm-text {
   font-size: 11px; color: var(--muted); line-height: 1.5;
 }
-.comm-text strong { color: var(--text); font-weight: 600; }
+.comm-text strong { color: var(--ink); font-weight: 600; }
 .comm-time {
-  display: block; font-family: var(--font-mono);
-  font-size: 9px; color: var(--muted2); margin-top: 2px;
+  display: block; font-family: var(--font);
+  font-size: 9.5px; color: var(--muted); margin-top: 2px; opacity: .7;
 }
 
 /* ── FOUNDER MODE ── */
 .founder-bar {
   display: none; align-items: center; gap: 10px;
-  padding: 6px 16px; background: rgba(184,240,84,0.08);
-  border-bottom: 1px solid rgba(184,240,84,0.2);
-  font-family: var(--font-mono); font-size: 9px;
-  letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent);
+  padding: 6px 16px; background: var(--yellow-soft);
+  border-bottom: 1px solid var(--yellow-line);
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--ink);
 }
 .founder-bar.visible { display: flex; }
-.founder-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+.founder-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--yellow); animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 .founder-bar span { flex:1; }
-.founder-exit { cursor:pointer; color:var(--muted); transition:color .15s; padding: 2px 6px; border-radius:3px; border: 1px solid var(--border2); }
-.founder-exit:hover { color: var(--red); border-color: var(--red); }
+.founder-exit { cursor:pointer; color:var(--muted); transition:color .15s; padding: 2px 6px; border-radius:6px; border: 1px solid var(--line); }
+.founder-exit:hover { color: var(--coral); border-color: var(--coral); }
 
 /* founder editable fields */
 .f-edit {
@@ -377,154 +375,155 @@ main::-webkit-scrollbar-thumb { background: var(--border2); }
   transition: background .15s, box-shadow .15s;
 }
 body.founder-active .f-edit:hover {
-  background: rgba(184,240,84,0.06);
-  box-shadow: 0 0 0 1px rgba(184,240,84,0.2);
+  background: oklch(0.86 0.16 95 / .12);
+  box-shadow: 0 0 0 1px var(--yellow-line);
 }
 body.founder-active .f-edit:focus {
-  background: rgba(184,240,84,0.1);
-  box-shadow: 0 0 0 1.5px var(--accent);
+  background: oklch(0.86 0.16 95 / .18);
+  box-shadow: 0 0 0 1.5px var(--yellow);
 }
-body.founder-active [data-editable]:hover { outline: 1px dashed rgba(184,240,84,0.25); outline-offset: 2px; border-radius:3px; }
+body.founder-active [data-editable]:hover { outline: 1px dashed var(--yellow-line); outline-offset: 2px; border-radius:3px; }
 
 /* video founder controls */
 .video-founder-wrap { position: relative; }
 .video-add-btn {
   display: none; position: absolute; inset:0;
   align-items: center; justify-content: center; flex-direction: column; gap: 10px;
-  background: rgba(0,0,0,0.7); cursor: pointer; z-index: 10;
-  font-family: var(--font-mono); font-size: 10px; letter-spacing: 1px;
-  text-transform: uppercase; color: var(--accent);
+  background: oklch(0.22 0.02 260 / .75); cursor: pointer; z-index: 10;
+  font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--yellow);
 }
-.video-add-btn svg { width: 32px; height: 32px; stroke: var(--accent); stroke-width: 1.5; fill: none; }
+.video-add-btn svg { width: 32px; height: 32px; stroke: var(--yellow); stroke-width: 1.5; fill: none; }
 body.founder-active .video-add-btn { display: flex; }
-body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
+body.founder-active .video-add-btn:hover { background: oklch(0.22 0.02 260 / .88); }
 
 /* video edit panel */
 .video-edit-panel {
-  display: none; background: var(--panel2);
-  border-bottom: 1px solid var(--border2);
+  display: none; background: var(--card);
+  border-bottom: 1px solid var(--line);
   padding: 14px 20px; gap: 10px; align-items: center;
-  font-family: var(--font-mono); font-size: 11px;
+  font-family: var(--font); font-size: 12px;
 }
 .video-edit-panel.open { display: flex; }
 .video-edit-panel input {
-  flex: 1; background: var(--bg); border: 1px solid var(--border2);
-  border-radius: 4px; padding: 7px 10px; color: var(--text);
+  flex: 1; background: var(--bg); border: 1px solid var(--line);
+  border-radius: 8px; padding: 7px 10px; color: var(--ink);
   font-family: var(--font-mono); font-size: 11px; outline: none;
   transition: border-color .15s;
 }
-.video-edit-panel input:focus { border-color: var(--accent); }
-.video-edit-panel input::placeholder { color: var(--muted2); }
+.video-edit-panel input:focus { border-color: var(--yellow); }
+.video-edit-panel input::placeholder { color: var(--muted); }
 .vid-save-btn {
-  padding: 7px 16px; background: var(--accent); color: #000;
-  border: none; border-radius: 4px; cursor: pointer;
-  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  padding: 7px 16px; background: var(--yellow); color: var(--ink);
+  border: none; border-radius: 8px; cursor: pointer;
+  font-family: var(--font-display); font-size: 10px; font-weight: 800;
   letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;
-  transition: background .15s;
+  transition: transform .15s;
 }
-.vid-save-btn:hover { background: #cbff5e; }
+.vid-save-btn:hover { transform: translateY(-1px); }
 .vid-clear-btn {
   padding: 7px 12px; background: transparent; color: var(--muted);
-  border: 1px solid var(--border2); border-radius: 4px; cursor: pointer;
-  font-family: var(--font-mono); font-size: 10px; white-space: nowrap;
+  border: 1px solid var(--line); border-radius: 8px; cursor: pointer;
+  font-family: var(--font); font-size: 10px; white-space: nowrap;
   transition: all .15s;
 }
-.vid-clear-btn:hover { color: var(--red); border-color: var(--red); }
+.vid-clear-btn:hover { color: var(--coral); border-color: var(--coral); }
 
 /* founder modal */
 .founder-modal-overlay {
   display: none; position: fixed; inset: 0; z-index: 9999;
-  background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+  background: oklch(0.25 0.03 260 / .4); backdrop-filter: blur(8px);
   align-items: center; justify-content: center;
 }
 .founder-modal-overlay.open { display: flex; }
 .founder-modal {
-  background: var(--panel); border: 1px solid var(--border2);
-  border-radius: 10px; padding: 32px; width: 360px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 16px; padding: 32px; width: 360px;
   display: flex; flex-direction: column; gap: 16px;
+  box-shadow: var(--shadow);
 }
 .founder-modal-title {
   font-family: var(--font-display); font-size: 18px; font-weight: 800;
-  color: var(--accent); letter-spacing: 0.5px;
+  color: var(--ink); letter-spacing: -.2px;
 }
 .founder-modal-sub {
-  font-size: 11px; color: var(--muted); margin-top: -8px; line-height:1.5;
+  font-size: 12px; color: var(--muted); margin-top: -8px; line-height:1.5;
 }
 .founder-modal input {
   width: 100%; padding: 10px 14px; background: var(--bg);
-  border: 1px solid var(--border2); border-radius: 5px;
-  color: var(--text); font-family: var(--font-mono); font-size: 13px;
+  border: 1px solid var(--line); border-radius: 10px;
+  color: var(--ink); font-family: var(--font-mono); font-size: 13px;
   outline: none; letter-spacing: 2px; transition: border-color .15s;
 }
-.founder-modal input:focus { border-color: var(--accent); }
-.founder-modal input.error { border-color: var(--red); animation: shake .3s; }
+.founder-modal input:focus { border-color: var(--yellow); }
+.founder-modal input.error { border-color: var(--coral); animation: shake .3s; }
 @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
 .founder-modal-actions { display: flex; gap: 8px; }
 .founder-modal-confirm {
-  flex:1; padding: 10px; background: var(--accent); color: #000;
-  border: none; border-radius: 5px; cursor: pointer;
+  flex:1; padding: 10px; background: var(--yellow); color: var(--ink);
+  border: none; border-radius: 10px; cursor: pointer;
   font-family: var(--font-display); font-size: 13px; font-weight: 800;
-  transition: background .15s;
+  transition: transform .15s;
 }
-.founder-modal-confirm:hover { background: #cbff5e; }
+.founder-modal-confirm:hover { transform: translateY(-1px); }
 .founder-modal-cancel {
   padding: 10px 16px; background: transparent; color: var(--muted);
-  border: 1px solid var(--border2); border-radius: 5px; cursor: pointer;
-  font-family: var(--font-mono); font-size: 11px; transition: all .15s;
+  border: 1px solid var(--line); border-radius: 10px; cursor: pointer;
+  font-family: var(--font); font-size: 11px; transition: all .15s;
 }
-.founder-modal-cancel:hover { color: var(--text); border-color: var(--muted); }
+.founder-modal-cancel:hover { color: var(--ink); border-color: var(--muted); }
 
 /* ── TOOL CTA ── */
 .tool-cta {
-  background: var(--panel2); border: 1px solid rgba(184,240,84,0.2);
-  border-radius: 6px; padding: 14px;
+  background: var(--blue-soft); border: 1px solid var(--line);
+  border-radius: 12px; padding: 14px;
 }
 .tool-cta-label {
-  font-family: var(--font-mono); font-size: 8px;
-  letter-spacing: 1.5px; text-transform: uppercase;
-  color: var(--muted2); margin-bottom: 6px;
+  font-family: var(--font-display); font-size: 9px; font-weight: 800;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 6px;
 }
 .tool-cta-title {
   font-family: var(--font-display); font-size: 13px;
-  font-weight: 800; color: var(--accent); margin-bottom: 8px;
+  font-weight: 800; color: var(--ink); margin-bottom: 8px;
 }
 .tool-cta-btn {
   display: block; width: 100%; padding: 8px 0;
-  background: var(--accent); color: #000;
+  background: var(--yellow); color: var(--ink);
   font-family: var(--font-display); font-size: 11px;
   font-weight: 800; letter-spacing: 0.5px;
-  border: none; border-radius: 4px; cursor: pointer;
+  border: none; border-radius: 8px; cursor: pointer;
   text-align: center; text-decoration: none;
-  transition: background .15s;
+  transition: transform .15s;
 }
-.tool-cta-btn:hover { background: #cbff5e; }
+.tool-cta-btn:hover { transform: translateY(-1px); }
 
 /* ── DYNAMIC SIDEBAR ── */
-.sidebar-module { border-bottom: 1px solid var(--border); }
+.sidebar-module { border-bottom: 1px solid var(--line); }
 .sidebar-module .module-header {
   display: flex; align-items: center; gap: 10px;
   padding: 13px 20px; cursor: default;
   transition: background .15s; user-select: none;
 }
-.sidebar-module .module-header:hover { background: rgba(255,255,255,0.02); }
+.sidebar-module .module-header:hover { background: var(--ink-hover); }
 .mod-num {
-  font-family: var(--font-mono); font-size: 9px;
-  color: var(--muted2); min-width: 16px;
+  font-family: var(--font-display); font-weight: 800; font-size: 10px;
+  color: var(--muted); min-width: 18px;
 }
 .mod-badge-free {
-  font-family: var(--font-mono); font-size: 9px;
-  background: var(--accent); color: #000;
-  padding: 2px 6px; border-radius: 4px; font-weight: 700;
+  font-family: var(--font-display); font-size: 9px;
+  background: var(--green-soft); color: var(--green);
+  padding: 2px 8px; border-radius: 999px; font-weight: 800;
 }
 .mod-badge-soon {
-  font-family: var(--font-mono); font-size: 9px;
-  background: transparent; color: var(--muted2);
-  border: 1px solid var(--border2);
-  padding: 2px 6px; border-radius: 4px; font-weight: 700;
+  font-family: var(--font-display); font-size: 9px;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 2px 8px; border-radius: 999px; font-weight: 800;
 }
 .mod-title {
-  font-family: var(--font-display); font-size: 10px;
-  font-weight: 700; letter-spacing: 0.08em;
+  font-family: var(--font-display); font-size: 11px;
+  font-weight: 700; letter-spacing: 0.06em;
   text-transform: uppercase; color: var(--muted); flex: 1;
 }
 .lesson-list { display: flex; flex-direction: column; }
@@ -534,42 +533,42 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
   transition: background .15s;
   border-left: 2px solid transparent;
 }
-.lesson-list .lesson-item:hover { background: rgba(255,255,255,0.02); }
+.lesson-list .lesson-item:hover { background: var(--ink-hover); }
 .lesson-list .lesson-item.active {
-  background: var(--accent2);
-  border-left: 2px solid var(--accent);
+  background: var(--yellow-soft);
+  border-left: 2px solid var(--yellow);
 }
 .lesson-list .lesson-dot {
-  width: 14px; height: 14px; border-radius: 50%;
-  border: 1.5px solid var(--muted2);
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--line);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; font-size: 9px;
 }
 .lesson-list .lesson-dot.done {
-  background: var(--green); border-color: var(--green); color: #000;
+  background: var(--green); border-color: var(--green); color: #fff;
 }
 .lesson-list .lesson-dot.locked { border-color: transparent; }
 .lesson-list .lesson-title {
-  font-size: 11px; color: var(--muted); flex: 1;
-  line-height: 1.4; font-family: var(--font);
+  font-size: 12px; color: var(--muted); flex: 1;
+  line-height: 1.4; font-family: var(--font); font-weight: 500;
 }
 .lesson-list .lesson-item:hover .lesson-title,
-.lesson-list .lesson-item.active .lesson-title { color: var(--text); }
+.lesson-list .lesson-item.active .lesson-title { color: var(--ink); }
 
 /* ── FOUNDER DYNAMIC CONTROLS ── */
 .founder-mod-ctrl { display:flex;gap:4px;margin-left:auto; }
-.founder-mod-ctrl button { background:transparent;border:1px solid var(--border,#333);color:var(--muted,#888);padding:2px 6px;border-radius:4px;cursor:pointer;font-size:10px; }
-.founder-mod-ctrl button:hover { color:var(--text,#fff);border-color:var(--accent,#b8f054); }
-.founder-lesson-del { background:transparent;border:none;color:var(--muted,#888);cursor:pointer;font-size:10px;margin-left:auto;padding:0 4px; }
-.founder-lesson-del:hover { color:#f44; }
-.founder-block-del { display:block;background:transparent;border:1px solid #f44;color:#f44;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:10px;margin-top:8px; }
-.founder-block-del:hover { background:#f44;color:#fff; }
-.founder-btn { background:transparent;border:1px solid var(--border,#333);color:var(--muted,#888);padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px; }
-.founder-btn:hover { color:var(--text,#fff);border-color:var(--accent,#b8f054); }
+.founder-mod-ctrl button { background:transparent;border:1px solid var(--line);color:var(--muted);padding:2px 6px;border-radius:6px;cursor:pointer;font-size:10px; }
+.founder-mod-ctrl button:hover { color:var(--ink);border-color:var(--yellow); }
+.founder-lesson-del { background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:10px;margin-left:auto;padding:0 4px; }
+.founder-lesson-del:hover { color:var(--coral); }
+.founder-block-del { display:block;background:transparent;border:1px solid var(--coral);color:var(--coral);padding:3px 10px;border-radius:6px;cursor:pointer;font-size:10px;margin-top:8px; }
+.founder-block-del:hover { background:var(--coral);color:#fff; }
+.founder-btn { background:transparent;border:1px solid var(--line);color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px; }
+.founder-btn:hover { color:var(--ink);border-color:var(--yellow); }
 
 /* ── LESSON BRIEF ── */
 .lesson-brief {
-  font-size: 14px; color: var(--muted); line-height: 1.7;
+  font-size: 14.5px; color: var(--muted); line-height: 1.7;
   margin: 0 0 28px; max-width: 680px;
 }
 
@@ -578,28 +577,29 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
 
 /* Block wrapper */
 .bam-block {
-  position: relative; border-radius: 8px;
-  background: var(--panel2); border: 1px solid var(--border2);
+  position: relative; border-radius: 12px;
+  background: var(--card); border: 1px solid var(--line);
+  box-shadow: var(--shadow);
 }
 /* Drag highlight */
-.bam-block.drag-over { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.bam-block.drag-over { border-color: var(--yellow); box-shadow: 0 0 0 1px var(--yellow); }
 
 /* Block: text */
 .bam-block-text { padding: 20px 22px; }
 .bam-block-text .block-heading {
-  font-family: var(--font-display); font-size: 13px; font-weight: 700;
-  letter-spacing: 0.05em; text-transform: uppercase; color: var(--text);
+  font-family: var(--font-display); font-size: 13px; font-weight: 800;
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink);
   margin-bottom: 10px;
 }
 .bam-block-text .block-body {
-  font-size: 13px; color: var(--muted); line-height: 1.75;
+  font-size: 14px; color: var(--muted); line-height: 1.75;
 }
 
 /* Block: video */
-.bam-block-video { overflow: hidden; border-radius: 8px; }
+.bam-block-video { overflow: hidden; border-radius: 12px; }
 .bam-block-video .block-video-inner {
   position: relative; width: 100%; padding-top: 56.25%;
-  background: #000;
+  background: oklch(0.22 0.02 260);
 }
 .bam-block-video .block-video-inner iframe,
 .bam-block-video .block-video-inner video {
@@ -607,11 +607,11 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
 }
 
 /* Block: image */
-.bam-block-image { overflow: hidden; border-radius: 8px; }
-.bam-block-image img { width: 100%; display: block; border-radius: 8px; }
+.bam-block-image { overflow: hidden; border-radius: 12px; }
+.bam-block-image img { width: 100%; display: block; border-radius: 12px; }
 .bam-block-image .block-caption {
-  padding: 10px 14px; font-size: 11px; color: var(--muted2);
-  font-family: var(--font-mono); text-align: center;
+  padding: 10px 14px; font-size: 11.5px; color: var(--muted);
+  font-family: var(--font); text-align: center;
 }
 
 /* Block: file */
@@ -619,15 +619,15 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
 .bam-block-file .block-file-row {
   display: flex; align-items: center; gap: 12px;
   padding: 14px 18px; text-decoration: none;
-  transition: background .15s; border-radius: 8px;
+  transition: background .15s; border-radius: 12px;
 }
-.bam-block-file .block-file-row:hover { background: rgba(255,255,255,0.04); }
+.bam-block-file .block-file-row:hover { background: var(--yellow-soft); }
 .bam-block-file .block-file-icon { font-size: 18px; flex-shrink: 0; }
-.bam-block-file .block-file-name { font-size: 13px; color: var(--text); flex: 1; }
+.bam-block-file .block-file-name { font-size: 13px; color: var(--ink); flex: 1; }
 .bam-block-file .block-file-tag {
-  font-family: var(--font-mono); font-size: 9px; letter-spacing: 1px;
-  text-transform: uppercase; color: var(--muted2);
-  border: 1px solid var(--border2); border-radius: 4px; padding: 2px 7px;
+  font-family: var(--font-display); font-size: 9px; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px;
 }
 
 /* Block: steps */
@@ -638,16 +638,16 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
 }
 .bam-block-steps .step-num {
   width: 26px; height: 26px; border-radius: 50%;
-  background: var(--accent); color: #000;
+  background: var(--yellow); color: var(--ink);
   font-family: var(--font-display); font-size: 12px; font-weight: 800;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   margin-top: 1px;
 }
 .bam-block-steps .step-content { flex: 1; }
 .bam-block-steps .step-title {
-  font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px;
+  font-size: 13.5px; font-weight: 600; color: var(--ink); margin-bottom: 3px;
 }
-.bam-block-steps .step-body { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.bam-block-steps .step-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
 /* Founder block controls (visible only in founder mode) */
 .block-founder-ctrl {
@@ -657,19 +657,19 @@ body.founder-active .video-add-btn:hover { background: rgba(0,0,0,0.85); }
 body.founder-active .block-founder-ctrl { display: flex; }
 .block-drag-handle {
   display: none; position: absolute; top: 50%; left: -20px;
-  transform: translateY(-50%); cursor: grab; color: var(--muted2);
+  transform: translateY(-50%); cursor: grab; color: var(--muted);
   font-size: 14px; user-select: none;
 }
 body.founder-active .block-drag-handle { display: block; }
 .block-ctrl-btn {
-  background: var(--panel); border: 1px solid var(--border2);
-  color: var(--muted); padding: 3px 8px; border-radius: 4px;
-  cursor: pointer; font-size: 10px; font-family: var(--font-mono);
+  background: var(--card); border: 1px solid var(--line);
+  color: var(--muted); padding: 3px 8px; border-radius: 6px;
+  cursor: pointer; font-size: 10px; font-family: var(--font);
   transition: all .15s;
 }
-.block-ctrl-btn:hover { color: var(--text); border-color: var(--muted); }
-.block-ctrl-btn.del:hover { color: #f44; border-color: #f44; }
-.block-ctrl-btn.up:hover,.block-ctrl-btn.dn:hover { border-color: var(--accent); color: var(--accent); }
+.block-ctrl-btn:hover { color: var(--ink); border-color: var(--muted); }
+.block-ctrl-btn.del:hover { color: var(--coral); border-color: var(--coral); }
+.block-ctrl-btn.up:hover,.block-ctrl-btn.dn:hover { border-color: var(--yellow); color: var(--ink); }
 
 /* contenteditable in founder mode */
 body.founder-active .block-editable {
@@ -677,12 +677,12 @@ body.founder-active .block-editable {
   cursor: text;
 }
 body.founder-active .block-editable:hover {
-  background: rgba(184,240,84,0.06);
-  box-shadow: 0 0 0 1px rgba(184,240,84,0.2);
+  background: oklch(0.86 0.16 95 / .12);
+  box-shadow: 0 0 0 1px var(--yellow-line);
 }
 body.founder-active .block-editable:focus {
-  background: rgba(184,240,84,0.1);
-  box-shadow: 0 0 0 1.5px var(--accent);
+  background: oklch(0.86 0.16 95 / .18);
+  box-shadow: 0 0 0 1.5px var(--yellow);
 }
 
 /* ── FOUNDER SIDE PANEL ── */
@@ -690,37 +690,49 @@ body.founder-active .block-editable:focus {
   display: none;
   position: fixed; right: 0; top: 50%; transform: translateY(-50%);
   z-index: 200; flex-direction: column; gap: 0;
-  background: var(--panel); border: 1px solid rgba(184,240,84,0.25);
-  border-right: none; border-radius: 10px 0 0 10px;
-  overflow: hidden; box-shadow: -4px 0 24px rgba(0,0,0,0.4);
+  background: var(--card); border: 1px solid var(--yellow-line);
+  border-right: none; border-radius: 12px 0 0 12px;
+  overflow: hidden; box-shadow: var(--shadow);
   min-width: 130px;
 }
 body.founder-active .founder-side-panel { display: flex; }
 .fsp-header {
-  padding: 10px 14px; background: rgba(184,240,84,0.08);
-  border-bottom: 1px solid rgba(184,240,84,0.15);
-  font-family: var(--font-mono); font-size: 8px; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--accent); text-align: center;
+  padding: 10px 14px; background: var(--yellow-soft);
+  border-bottom: 1px solid var(--yellow-line);
+  font-family: var(--font-display); font-size: 9px; font-weight: 800; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--ink); text-align: center;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
 }
 .fsp-btn {
   display: flex; align-items: center; gap: 8px;
   padding: 11px 14px; cursor: pointer; transition: background .15s;
   border: none; background: transparent;
   font-size: 12px; color: var(--muted); font-family: var(--font);
-  text-align: left; border-bottom: 1px solid var(--border);
+  text-align: left; border-bottom: 1px solid var(--line);
   width: 100%;
 }
 .fsp-btn:last-child { border-bottom: none; }
-.fsp-btn:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.fsp-btn:hover { background: var(--ink-hover); color: var(--ink); }
 .fsp-btn .fsp-icon { font-size: 14px; flex-shrink: 0; }
 
 /* auto-save indicator */
 .fsp-save-dot {
   width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent); margin-left: auto; flex-shrink: 0;
+  background: var(--green); margin-left: auto; flex-shrink: 0;
   opacity: 0; transition: opacity .3s;
 }
 .fsp-save-dot.active { opacity: 1; animation: pulse 1s ease-out forwards; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) {
+  .right-panel { display: none; }
+}
+@media (max-width: 820px) {
+  .layout { flex-direction: column; height: auto; overflow: visible; }
+  sidebar { width: 100%; min-width: 0; max-height: 40vh; border-right: none; border-bottom: 1px solid var(--line); }
+  main { overflow: visible; }
+  .lesson-content { padding: 28px 22px; }
+}
 </style>
 </head>
 <body>
@@ -739,23 +751,22 @@ body.founder-active .founder-side-panel { display: flex; }
 </div>
 
 <!-- COMING SOON MODAL -->
-<div id="coming-soon-modal" class="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center">
-  <div class="modal-box" style="background:var(--panel,#1a1a1a);border:1px solid var(--border,#333);border-radius:12px;padding:32px;text-align:center;max-width:340px;width:90%">
-    <div style="font-size:28px;margin-bottom:10px">🚧</div>
-    <div style="font-size:15px;font-weight:700;margin-bottom:8px;color:var(--text,#fff)">Coming Soon</div>
-    <div style="font-size:12px;color:var(--muted,#888);margin-bottom:22px;line-height:1.5">This module is still in production. You'll be notified when it drops.</div>
-    <button onclick="document.getElementById('coming-soon-modal').style.display='none'" style="background:var(--accent,#b8f054);color:#000;border:none;padding:9px 24px;border-radius:6px;font-weight:700;cursor:pointer;font-size:12px">Got it</button>
+<div id="coming-soon-modal" class="modal-overlay" style="display:none;position:fixed;inset:0;background:oklch(0.25 0.03 260 / .4);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center">
+  <div class="modal-box" style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:32px;text-align:center;max-width:340px;width:90%;box-shadow:var(--shadow)">
+    <svg viewBox="0 0 24 24" style="width:30px;height:30px;stroke:var(--blue);stroke-width:1.8;fill:none;margin-bottom:10px"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3"/></svg>
+    <div style="font-size:15px;font-weight:700;margin-bottom:8px;color:var(--ink);font-family:var(--font-display)">Coming Soon</div>
+    <div style="font-size:12.5px;color:var(--muted);margin-bottom:22px;line-height:1.5">This module is still in production. You'll be notified when it drops.</div>
+    <button onclick="document.getElementById('coming-soon-modal').style.display='none'" style="background:var(--yellow);color:var(--ink);border:none;padding:9px 24px;border-radius:10px;font-weight:800;cursor:pointer;font-size:12px;font-family:var(--font-display)">Got it</button>
   </div>
 </div>
 
 <!-- NAV -->
 <nav>
-  <a href="/" class="nav-logo" id="nav-logo-trigger">BUILD<em>AI</em>MODELS</a>
+  <a href="/" class="nav-logo" id="nav-logo-trigger">bam<em>.</em></a>
   <a href="/course" class="nav-link">Course</a>
-  <a href="/studio" class="nav-link">Studio</a>
   <a href="/account" class="nav-link">Account</a>
   <div class="nav-right" style="margin-left:auto;display:flex;align-items:center;gap:12px">
-    <div class="tier-badge">Beginner</div>
+    <div class="tier-badge">Starter Kit</div>
     <div class="avatar">JA</div>
     <button class="nav-btn" onclick="handleSignOut()">Sign Out</button>
   </div>
@@ -786,7 +797,7 @@ body.founder-active .founder-side-panel { display: flex; }
   <sidebar>
     <div class="sidebar-header">
       <div class="course-label">You're enrolled in</div>
-      <div class="course-title-sidebar">AI MODEL BLUEPRINT</div>
+      <div class="course-title-sidebar">Web Design Agency Starter Kit</div>
       <div class="progress-wrap">
         <div class="progress-bar-outer">
           <div class="progress-bar-inner" id="progress-bar" style="width:22%"></div>
@@ -807,7 +818,7 @@ body.founder-active .founder-side-panel { display: flex; }
         <div class="play-btn" id="play-btn-el">
           <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         </div>
-        <span class="video-label" id="video-label-text">The operator mindset — 4:22</span>
+        <span class="video-label" id="video-label-text">Start here — what you're building</span>
       </div>
       <!-- founder overlay shown in founder mode when no video set -->
       <div class="video-add-btn" id="video-add-btn" onclick="openVideoPanel()">
@@ -826,11 +837,11 @@ body.founder-active .founder-side-panel { display: flex; }
 
     <div class="lesson-content" id="lesson-body">
       <div class="lesson-meta">
-        <span class="lesson-tag" id="lesson-tag-el">Module 01</span>
+        <span class="lesson-tag" id="lesson-tag-el">Module 00</span>
         <span class="lesson-num-label" id="lesson-num-el">Lesson 1 of 3</span>
       </div>
-      <h1 class="lesson-main-title" id="lesson-title-el"><span class="f-edit" contenteditable="false" data-key="title">Watch This First</span></h1>
-      <p class="lesson-subtitle" id="lesson-sub-el"><span class="f-edit" contenteditable="false" data-key="sub">Start here before anything else.</span></p>
+      <h1 class="lesson-main-title" id="lesson-title-el"><span class="f-edit" contenteditable="false" data-key="title">What You're Building</span></h1>
+      <p class="lesson-subtitle" id="lesson-sub-el"><span class="f-edit" contenteditable="false" data-key="sub">The whole system in one sitting, before you spend a penny.</span></p>
       <p class="lesson-brief" id="lesson-brief-el"></p>
 
       <div id="blocks-container"></div>
@@ -868,58 +879,51 @@ body.founder-active .founder-side-panel { display: flex; }
       <div class="panel-section-title">Your plan</div>
       <div class="tier-card current">
         <div class="tier-name">
-          Beginner
+          Agency Starter Kit
           <div class="tier-check">
             <svg viewBox="0 0 10 10"><path d="M2 5l2.5 2.5L8 3"/></svg>
           </div>
         </div>
         <div class="tier-price">£99</div>
-        <div class="tier-desc">Full beginner course + BuildAIModels studio access</div>
+        <div class="tier-desc">All 14 modules, the prompt &amp; script library, and every v2 update</div>
       </div>
       <div class="tier-card locked">
-        <div class="tier-name">Advanced</div>
-        <div class="tier-price">£299</div>
-        <div class="tier-desc">Agency scaling, automation, multi-model ops — coming soon</div>
+        <div class="tier-name">SEO Automation Kit</div>
+        <div class="tier-price">+£80</div>
+        <div class="tier-desc">The content-engine course — domain warming, GEO writing, indexing. Bundle upgrade from your account.</div>
       </div>
     </div>
 
     <div>
-      <div class="panel-section-title">Studio</div>
+      <div class="panel-section-title">Upgrade</div>
       <div class="tool-cta">
-        <div class="tool-cta-label">BuildAIModels</div>
-        <div class="tool-cta-title">Open Your Studio →</div>
-        <a href="/studio" class="tool-cta-btn">Launch Studio</a>
+        <div class="tool-cta-label">Course 2</div>
+        <div class="tool-cta-title">Add the SEO Kit →</div>
+        <a href="/account" class="tool-cta-btn">View bundle</a>
       </div>
     </div>
 
     <div>
-      <div class="panel-section-title">Operator feed</div>
+      <div class="panel-section-title">Latest updates</div>
       <div class="community-item">
-        <div class="comm-avatar">MK</div>
+        <div class="comm-avatar">07</div>
         <div class="comm-text">
-          <strong>MikeK</strong> just hit £1,200/mo on Fanvue with model #2
-          <span class="comm-time">2h ago</span>
+          <strong>Module 07</strong> — UK legal section: TPS/CTPS screening walkthrough
+          <span class="comm-time">Course update</span>
         </div>
       </div>
       <div class="community-item">
-        <div class="comm-avatar">AS</div>
+        <div class="comm-avatar">11</div>
         <div class="comm-text">
-          <strong>AlexS</strong> completed the full beginner course
-          <span class="comm-time">5h ago</span>
+          <strong>Module 11</strong> — one-page contract template added to resources
+          <span class="comm-time">Course update</span>
         </div>
       </div>
       <div class="community-item">
-        <div class="comm-avatar">JR</div>
+        <div class="comm-avatar">06</div>
         <div class="comm-text">
-          <strong>JadeR</strong> posted: "DreamPrint vault is a game changer"
-          <span class="comm-time">8h ago</span>
-        </div>
-      </div>
-      <div class="community-item">
-        <div class="comm-avatar">TW</div>
-        <div class="comm-text">
-          <strong>TomW</strong> unlocked Advanced tier
-          <span class="comm-time">1d ago</span>
+          <strong>Module 06</strong> — lead sheet template refreshed with the verification checklist
+          <span class="comm-time">Course update</span>
         </div>
       </div>
     </div>
@@ -1016,13 +1020,13 @@ window.addEventListener('load', async () => {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '/auth'; return; }
 
+  // Multi-course schema: one row per (user_id, product)
   const { data: access } = await sb
     .from('course_access')
-    .select('tier')
-    .eq('user_id', session.user.id)
-    .single();
+    .select('product')
+    .eq('user_id', session.user.id);
 
-  if (access) {
+  if (access && access.some(r => r.product === 'agency')) {
     window._courseAccess = true;
   } else {
     window._courseAccess = false;
@@ -1034,69 +1038,78 @@ window.addEventListener('load', async () => {
 });
 
 // ── LESSON DATA ─────────────────────────────────────────────────
+// Default structure for the Web Design Agency Starter Kit.
+// Overridden live by remote structure in Supabase once the founder editor saves.
 const MODULES = [
-  { id: 'free-preview', label: 'Free Preview',              num: null, free: true },
-  { id: 'mod-00',       label: 'Before You Touch Anything', num: '00', free: false },
-  { id: 'mod-01',       label: 'Foundation',                num: '01', free: false },
-  { id: 'mod-02',       label: 'Niche & Model Concept',     num: '02', free: false },
-  { id: 'mod-03',       label: 'Build Your Model',          num: '03', free: false },
-  { id: 'mod-04',       label: 'Fanvue',                    num: '04', free: false },
-  { id: 'mod-05',       label: 'Socials Setup',             num: '05', free: false },
-  { id: 'mod-06',       label: 'Community Links',           num: '06', free: false },
-  { id: 'advanced',     label: 'Advanced',                  num: null, free: false, comingSoon: true },
+  { id: 'mod-00', label: 'Start Here',               num: '00', free: true },
+  { id: 'mod-01', label: 'Basics',                   num: '01', free: false },
+  { id: 'mod-02', label: 'Your Offer & Pricing',     num: '02', free: false },
+  { id: 'mod-03', label: 'Niche & Territory',        num: '03', free: false },
+  { id: 'mod-04', label: 'Create Your Main Website', num: '04', free: false },
+  { id: 'mod-05', label: 'Create Demos',             num: '05', free: false },
+  { id: 'mod-06', label: 'Scrape Leads with Claude', num: '06', free: false },
+  { id: 'mod-07', label: 'Cold Outreach',            num: '07', free: false },
+  { id: 'mod-08', label: 'Follow-up & Pipeline',     num: '08', free: false },
+  { id: 'mod-09', label: 'Closing the Deal',         num: '09', free: false },
+  { id: 'mod-10', label: 'Fulfilment',               num: '10', free: false },
+  { id: 'mod-11', label: 'Getting Paid',             num: '11', free: false },
+  { id: 'mod-12', label: 'Retention & Upsells',      num: '12', free: false },
+  { id: 'mod-13', label: 'Case Study',               num: '13', free: false },
 ];
 
 const LESSONS = {
-  // FREE PREVIEW
-  'preview-intro':   { mod: 'free-preview', title: "What's Included?",          sub: "A quick look at what's inside the full course.",                            brief: "Get a full overview of everything inside BAM — every module, every lesson, and exactly what you'll be able to build by the end. Watch this first so you know what you're walking into." },
+  // MOD 00 — FREE PREVIEW
+  'what-building':   { mod: 'mod-00', title: "What You're Building",       sub: 'The whole system in one sitting, before you spend a penny.', brief: 'A tour of the full system — the agency model, what the 14 modules build towards, and what a working month looks like once you have clients. Watch this first: if the model is not for you, you will know before paying.' },
+  'tool-stack':      { mod: 'mod-00', title: 'The Tool Stack & Costs',     sub: 'Claude Code, GitHub, Cloudflare — and what it all costs per month.', brief: 'Every tool the agency runs on, what each one is for, and the honest monthly cost of running the whole operation. Set up each account as you follow along.' },
+  'install-kit':     { mod: 'mod-00', title: 'Installing the Kit',         sub: 'The skills, prompts and templates that come with the course.', brief: 'How to install the prompt library, skills and templates included with the kit so everything in later modules is one command away.' },
 
-  // MOD 00
-  'watch-first':     { mod: 'mod-00', title: 'Watch This First',          sub: 'Start here before anything else.',                                           brief: 'Watch this before you touch anything else in the course. This short video sets the context, the order to follow, and the mindset shift you need from day one.' },
-  'software-links':  { mod: 'mod-00', title: 'Software Links',            sub: 'Every tool and platform used in the course, in one place.',                   brief: 'Every tool, platform, and software used across the entire course — all in one place. Bookmark this lesson and come back to it as you work through each module.' },
+  // MOD 01 — BASICS
+  'design-skills':   { mod: 'mod-01', title: 'Design Without Being a Designer', sub: 'The rules that make a site look agency-built, not AI-built.', brief: 'The anti-slop design rules the agency uses on every build — typography, colour, layout — and how to enforce them through Claude so the output looks deliberate.' },
+  'council-method':  { mod: 'mod-01', title: 'The 5-Opinion Council',      sub: 'Validate decisions before you act on them.', brief: 'The council method: how to have Claude argue a decision from five expert perspectives before you commit — used throughout the course for design, pricing and strategy calls.' },
+  'prompt-library':  { mod: 'mod-01', title: 'The Core Prompt Library',    sub: 'The prompts that do the heavy lifting.', brief: 'A guided tour of the core prompts — component sourcing, page builds, image handling — and how to adapt them without breaking what makes them work.' },
 
-  // MOD 01
-  'tool-stack':      { mod: 'mod-01', title: 'Tool Stack',                sub: 'Wan 2.7, Seedream 5.0 Lite, and Kling — the AI tools that power your model.', brief: 'A breakdown of the three core AI tools in the BAM system — Wan 2.7, Seedream 5.0 Lite, and Kling. We cover what each one does, when to use it, and how they fit together in your production workflow.' },
-  'bam-studio':      { mod: 'mod-01', title: 'BAM Studio',                sub: 'A full walkthrough of the BAM Studio and how to use it.',                    brief: 'A full walkthrough of the BAM Studio — how to navigate it, what each feature does, and how to get the most out of it from day one. This is your main hub for generating content.' },
-  'prompt-farm':     { mod: 'mod-01', title: 'Prompt Farm Setup',         sub: 'Building a prompt library that generates consistent, on-brand results.',      brief: 'How to build a personal prompt library that consistently generates on-brand, high-quality images every time. A solid prompt farm means faster output, less repetition, and better results at scale.' },
+  // MOD 02 — OFFER & PRICING
+  'retainer-model':  { mod: 'mod-02', title: 'The Done-For-You Retainer',  sub: 'Why monthly beats one-off builds.', brief: 'The core offer: a done-for-you website on a monthly plan, hosting included. Why recurring revenue changes the whole business, and how to explain it to a tradesperson in one sentence.' },
+  'what-to-charge':  { mod: 'mod-02', title: 'What to Charge',             sub: 'Tiers, anchoring, and where the numbers come from.', brief: 'The pricing ladder, how to anchor it against what trades already pay for leads, and when to flex. Includes the exact tier structure a real agency sells today.' },
 
-  // MOD 02
-  'pick-niche':      { mod: 'mod-02', title: 'Pick Your Niche',           sub: 'Finding a profitable angle before you create anything.',                     brief: 'How to identify a profitable niche before you create a single image — covering demand signals, competition gaps, and what actually converts on Fanvue. This is the most important decision you will make in this business.' },
-  'whats-working':   { mod: 'mod-02', title: "What's Working",            sub: 'Real examples of winning niches and why they work.',                         brief: 'Real-world examples of niches and model concepts that are earning right now, so you can build from proven templates rather than guessing. See the patterns and reverse-engineer what works.' },
-  'personality':     { mod: 'mod-02', title: 'Personality & Consistency', sub: 'Giving your model a character that fans actually connect with.',              brief: 'How to give your model a personality that fans connect with and keep that character consistent across every post and platform. Consistency is what turns followers into loyal, paying subscribers.' },
+  // MOD 03 — NICHE & TERRITORY
+  'who-to-target':   { mod: 'mod-03', title: 'Who to Target',              sub: 'The trades that answer the phone and pay monthly.', brief: 'Which trades convert, which waste your time, and why "boring" businesses are the best clients you will ever have.' },
+  'qualification':   { mod: 'mod-03', title: 'The Qualification Bar',      sub: 'Dated site + mobile number = a real lead.', brief: 'The two-part qualification rule that keeps your calling list honest, and how to pick a region you can actually own.' },
 
-  // MOD 03
-  'build-face':      { mod: 'mod-03', title: 'Build Your Face',           sub: 'Generating and locking in a consistent face for your model.',                brief: 'How to generate and lock in a consistent face for your AI model — prompt structure, reference techniques, and the exact settings to get reliable results every time. This is where your model identity starts.' },
-  'build-body':      { mod: 'mod-03', title: 'Build Your Body',           sub: 'Full-body content — style, outfits, and consistency at scale.',              brief: 'Extending your model beyond the face — body type, outfit consistency, and the workflow for producing full-body content that stays on-brand across every shoot. Style choices here define your aesthetic.' },
-  'image-posts':     { mod: 'mod-03', title: 'Image Posts/Carousels',     sub: 'Packaging your images into posts that drive engagement.',                    brief: 'How to produce and package your images into posts and carousels optimised for engagement on every platform. Format and presentation matter as much as the image itself.' },
-  'reel-rec':        { mod: 'mod-03', title: 'Reel Recreation',           sub: 'Recreating proven reel formats that get views and profile visits.',           brief: 'How to recreate the reel formats that are already proven to work — the templates, pacing, and style choices that get views and drive profile visits. Do not reinvent the wheel; copy what converts.' },
-  'own-videos':      { mod: 'mod-03', title: 'Create Your Own Videos',    sub: 'Producing original video content with your AI model.',                       brief: 'Going beyond recreation — how to produce original video content with your AI model, from short clips to looping content ready for TikTok and Instagram Reels. This is where you start building a real content engine.' },
-  'nsfw-photos':     { mod: 'mod-03', title: 'NSFW - Photos',             sub: 'Producing and batching NSFW photo content efficiently.',                     brief: 'How to produce NSFW photo content efficiently — what tools to use, how to batch produce, and the quality benchmarks that keep subscribers paying month after month. Production volume beats perfection here.' },
-  'nsfw-videos':     { mod: 'mod-03', title: 'NSFW - Videos',             sub: 'The full NSFW video workflow for Fanvue PPV revenue.',                       brief: 'The full NSFW video production workflow — generation tools, editing, and how to structure your vault to maximise PPV revenue on Fanvue. Video content commands the highest price points, and this lesson shows you why.' },
+  // MOD 04 — YOUR SITE
+  'proof-of-skill':  { mod: 'mod-04', title: 'Your Agency Site',           sub: 'The site that answers "have you done this before?"', brief: 'Build your own agency website as proof of skill — structure, copy and the sections that make a one-person agency look established.' },
 
-  // MOD 04
-  'fanvue-account':  { mod: 'mod-04', title: 'Create Your Account',       sub: 'Step-by-step Fanvue setup — profile, pricing, and first impressions.',       brief: 'Step-by-step Fanvue account setup — profile, bio, pricing structure, and the key settings that affect discoverability and subscriber trust from day one. First impressions determine whether someone subscribes or bounces.' },
-  'starter-pack':    { mod: 'mod-04', title: 'Content Starter Pack',      sub: 'The content you need ready before you go live.',                             brief: 'The exact content you need ready before you go live — what to produce, how much of it, and how to structure your vault so new subscribers stay subscribed. Never launch to an empty page.' },
-  'script-guide':    { mod: 'mod-04', title: 'Script Guide',              sub: 'DM scripts and captions that convert fans into paying subscribers.',          brief: 'DM scripts, caption templates, and message sequences that convert fans into paying subscribers. The words you use make or break conversions — this lesson covers the exact language that works in this niche.' },
-  'chatting':        { mod: 'mod-04', title: 'Chatting Masterclass',      sub: 'How to chat with subscribers in a way that drives revenue.',                 brief: 'How to chat with subscribers in a way that drives PPV opens, tips, and renewals without burning out. Every conversation is a revenue opportunity — this lesson shows you how to work it.' },
+  // MOD 05 — DEMOS
+  'swap-and-send':   { mod: 'mod-05', title: 'The Swap-and-Send System',   sub: 'One template, endless client demos.', brief: 'The demo system: a template where every piece of content lives in one config, so rebuilding a prospect’s site takes minutes, not days.' },
+  'demo-portfolio':  { mod: 'mod-05', title: 'Demos as Portfolio',         sub: 'Every prospect demo doubles as your portfolio.', brief: 'How to organise, host and reuse your demos so every one you send also builds the body of work you show the next prospect.' },
 
-  // MOD 05
-  'ig':              { mod: 'mod-05', title: 'Instagram',                  sub: 'Content, cadence, and funnelling followers to Fanvue.',                     brief: 'How to build and grow an Instagram presence for your AI model — content format, posting cadence, and how to funnel followers into paying Fanvue subscribers. Instagram is your top-of-funnel, not your income source.' },
-  'tiktok':          { mod: 'mod-05', title: 'TikTok',                     sub: 'High-reach top-of-funnel strategy for AI model creators.',                  brief: 'TikTok-specific strategy for AI model creators — what content works, what gets flagged, how the algorithm treats this niche, and how to use it as a high-reach growth engine. Fast reach, free traffic.' },
-  'x-twitter':       { mod: 'mod-05', title: 'X/Twitter',                  sub: 'Posting style and DM strategy that monetises fast.',                        brief: 'Building your X presence as an AI model operator — the posting style that works, how to use DMs effectively, and why X is one of the fastest platforms to monetise in this space.' },
-  'telegram-social': { mod: 'mod-05', title: 'Telegram',                   sub: 'Building a broadcast list you own outside the main platforms.',              brief: 'How to use Telegram as a community and broadcast channel — building a subscriber list you own and using it to drive traffic and sales outside the main platforms where you can get banned or shadowbanned.' },
+  // MOD 06 — LEADS
+  'lead-sheets':     { mod: 'mod-06', title: 'Building Lead Sheets',       sub: 'From region to calling list with Claude.', brief: 'The lead-scraping workflow: mining a region for qualified trades, the keep/exclude rules, and the sheet format that doubles as your CRM.' },
+  'verification':    { mod: 'mod-06', title: 'Verify Off the Live Site',   sub: 'Never call a lead you haven’t checked.', brief: 'The verification pass: confirming every number, name and website state off the live site before it earns a row on your sheet.' },
 
-  // MOD 06
-  'discord':         { mod: 'mod-06', title: 'Discord',                    sub: 'Connect with the BAM operator community.',                                  brief: 'Access the BAM operator Discord — connect with other creators, get feedback on your model, and stay up to date with new strategies as the platforms and tools evolve.' },
-  'telegram-comm':   { mod: 'mod-06', title: 'Telegram',                   sub: 'BAM announcements and tips straight to your phone.',                        brief: 'Join the BAM Telegram channel for announcements, tips, and community updates straight to your phone. This is where urgent updates and new resources get posted first.' },
+  // MOD 07 — OUTREACH
+  'cold-calling':    { mod: 'mod-07', title: 'Cold Calling',               sub: 'The script, the opener, the tone.', brief: 'The call framework: the opener that survives the first five seconds, handling "how much is it?", and booking the demo walkthrough.' },
+  'cold-dm-email':   { mod: 'mod-07', title: 'Cold DM & Email',            sub: 'For the leads that never pick up.', brief: 'DM and email scripts with real examples — short, demo-led, and written to get a reply rather than to impress.' },
+  'uk-legal':        { mod: 'mod-07', title: 'The UK Legal Bit',           sub: 'TPS/CTPS, PECR, GDPR — do it properly.', brief: 'The compliance module: screening numbers against TPS/CTPS, PECR rules for email outreach, and GDPR basics for holding lead data. Ten minutes that keeps you out of trouble.' },
 
-  // ADVANCED (coming soon)
-  'scale-models':    { mod: 'advanced', title: 'How to Scale 2+ Models',   sub: 'Running multiple models as a portfolio.' },
-  'outsource':       { mod: 'advanced', title: 'How to Outsource Jobs',    sub: 'Building a team around your operation.' },
-  'meta-ads':        { mod: 'advanced', title: 'Meta Ads',                  sub: 'Paid acquisition for your Fanvue.' },
-  'agency':          { mod: 'advanced', title: 'Agency Creation',           sub: 'Turning your operation into an agency.' },
-  'ten-k':           { mod: 'advanced', title: 'Watch After £10k MRR',     sub: 'What changes when you hit serious revenue.' },
-  'automate':        { mod: 'advanced', title: 'How to Automate Jobs',      sub: 'Systems that run without you.' },
-  'more':            { mod: 'advanced', title: 'And more....',              sub: '' },
+  // MOD 08 — PIPELINE
+  'follow-up':       { mod: 'mod-08', title: 'Follow-up Cadence',          sub: 'Most deals close on contact three to five.', brief: 'The follow-up system: cadence that stays welcome, the lead sheet as CRM, and the objection-handling lines that actually get used.' },
+
+  // MOD 09 — CLOSING
+  'booked-call':     { mod: 'mod-09', title: 'The Booked-Call Playbook',   sub: 'From "go on then" to paid.', brief: 'The closing call, word for word: walking the demo, naming the price, handling wobbles, and taking payment details before you hang up.' },
+
+  // MOD 10 — FULFILMENT
+  'onboarding':      { mod: 'mod-10', title: 'Onboarding & Build',         sub: 'The checklist from deposit to go-live.', brief: 'The fulfilment checklist: content gathering, the real build, client DNS and domains, go-live day and handover without the client ever feeling lost.' },
+
+  // MOD 11 — GETTING PAID
+  'payments':        { mod: 'mod-11', title: 'Invoices, Deposits & Direct Debit', sub: 'GoCardless retainers + the one-page contract.', brief: 'Money mechanics: invoicing, taking deposits, setting up GoCardless direct debit for retainers, and the one-page contract template that covers you without scaring clients.' },
+
+  // MOD 12 — RETENTION
+  'monthly-ritual':  { mod: 'mod-12', title: 'The Monthly Ritual',         sub: 'What "done-for-you" means every month.', brief: 'The retention system: the small monthly ritual that makes the retainer feel effortless to the client, and the churn-defence moves when someone wobbles.' },
+  'upsell-ladder':   { mod: 'mod-12', title: 'The Upsell Ladder',          sub: 'SEO blogs and beyond.', brief: 'The upsell ladder, starting with the SEO blogs add-on — how to package it, price it, and when to offer it so it feels like service, not sales.' },
+
+  // MOD 13 — CASE STUDY
+  'end-to-end':      { mod: 'mod-13', title: 'One Lead, End to End',       sub: 'Scrape → call → demo → close → live site.', brief: 'One real lead followed all the way through the system: the sheet row, the call, the demo that went out, the close, and the live site — with the timestamps to prove the pace.' },
 };
 
 // Helper: get lessons for a module
@@ -1117,7 +1130,7 @@ function getTotalLessons() {
   return Object.values(LESSONS).filter(l => l.mod !== 'advanced').length;
 }
 
-let currentLessonId = 'watch-first';
+let currentLessonId = 'what-building';
 
 // ── PROGRESS HELPERS ─────────────────────────────────────────────
 function updateStats() {
@@ -1794,8 +1807,8 @@ function lockCourse() {
   if (main && !main.querySelector('.upgrade-banner')) {
     const banner = document.createElement('div');
     banner.className = 'upgrade-banner';
-    banner.style.cssText = 'background:var(--panel2);border-bottom:1px solid var(--border2);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:13px;color:var(--muted);position:relative;z-index:10';
-    banner.innerHTML = `<span>👀 You're previewing the free content — unlock the full course to access all lessons</span><a href="/account" style="background:var(--accent);color:#000;padding:7px 18px;border-radius:6px;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap;flex-shrink:0">Unlock Full Course →</a>`;
+    banner.style.cssText = 'background:var(--yellow-soft);border-bottom:1px solid var(--yellow-line);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:13px;color:var(--ink);position:relative;z-index:10';
+    banner.innerHTML = `<span>You're previewing the free module — unlock the full course to open all 14 modules</span><a href="/account" style="background:var(--yellow);color:var(--ink);padding:8px 18px;border-radius:10px;font-weight:800;font-size:12px;font-family:var(--font-display);text-decoration:none;white-space:nowrap;flex-shrink:0">Unlock Full Course →</a>`;
     main.prepend(banner);
   }
 }

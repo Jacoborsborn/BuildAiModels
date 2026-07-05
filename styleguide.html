@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Styleguide — Study Hall</title>
+<link rel="stylesheet" href="/global.css">
+<style>
+  .wrap { max-width: 960px; margin: 0 auto; padding: 48px 28px; display: grid; gap: 40px; }
+  section h2 { font-size: 22px; font-weight: 800; margin-bottom: 16px; }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .swatch { width: 120px; border-radius: 12px; border: 1px solid var(--line); overflow: hidden; box-shadow: var(--shadow); }
+  .swatch i { display: block; height: 64px; }
+  .swatch span { display: block; font-size: 12px; padding: 8px 10px; background: var(--card); font-family: var(--font-mono); }
+  .type-demo > * { margin-bottom: 10px; }
+  .lesson-demo { max-width: 420px; }
+  .lesson { display: flex; align-items: center; gap: 12px; padding: 13px 20px; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .lesson:last-child { border-bottom: none; }
+  .lesson .t { flex: 1; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">bam<em>.</em></a>
+  <a class="nav-link" href="#">Curriculum</a>
+  <a class="nav-link" href="#">Pricing</a>
+  <a class="nav-signin" href="#">Sign in</a>
+  <a class="nav-cta" href="#">Start free preview</a>
+</nav>
+
+<div class="wrap">
+
+  <section>
+    <h2>Colour roles</h2>
+    <p style="color:var(--muted);margin-bottom:14px">Yellow = act &middot; Green = done &middot; Blue = learn/trust &middot; Coral = avoid. Never mix roles.</p>
+    <div class="row">
+      <div class="swatch"><i style="background:var(--yellow)"></i><span>--yellow</span></div>
+      <div class="swatch"><i style="background:var(--green)"></i><span>--green</span></div>
+      <div class="swatch"><i style="background:var(--blue)"></i><span>--blue</span></div>
+      <div class="swatch"><i style="background:var(--coral)"></i><span>--coral</span></div>
+      <div class="swatch"><i style="background:var(--ink)"></i><span>--ink</span></div>
+      <div class="swatch"><i style="background:var(--bg)"></i><span>--bg</span></div>
+    </div>
+  </section>
+
+  <section class="type-demo">
+    <h2>Type</h2>
+    <h1 style="font-size:44px;font-weight:800;letter-spacing:-1.5px;line-height:1.06">Learn the agency. Then <em class="hl">run</em> the agency.</h1>
+    <p style="color:var(--muted);max-width:52ch">Body is Public Sans. Display is Plus Jakarta Sans 700–800 with tight letter-spacing. Prompts and terminal content use JetBrains Mono.</p>
+    <div class="prompt-block">claude "Build me a one-page site for a plumber in Leeds using the swap-and-send template"</div>
+  </section>
+
+  <section>
+    <h2>Buttons &amp; chips</h2>
+    <div class="row">
+      <button class="btn-primary">Unlock the full course →</button>
+      <button class="btn-ghost">Watch module 00 free</button>
+      <span class="chip"><span class="dot"></span>Built from a real, running UK agency</span>
+      <span class="badge">Most picked</span>
+      <span class="badge badge-green">Free</span>
+      <span class="badge badge-blue">Level 2</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Progress</h2>
+    <div class="row" style="margin-bottom:16px">
+      <div class="ring" style="--pct:38"><i>38%</i></div>
+      <div class="bar" style="width:220px"><i style="width:60%"></i></div>
+    </div>
+    <div class="card lesson-demo">
+      <div class="lesson"><span class="tick done"><svg viewBox="0 0 24 24"><path d="M5 13l4 4 10-11"/></svg></span><span class="t">00 · Start here — tools &amp; setup</span></div>
+      <div class="lesson" style="background:var(--yellow-soft)"><span class="tick now"></span><span class="t">06 · Scrape leads with Claude</span></div>
+      <div class="lesson" style="opacity:.45"><span class="tick todo"></span><span class="t">07 · Cold outreach + the legal bit</span></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>Study Hall design system — internal styleguide, unlinked.</footer>
+</body>
+</html>
