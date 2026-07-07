@@ -10,13 +10,15 @@
 - Built from one real agency: 300+ leads mined, qualified and called with this system; £50–150/month retainers; 0 paid ads or lead fees.
 
 ## Blog guides
-- [How to Start a Web Design Agency With No Experience (2026)](https://www.buildaimodels.co.uk/blog/how-to-start-a-web-design-agency-no-experience/): No code, no design background, no portfolio. The honest 2026 route to a web design agency: AI does the building, you run the business. From a real UK agency.
 - [Is Web Design Still Profitable in 2026? Honest AI Answer](https://www.buildaimodels.co.uk/blog/is-web-design-still-profitable/): AI killed the £3,000 one-off build, not web design. The model that grew instead: done-for-you monthly retainers. The honest maths, from a real UK agency.
+- [Can AI Build Client Websites? Claude Code, Tested (2026)](https://www.buildaimodels.co.uk/blog/can-ai-build-client-websites/): An AI coding agent can take a local business from blank folder to client-ready demo in about 4 hours. What it nails, what it can't do, and what the toolchain really costs.
+- [How to Start a Web Design Agency With No Experience (2026)](https://www.buildaimodels.co.uk/blog/how-to-start-a-web-design-agency-no-experience/): No code, no design background, no portfolio. The honest 2026 route to a web design agency: AI does the building, you run the business. From a real UK agency.
 
 ## Key pages
 - [Home](https://www.buildaimodels.co.uk/): The Web Design Agency Starter Kit. Learn the agency, then run the agency.
-- [Curriculum](https://www.buildaimodels.co.uk/#curriculum): All 14 modules, from tool setup to a real closed-client case study.
-- [Pricing](https://www.buildaimodels.co.uk/#pricing): £99 Starter Kit or £179 with the SEO Automation Kit, both one-time.
+- [What's Included](https://www.buildaimodels.co.uk/whats-included): All 14 modules in four phases, plus the prompt library, scripts, lead sheets and contract templates.
+- [Pricing](https://www.buildaimodels.co.uk/pricing): £99 Starter Kit or £179 with the SEO Automation Kit, both one-time.
+- [About](https://www.buildaimodels.co.uk/about): The founder and the real agency (sitework.uk) behind the course.
 - [Blog](https://www.buildaimodels.co.uk/blog/): Honest guides on starting an AI web design agency, covering pricing, clients, tools and the UK legal bits.
 - [Legal](https://www.buildaimodels.co.uk/legal): Terms and privacy policy.
 

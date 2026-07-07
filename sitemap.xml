@@ -2,18 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.buildaimodels.co.uk/</loc>
-    <lastmod>2026-07-05</lastmod>
+    <lastmod>2026-07-06</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.buildaimodels.co.uk/blog/</loc>
-    <lastmod>2026-07-06</lastmod>
+    <lastmod>2026-07-07</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.buildaimodels.co.uk/legal</loc>
-    <lastmod>2026-07-05</lastmod>
+    <lastmod>2026-07-06</lastmod>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.buildaimodels.co.uk/blog/can-ai-build-client-websites/</loc>
+    <lastmod>2026-07-07</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.buildaimodels.co.uk/blog/how-to-start-a-web-design-agency-no-experience/</loc>
@@ -22,7 +27,7 @@
   </url>
   <url>
     <loc>https://www.buildaimodels.co.uk/blog/is-web-design-still-profitable/</loc>
-    <lastmod>2026-07-06</lastmod>
+    <lastmod>2026-07-07</lastmod>
     <priority>0.8</priority>
   </url>
 </urlset>
