@@ -11,6 +11,7 @@
 
 ## Blog guides
 - [Is Web Design Still Profitable in 2026? Honest AI Answer](https://www.buildaimodels.co.uk/blog/is-web-design-still-profitable/): AI killed the £3,000 one-off build, not web design. The model that grew instead: done-for-you monthly retainers. The honest maths, from a real UK agency.
+- [How Much to Charge for a Website UK (2026 Guide)](https://www.buildaimodels.co.uk/blog/how-much-to-charge-for-a-website/): One-off builds vs done-for-you monthly retainers: what to actually charge for a website in the UK in 2026, and which model pays more by month 12. From a real agency.
 - [Can AI Build Client Websites? Claude Code, Tested (2026)](https://www.buildaimodels.co.uk/blog/can-ai-build-client-websites/): An AI coding agent can take a local business from blank folder to client-ready demo in about 4 hours. What it nails, what it can't do, and what the toolchain really costs.
 - [How to Start a Web Design Agency With No Experience (2026)](https://www.buildaimodels.co.uk/blog/how-to-start-a-web-design-agency-no-experience/): No code, no design background, no portfolio. The honest 2026 route to a web design agency: AI does the building, you run the business. From a real UK agency.
 
