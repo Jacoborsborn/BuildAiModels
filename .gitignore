@@ -3,4 +3,5 @@ config.js
 local2.html
 .DS_Store
 node_modules/
-.claude/
+.claude/worktrees/
+.claude/settings.local.json

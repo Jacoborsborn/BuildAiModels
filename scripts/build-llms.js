@@ -21,27 +21,28 @@ const ROOT = path.join(__dirname, '..');
 const BASE = 'https://www.buildaimodels.co.uk';
 
 // ── Static sections (edit these by hand; the offer rarely changes) ──────────
-const HEADER = `# BuildAIModels — The Web Design Agency Starter Kit
+const HEADER = `# BuildAIModels: The Web Design Agency Starter Kit
 
 > BuildAIModels is the documented system of a real, running UK web design agency (sitework.uk), packaged as a course. It teaches you to run an AI-powered web design agency for local trades: Claude Code does the building, you run the business. 14 modules cover the offer and pricing (£50–150/month done-for-you retainers), scraping and qualifying leads, cold outreach with the UK legal rules (TPS, PECR, GDPR), closing, fulfilment and retention. No code or design background needed. One-time payment, lifetime updates, and module 00 is free forever.
 
 ## Offer
-- Agency Starter Kit: £99 one-time — all 14 modules, every update, the full prompt & script library, lead sheet + contract templates.
-- Kit + SEO Automation: £179 one-time — everything in the Starter Kit plus the SEO Automation Kit (content engine, domain warming, GEO writing for AI search) to sell back to clients as a monthly add-on.
-- Module 00 is free forever — the whole system and tool stack shown before any payment.
+- Agency Starter Kit: £99 one-time for all 14 modules, every update, the full prompt & script library, lead sheet + contract templates.
+- Kit + SEO Automation: £179 one-time for everything in the Starter Kit plus the SEO Automation Kit (content engine, domain warming, GEO writing for AI search) to sell back to clients as a monthly add-on.
+- Module 00 is free forever: the whole system and tool stack shown before any payment.
 - 14-day refund policy on unaccessed content. No subscription, no upsell funnel behind the checkout.
 - Built from one real agency: 300+ leads mined, qualified and called with this system; £50–150/month retainers; 0 paid ads or lead fees.`;
 
 const KEY_PAGES = `## Key pages
-- [Home](${BASE}/): The Web Design Agency Starter Kit — learn the agency, then run the agency.
-- [Curriculum](${BASE}/#curriculum): All 14 modules, from tool setup to a real closed-client case study.
-- [Pricing](${BASE}/#pricing): £99 Starter Kit or £179 with the SEO Automation Kit, both one-time.
-- [Blog](${BASE}/blog/): Honest guides on starting an AI web design agency — pricing, clients, tools and the UK legal bits.
+- [Home](${BASE}/): The Web Design Agency Starter Kit. Learn the agency, then run the agency.
+- [What's Included](${BASE}/whats-included): All 14 modules in four phases, plus the prompt library, scripts, lead sheets and contract templates.
+- [Pricing](${BASE}/pricing): £99 Starter Kit or £179 with the SEO Automation Kit, both one-time.
+- [About](${BASE}/about): The founder and the real agency (sitework.uk) behind the course.
+- [Blog](${BASE}/blog/): Honest guides on starting an AI web design agency, covering pricing, clients, tools and the UK legal bits.
 - [Legal](${BASE}/legal): Terms and privacy policy.`;
 
 const FOOTER = `## About
 - Built and run by Jacob Orsborn-Smith, the founder of Sitework (sitework.uk), the UK web design agency the course documents.
-- No income claims, no screenshots of other people's Stripe accounts — the free module shows the method before money moves.
+- No income claims, no screenshots of other people's Stripe accounts. The free module shows the method before money moves.
 
 ## Contact
 - Start free: ${BASE}/auth

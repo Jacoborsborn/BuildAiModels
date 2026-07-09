@@ -9,10 +9,14 @@ const ROOT = __dirname;
 // Keep this aligned with `vercel.json` rewrites.
 const REWRITES = new Map([
   ["/", "/BAMLanding.html"],
+  ["/about", "/About.html"],
+  ["/whats-included", "/WhatsIncluded.html"],
+  ["/pricing", "/Pricing.html"],
   ["/auth", "/BAMAuth.html"],
   ["/account", "/BAMAccount.html"],
   ["/legal", "/BAMLegal.html"],
   ["/course", "/Course.html"],
+  ["/waitlist", "/Waitlist.html"],
 ]);
 
 const CONTENT_TYPES = new Map([

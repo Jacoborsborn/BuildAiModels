@@ -1,6 +1,9 @@
 {
     "rewrites": [
       { "source": "/", "destination": "/BAMLanding.html" },
+      { "source": "/about", "destination": "/About.html" },
+      { "source": "/whats-included", "destination": "/WhatsIncluded.html" },
+      { "source": "/pricing", "destination": "/Pricing.html" },
       { "source": "/auth", "destination": "/BAMAuth.html" },
       { "source": "/account", "destination": "/BAMAccount.html" },
       { "source": "/legal", "destination": "/BAMLegal.html" },

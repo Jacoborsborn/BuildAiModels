@@ -61,6 +61,8 @@ Every post follows the sitework GEO spine, adapted to BAM's voice and CTA:
 - **≥2 real authority citations** (ONS/gov.uk self-employment stats, Companies House, Anthropic docs/pricing, ICO on PECR/GDPR for outreach posts) — never invented URLs.
 - **CTA**: module 00 free, one-time payment, lifetime updates → link `/#pricing` (or `/#curriculum` for how-to posts).
 - **Banned words**: the full AppSeo list (delve, journey, elevate, seamless, robust, game-changer, "in today's world"…). Titles avoid Ultimate/Complete/Discover.
+- **No em dashes (—) anywhere in reader-facing copy** — rewrite with commas, colons, full stops or parentheses. Hyphenated compounds (done-for-you, one-off, mobile-first) and number ranges (£50–150) are fine.
+- **Daily workflow is codified in the `daily-blog` skill** (`.claude/skills/daily-blog/SKILL.md`) — invoke it to write each day's post so structure stays identical.
 
 | Day | Working title | Target keyword | Cluster | Internal links → |
 |---|---|---|---|---|
