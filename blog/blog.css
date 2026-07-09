@@ -161,6 +161,14 @@
 .post-card p { font-size: 13.5px; color: var(--muted); flex: 1; }
 .post-card .post-meta { font-size: 12.5px; }
 
+/* ── Footer ── */
+.foot-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; max-width: 1120px; margin: 0 auto; flex-wrap: wrap; }
+.foot-links { display: flex; gap: 20px; align-items: center; }
+.made-by { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); text-decoration: none; transition: color .15s; }
+.made-by:hover { color: var(--ink); }
+.made-by .mark { width: 15px; height: 15px; flex-shrink: 0; }
+.made-by strong { font-weight: 700; }
+
 @media (max-width: 760px) {
   .rel-grid, .post-grid { grid-template-columns: 1fr; }
   nav .nav-link { display: none; }
