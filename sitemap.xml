@@ -6,21 +6,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.buildaimodels.co.uk/whats-included</loc>
-    <lastmod>2026-07-09</lastmod>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://www.buildaimodels.co.uk/pricing</loc>
-    <lastmod>2026-07-09</lastmod>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://www.buildaimodels.co.uk/about</loc>
-    <lastmod>2026-07-09</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.buildaimodels.co.uk/blog/</loc>
     <lastmod>2026-07-09</lastmod>
     <priority>0.7</priority>
@@ -31,13 +16,18 @@
     <priority>0.3</priority>
   </url>
   <url>
+    <loc>https://www.buildaimodels.co.uk/blog/best-ai-side-hustles-2026/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.buildaimodels.co.uk/blog/can-ai-build-client-websites/</loc>
-    <lastmod>2026-07-07</lastmod>
+    <lastmod>2026-07-09</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.buildaimodels.co.uk/blog/how-much-to-charge-for-a-website/</loc>
-    <lastmod>2026-07-07</lastmod>
+    <lastmod>2026-07-09</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
@@ -52,7 +42,7 @@
   </url>
   <url>
     <loc>https://www.buildaimodels.co.uk/blog/is-web-design-still-profitable/</loc>
-    <lastmod>2026-07-07</lastmod>
+    <lastmod>2026-07-09</lastmod>
     <priority>0.8</priority>
   </url>
 </urlset>
